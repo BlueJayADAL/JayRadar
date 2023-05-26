@@ -44,15 +44,22 @@ mainwin.resizable(True, True)
 mainwin.minsize(width=889, height=500)
 mainwin.bind("<Configure>", resize)
 
+# Change the background color of the main window to green
+mainwin.configure(bg="blue")
+
 # Create the internal frames
 frame_1 = Frame(mainwin, bg='grey')
 frame_1.grid(row=0, column=0, sticky="nsew", padx=1)
+frame_1.grid_columnconfigure(0, weight=1)
 
 frame_2 = Frame(mainwin, bg='grey')
 frame_2.grid(row=0, column=1, sticky="nsew", padx=1)
+frame_2.grid_columnconfigure(0, weight=1)
 
 camframe = Frame(mainwin, bg='grey')
-camframe.grid(row=0, column=2, sticky="nsew", padx=1)
+camframe.grid(row=0, column=2, sticky="nw", padx=1)
+camframe.grid_columnconfigure(0, weight=1)
+camframe.grid_rowconfigure(0, weight=1)
 
 # Configure the layout of the main window
 mainwin.grid_columnconfigure(0, weight=1, minsize=180)
@@ -61,7 +68,7 @@ mainwin.grid_columnconfigure(2, weight=2)
 mainwin.grid_rowconfigure(0, weight=1, minsize=500)
 
 # Create the widgets in frame_1 ('Tuning')
-Tuning = tk.Label(frame_1, bg='grey', text="Tuning", font=("Arial Bold", 30)).grid(row=0, column=0)
+Tuning = tk.Label(frame_1, bg='grey', text="Tuning", font=("Arial Bold", 30, "underline")).grid(row=0, column=0)
 
 Conf_Thresh = tk.Label(frame_1, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=1, column=0)
 Conf_Thresh_Spin = Spinbox(frame_1, min=0, max=100, increment=1, default_value=50).grid(row=2, column=0)
@@ -76,7 +83,7 @@ Filter_Options = ["Closest", "Highest Confidence"]
 Filter = OptionMenu(frame_1, selected_filter_option, *Filter_Options, command=filter_option_selected).grid(row=6, column=0)
 
 # Create the widgets in frame_2 ('Model')
-Model_Label = tk.Label(frame_2, bg='grey', text="Model", font=("Arial Bold", 40), justify="center").grid(row=0, column=0)
+Model_Label = tk.Label(frame_2, bg='grey', text="Model", font=("Arial Bold", 30, "underline")).grid(row=0, column=0, sticky = 'nsew')
 
 model_type = tk.Label(frame_2, bg='grey', text="Model: ", font=("Arial Bold", 12), justify="center").grid(row=1, column=0)
 
@@ -86,22 +93,21 @@ Model_Options = ["1", "2", "3", "4"]
 Model_OptionMenu = OptionMenu(frame_2, selected_model_option, *Model_Options, command=model_option_selected)
 Model_OptionMenu.grid(row=2, column=0)
 
-res_label = tk.Label(frame_2, bg='grey', text="Resolution", font=("Arial Bold", 18), justify="center").grid(row=3, column=0)
 res_frame = Frame(frame_2, bg='grey')
-res_frame.grid(row=4, column=0, sticky="nsew")
+res_frame.grid(row=3, column=0, pady=20)
 
-res_width = tk.Label(res_frame, bg='grey', text="Width", font=("Arial Bold", 12), justify="center").grid(row=0, column=0)
-res_width_spin = Spinbox(res_frame, min=100, max=9999, increment=1, default_value=400)
-res_width_spin.grid(row=1, column=0)
+res_label = tk.Label(res_frame, bg='grey', text="Resolution", font=("Arial Bold", 15, "underline"), justify="center").grid(row=0, column=0)
 
-res_height = tk.Label(res_frame, bg='grey', text="Height", font=("Arial Bold", 12), justify="center").grid(row=2, column=0)
-res_height_spin = Spinbox(res_frame, min=100, max=9999, increment=1, default_value=400)
-res_height_spin.grid(row=3, column=0)
+res_width = tk.Label(res_frame, bg='grey', text="Width:", font=("Arial Bold", 12)).grid(row=1, column=0)
+res_width_spin = Spinbox(res_frame, min=100, max=9999, increment=1, default_value=400).grid(row=2, column=0)
+
+res_height = tk.Label(res_frame, bg='grey', text="Height:", font=("Arial Bold", 12)).grid(row=3, column=0)
+res_height_spin = Spinbox(res_frame, min=100, max=9999, increment=1, default_value=400).grid(row=4, column=0)
 
 # Create the widgets in camframe (camera output)
 cam = tk.Label(camframe)
 cam.grid(row=0, column=0)
-calc_disp = tk.Label(camframe, bg='grey', text="Output Information: (x, y, area)", font=("Arial Bold", 12), justify="center").grid(row=1, column=0)
+calc_disp = tk.Label(camframe, bg='grey', text="Output Information: (x, y, area)", font=("Arial Bold", 12)).grid(row=1, column=0, sticky = 'n')
 
 # Open the video capture
 cap = cv2.VideoCapture(0)
