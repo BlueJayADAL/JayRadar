@@ -89,7 +89,7 @@ model_type = tk.Label(frame_2, bg='grey', text="Model: ", font=("Arial Bold", 12
 
 selected_model_option = tk.StringVar(mainwin)
 selected_model_option.set("1")  # Set default option
-Model_Options = ["1", "2", "3", "4"]
+Model_Options = ["1", "2", "3", "4", "5"]
 Model_OptionMenu = OptionMenu(frame_2, selected_model_option, *Model_Options, command=model_option_selected)
 Model_OptionMenu.grid(row=2, column=0)
 
