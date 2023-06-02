@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Object Detection</title>
+    <style>
+        #slider {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Object Detection</h1>
+    <label for="confidence">Confidence Threshold:</label>
+    <input type="range" id="slider" min="0" max="100" step="1" value="{{ confidence }}" oninput="updateThreshold(this.value)">
+    <p id="slider-value">Threshold: {{ confidence }}</p>
+
+    <script>
+        function updateThreshold(value) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/update_threshold", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("confidence=" + value);
+            document.getElementById("slider-value").innerText = "Threshold: " + value;
+        }
+    </script>
+</body>
+</html>
