@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Object Detection</title>
+    <script>
+        // Function to update the confidence threshold value
+        function updateThreshold() {
+            // Get the current value of the confidence slider
+            var sliderValue = document.getElementById("confidenceSlider").value;
+            
+            // Update the displayed confidence value
+            document.getElementById("confidenceValue").textContent = sliderValue;
+            
+            // Send a POST request to update the confidence threshold on the server
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/update_threshold");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("confidence=" + sliderValue);
+        }
+    </script>
+    <style>
+        /* CSS styles for the slider container */
+        .slider-container {
+            display: flex;
+            align-items: center;
+        }
+
+        /* CSS styles for the slider label */
+        .slider-label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Object Detection</h1>
+    
+    <!-- Slider container -->
+    <div class="slider-container">
+        <!-- Slider label -->
+        <label for="confidenceSlider" class="slider-label">Confidence Threshold:</label>
+        
+        <!-- Slider input -->
+        <input type="range" min="0" max="100" value="{{ confidence }}" class="slider" id="confidenceSlider" oninput="updateThreshold()">
+        
+        <!-- Displayed confidence value -->
+        <span id="confidenceValue">{{ confidence }}</span>
+    </div>
+    <br>
+    
+    <!-- Image display -->
+    <img src="{{ url_for('video_feed') }}" width="640" height="480">
+</body>
+</html>
