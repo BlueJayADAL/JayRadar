@@ -8,7 +8,7 @@ from fastapi.responses import StreamingResponse
 
 # Initialize FastAPI app
 app = FastAPI()
-templates = Jinja2Templates(directory="./templates")
+templates = Jinja2Templates(directory="templates")
 
 # Initialize YOLOv8 model
 model = YOLO("yolov8n.pt")
@@ -99,10 +99,10 @@ def video_feed():
     return StreamingResponse(generate(), media_type='multipart/x-mixed-replace; boundary=frame')
 
 @app.post('/update_threshold')
-def update_threshold(confidence: int):
+async def update_threshold(confidence: dict):
     # Update the confidence threshold based on the slider value
     global confidence_threshold
-    confidence_threshold = confidence
+    confidence_threshold = int(confidence.get("value"))
     return 'OK'
 
 if __name__ == "__main__":
