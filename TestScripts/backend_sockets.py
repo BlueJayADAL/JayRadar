@@ -93,5 +93,12 @@ def send_detected_objects():
                 message = struct.pack("Q",len(a))+a
                 client_socket.sendall(message)
 
+
+                cv2.imshow("Object Detection", frame_with_boxes)
+
+                 # Exit the loop if the 'q' key is pressed
+                if cv2.waitKey(1) == ord('q'):
+                    break
+
 if __name__ == '__main__':
     send_detected_objects()
