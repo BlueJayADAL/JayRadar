@@ -1,3 +1,5 @@
 yolov8n.pt
 TestScripts/__pycache__/
 GUI/__pycache__
+GUI/__pycache__/spinbox.cpython-311.pyc
+.gitignore
