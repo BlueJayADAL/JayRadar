@@ -5,3 +5,7 @@ Libraries to install:
 Tkinter
 OpenCV
 Pillow
+
+
+For TestScripts:
+pip install -r requirements.txt
