@@ -4,3 +4,4 @@ Pillow
 ultralytics
 fastapi
 flask
+uvicorn
