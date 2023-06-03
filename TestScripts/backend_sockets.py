@@ -1,4 +1,27 @@
-import socket, cv2, pickle,struct
+"""
+SCARP 2023 JayRadar
+Professor: Dr. Peilong Li
+Students: Steven Klinefelter, Nathan Brightup
+
+This file grabs feed from a connected webcam or CSI camera,
+then passes it through a the loaded YOLOV8 Model.
+Output data, such as center cordinates is then calculated and passed to NetworkTables
+The output video is passed through socket to a gui.
+
+To be implemented:
+
+1. Pass output values to networkTables
+2. Run and output data to networkTables regardless of connected GUI
+3. Handle errors and exceptions regarding connection and disconnection of GUI
+4. Restart socket if GUI disconnects so that a new instance of the GUI can be started
+
+Comments and documentation generated with the help of ChatGPT
+"""
+
+import socket
+import cv2
+import pickle
+import struct
 import numpy as np
 from PIL import Image, ImageDraw
 from ultralytics import YOLO
@@ -47,6 +70,9 @@ def detect_objects_on_image(buf, confidence_threshold=50):
     return output
 
 def send_detected_objects():
+    """
+    Function to send frames with detected objects to a client using sockets.
+    """
     # Check if a CSI camera is available
     csi_camera = cv2.VideoCapture(0, cv2.CAP_V4L2)
     if csi_camera.isOpened():
