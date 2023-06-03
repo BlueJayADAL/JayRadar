@@ -5,3 +5,5 @@ ultralytics
 fastapi
 flask
 uvicorn
+tk
+customtkinter
