@@ -1,15 +1,21 @@
 import tkinter as tk
-from tkinter import Frame, OptionMenu
 import cv2
-from PIL import ImageTk, Image
-from spinbox import Spinbox
 import socket
 import pickle
 import struct
+from tkinter import Frame, OptionMenu
+from PIL import ImageTk, Image
+from spinbox import Spinbox
+from networktables import NetworkTables
+
+# Start Network Tables
+NetworkTables.initialize("10.4.10.146")
+table = NetworkTables.getTable
 
 def filter_option_selected(selected_option):
     """Callback function when the filter dropdown is changed"""
     print("Filter Mode: ", selected_option)
+    table.putNumber("max_detections", int(selected_option))
 
 def model_option_selected(selected_option):
     """Callback function when the model dropdown is changed"""
@@ -100,8 +106,8 @@ NMS_Thresh_Spin = Spinbox(frame_1, min=0, max=100, increment=1, default_value=50
 
 filter_type = tk.Label(frame_1, bg='grey', text="Filter mode: ", font=("Arial Bold", 12), justify="center").grid(row=5, column=0)
 selected_filter_option = tk.StringVar(mainwin)
-selected_filter_option.set("Closest")  # Set default option
-Filter_Options = ["Closest", "Highest Confidence"]
+selected_filter_option.set("1")  # Set default option
+Filter_Options = ["1", "2", "3", "4", "5"]
 Filter = OptionMenu(frame_1, selected_filter_option, *Filter_Options, command=filter_option_selected).grid(row=6, column=0)
 
 # Create the widgets in frame_2 ('Model')
@@ -132,7 +138,7 @@ cam.grid(row=0, column=0)
 calc_disp = tk.Label(camframe, bg='grey', text="Output Information: (x, y, area)", font=("Arial Bold", 12)).grid(row=1, column=0)
 
 # Set up socket connection to receive frames
-host = '10.1.80.32'  # Change to the appropriate IP address
+host = '10.4.10.46'  # Change to the appropriate IP address
 port = 9999  # Change to the appropriate port
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((host, port))
