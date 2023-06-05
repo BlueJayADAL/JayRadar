@@ -31,6 +31,7 @@ from networktables import NetworkTables
 server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 host_name  = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
+host_ip = "10.4.10.46"
 print('HOST IP:',host_ip)
 port = 9999
 socket_address = (host_ip,port)
@@ -76,7 +77,7 @@ def detect_objects_on_image(buf, confidence_threshold=50):
     [[x1,y1,x2,y2,object_type,probability],..]
     """
 
-    results = model.predict(buf, conf=confidence_threshold / 100)  # Perform object detection on the image
+    results = model.predict(buf, conf=confidence_threshold / 100, max_det = 1)  # Perform object detection on the image
     result = results[0]  # Get the detection results from the first image in the batch
     output = []
     for box in result.boxes:
@@ -124,17 +125,17 @@ def send_detected_objects():
 
                 # Convert the frame back to OpenCV format for display
                 frame_with_boxes = cv2.cvtColor(np.array(frame_pil_with_boxes), cv2.COLOR_RGB2BGR)
-            
+
                 a = pickle.dumps(frame_with_boxes)
                 message = struct.pack("Q",len(a))+a
                 client_socket.sendall(message)
 
 
-                cv2.imshow("Object Detection", frame_with_boxes)
+                #cv2.imshow("Object Detection", frame_with_boxes)
 
                  # Exit the loop if the 'q' key is pressed
-                if cv2.waitKey(1) == ord('q'):
-                    break
+               # if cv2.waitKey(1) == ord('q'):
+                   # break
 
 if __name__ == '__main__':
     send_detected_objects()
