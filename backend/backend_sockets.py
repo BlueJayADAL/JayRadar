@@ -25,6 +25,27 @@ import struct
 import numpy as np
 from PIL import Image, ImageDraw
 from ultralytics import YOLO
+from networktables import NetworkTables
+
+# Socket Create
+server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+host_name  = socket.gethostname()
+host_ip = socket.gethostbyname(host_name)
+print('HOST IP:',host_ip)
+port = 9999
+socket_address = (host_ip,port)
+
+# Socket Bind
+server_socket.bind(socket_address)
+
+# Socket Listen
+server_socket.listen(5)
+print("LISTENING AT:",socket_address)
+
+NetworkTables.initialize(server="10.4.10.146")
+table = NetworkTables.getTable("JayRadar")
+
+model = YOLO("yolov8n.pt")
 
 def draw_bounding_boxes(image, boxes):
     """
@@ -54,7 +75,7 @@ def detect_objects_on_image(buf, confidence_threshold=50):
     :return: Array of bounding boxes in format
     [[x1,y1,x2,y2,object_type,probability],..]
     """
-    model = YOLO("yolov8n.pt")  # Create an instance of the YOLOv8 model
+
     results = model.predict(buf, conf=confidence_threshold / 100)  # Perform object detection on the image
     result = results[0]  # Get the detection results from the first image in the batch
     output = []
@@ -67,6 +88,10 @@ def detect_objects_on_image(buf, confidence_threshold=50):
         output.append([
             x1, y1, x2, y2, result.names[class_id], prob
         ])  # Append the bounding box information to the output list
+        table.putNumber("x1", x1)
+        table.putNumber("y1", y1)
+        table.putNumber("x2", x2)
+        table.putNumber("y2", y2)
     return output
 
 def send_detected_objects():
@@ -79,21 +104,6 @@ def send_detected_objects():
         video_source = csi_camera
     else:
         video_source = cv2.VideoCapture(0)
-
-    # Socket Create
-    server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    host_name  = socket.gethostname()
-    host_ip = socket.gethostbyname(host_name)
-    print('HOST IP:',host_ip)
-    port = 9999
-    socket_address = (host_ip,port)
-
-    # Socket Bind
-    server_socket.bind(socket_address)
-
-    # Socket Listen
-    server_socket.listen(5)
-    print("LISTENING AT:",socket_address)
 
     while True:
         client_socket,addr = server_socket.accept()
