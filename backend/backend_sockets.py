@@ -76,8 +76,8 @@ def detect_objects_on_image(buf, confidence_threshold=50):
     :return: Array of bounding boxes in format
     [[x1,y1,x2,y2,object_type,probability],..]
     """
-
-    results = model.predict(buf, conf=confidence_threshold / 100, max_det = 1)  # Perform object detection on the image
+    max_detections = int(table.getNumber("max_detections", 1))
+    results = model.predict(buf, conf=confidence_threshold / 100, max_det = max_detections)  # Perform object detection on the image
     result = results[0]  # Get the detection results from the first image in the batch
     output = []
     for box in result.boxes:
