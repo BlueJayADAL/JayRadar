@@ -17,6 +17,9 @@ process_event = threading.Event()
 
 # Thread function to capture video frames and add them to the frame queue
 def capture_frames():
+    """
+    Function to capture video frames and add them to the frame queue.
+    """
     cap = cv2.VideoCapture(0)
 
     while cap.isOpened():
@@ -36,6 +39,9 @@ def capture_frames():
 
 # Thread function to process frames from the frame queue
 def process_frames():
+    """
+    Function to process frames from the frame queue using YOLOv8.
+    """
     # Load the YOLOv8 model
     model = YOLO('yolov8n.pt')
 
@@ -58,6 +64,9 @@ def process_frames():
 
 # Thread function to send frames over a socket connection
 def send_frames():
+    """
+    Function to send frames over a socket connection.
+    """
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     host_name = socket.gethostname()
     host_ip = socket.gethostbyname(host_name)
