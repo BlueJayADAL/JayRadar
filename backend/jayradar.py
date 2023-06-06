@@ -76,9 +76,7 @@ class JayRadar:
                     ret, self.buf = video_source.read()
                     self.buf = Image.fromarray(cv2.cvtColor(self.buf, cv2.COLOR_BGR2RGB))
                     results = self.detect_objects_on_image(self.buf)
-                    frame_pil_with_boxes = self.buf.copy()
-                    frame_with_boxes = cv2.cvtColor(np.array(frame_pil_with_boxes), cv2.COLOR_RGB2BGR)
-                    a = pickle.dumps(frame_with_boxes)
+                    a = pickle.dumps(self.buf)
                     message = struct.pack("Q", len(a)) + a
                     client_socket.sendall(message)
 
