@@ -12,10 +12,10 @@ pip install -r requirements.txt
 
 ## Usage
 
-To run an implementation of YOLOV8 displaying on a local pop up window:
+To run a class implementation of YOLOV8 displaying on a local pop up window:
 
 ```bash
-python3 backend.py
+python3 jayradar.py
 ```
 
 To run an implementation of YOLOV8 displaying on a socket, available on the local network:
@@ -24,14 +24,7 @@ To run an implementation of YOLOV8 displaying on a socket, available on the loca
 python3 backend_sockets.py
 ```
 
-To run an implementation of YOLOV8 displaying on a local WebBrower using FastAPI:
+## Test Sripts
 
-```bash
-python3 fastapi_frontend.py
-```
-
-To run an implementation of YOLOV8 displaying on a local WebBrower using Flask:
-
-```bash
-python3 frontend.py
-```
+These are short scripts I used during testing to isolate the errors and issues.
+They will be removed before making the repository public
