@@ -31,7 +31,7 @@ from networktables import NetworkTables
 server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 host_name  = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
-host_ip = "10.4.10.46"
+#host_ip = "10.4.10.46"
 print('HOST IP:',host_ip)
 port = 9999
 socket_address = (host_ip,port)
@@ -43,7 +43,8 @@ server_socket.bind(socket_address)
 server_socket.listen(5)
 print("LISTENING AT:",socket_address)
 
-NetworkTables.initialize(server="10.4.10.146")
+#NetworkTables.initialize(server="10.4.10.146")
+NetworkTables.initialize(server="10.1.80.32")
 table = NetworkTables.getTable("JayRadar")
 
 model = YOLO("yolov8n.pt")
@@ -76,10 +77,32 @@ def detect_objects_on_image(buf, confidence_threshold=50):
     :return: Array of bounding boxes in format
     [[x1,y1,x2,y2,object_type,probability],..]
     """
-    max_detections = int(table.getNumber("max_detections", 1))
-    results = model.predict(buf, conf=confidence_threshold / 100, max_det = max_detections)  # Perform object detection on the image
+    
+    confidence_threshold = table.getNumber("confidence_threshold", 50)
+    iou_threshold = table.getNumber("iou_threshold", 50)
+    half_precision = table.getBoolean("half_precision", False)
+    processor = table.getString("device", "cpu")
+    screenshot = table.getBoolean("screenshot", False)
+    screenshot_data = table.getBoolean("screenshot_data", False) 
+    max_detections = int(table.getNumber("max_detections", 3))
+    detected_classes = table.getNumberArray("classes", [0])
+
+
+    results = model.predict(
+        buf, 
+        conf = confidence_threshold / 100,
+        iou = iou_threshold / 100,
+        half = half_precision,
+        device = processor,
+        save = screenshot,
+        save_conf = screenshot_data,
+        max_det = max_detections,
+        classes = detected_classes
+        )  # Perform object detection on the image
     result = results[0]  # Get the detection results from the first image in the batch
     output = []
+    
+    #Try to rewrite this using YOLOV8 documentation, generators, stream etc...
     for box in result.boxes:
         x1, y1, x2, y2 = [
             round(x) for x in box.xyxy[0].tolist()
