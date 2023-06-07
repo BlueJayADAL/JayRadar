@@ -30,10 +30,10 @@ def capture_frames():
             frame_queue.append(frame)
             process_event.set()  # Set the event to resume frame processing
 
-            cv2.imshow('Capturing Video', frame)
+            #cv2.imshow('Capturing Video', frame)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            #if cv2.waitKey(1) & 0xFF == ord('q'):
+                #break
 
     cap.release()
 
@@ -69,7 +69,8 @@ def send_frames():
     """
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     host_name = socket.gethostname()
-    host_ip = socket.gethostbyname(host_name)
+    #host_ip = socket.gethostbyname(host_name)
+    host_ip = "10.4.10.46"
     print('HOST IP:', host_ip)
     port = 9999
     socket_address = (host_ip, port)
