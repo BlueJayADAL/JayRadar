@@ -41,7 +41,7 @@ def generate():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('flask.html')
 
 @app.route('/update_threshold', methods=['POST'])
 def update_threshold():
