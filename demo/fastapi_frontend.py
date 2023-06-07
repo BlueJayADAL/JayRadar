@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw
-from ultralytics import YOLO
+#from ultralytics import YOLO
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
@@ -11,8 +11,6 @@ from backend import draw_bounding_boxes, detect_objects_on_image
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# Initialize YOLOv8 model
-model = YOLO("yolov8n.pt")
 
 # Set initial confidence threshold value
 confidence_threshold = 50
