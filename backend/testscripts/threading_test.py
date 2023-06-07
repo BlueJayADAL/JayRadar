@@ -43,7 +43,7 @@ def process_frames():
     Function to process frames from the frame queue using YOLOv8.
     """
     # Load the YOLOv8 model
-    model = YOLO('yolov8n.pt')
+    model = YOLO('best.pt')
 
     while True:
         process_event.wait()  # Wait for the event to be set
