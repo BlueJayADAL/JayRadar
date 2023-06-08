@@ -10,11 +10,10 @@ The output video is passed through socket to a gui.
 
 To be implemented:
 
-1. Pass output values to networkTables
-2. Save pipelines/configs/presets to local file, and retrieve them. ***or explore other options***
-3. Handle crashes and errors
-4. Handle switching models?
-5. Explore AprilTag Detection
+1. Save pipelines/configs/presets to local file, and retrieve them. ***or explore other options***
+2. Handle crashes and errors
+3. Handle switching models?
+4. Explore AprilTag Detection
 
 Comments and documentation generated with the help of ChatGPT
 """
@@ -207,7 +206,19 @@ def process_frames():
                     max_det=max_det,
                     classes=classes
                 )
+            result = results[0]  # Get the detection results from the first image in the batch
+            
+            #Try to rewrite this using YOLOV8 documentation, generators, stream etc...
+            for index, box in enumerate(result.boxes):
+                name = 'object'+str(index)
+                cx, cy, w, h = [
+                    x for x in box.xywhn[0].tolist()
+                ]  # Extract the bounding box coordinates and round them
+                class_id = box.cls[0].item()  # Get the class ID of the detected object
+                prob = round(box.conf[0].item(), 2)  # Get the detection probability
+                output = [cx, cy, w, h, prob]  # Append the bounding box information to the output list
 
+                nt.putNumberArray(name, output)
             # Annotate and display the frame for testing, will be removed in final version
             annotated_frame = results[0].plot()
 
