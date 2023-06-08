@@ -7,6 +7,7 @@ from tkinter import Frame, OptionMenu
 from PIL import ImageTk, Image
 from spinbox import Spinbox
 from networktables import NetworkTables
+from boundingbox import draw_box_on_frame
 
 # Start Network Tables
 NetworkTables.initialize(server="10.4.10.146")
@@ -60,6 +61,17 @@ def show_frames():
         frame_data = data[:msg_size]
         data = data[msg_size:]
         frame = pickle.loads(frame_data)
+        objects_key = nt.getStringArray('objects_key', ['-1'])
+        print(objects_key)
+        
+        for index, key in enumerate(objects_key):
+            name = 'object'+str(index)
+            box_info = nt.getNumberArray(name, [-1])
+            print(box_info)
+            if box_info[0] == -1:
+                break
+        
+        frame = draw_box_on_frame(frame.copy(), box_info)
 
         # Convert the color channels from BGR to RGB
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
