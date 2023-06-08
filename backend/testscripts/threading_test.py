@@ -11,10 +11,10 @@ The output video is passed through socket to a gui.
 To be implemented:
 
 1. Pass output values to networkTables
-2. Save pipelines/configs/presets to local file, and retrieve them.
-    ***or explore other options***
-3. Handle switching models?
-4. Explore AprilTag Detection
+2. Save pipelines/configs/presets to local file, and retrieve them. ***or explore other options***
+3. Handle crashes and errors
+4. Handle switching models?
+5. Explore AprilTag Detection
 
 Comments and documentation generated with the help of ChatGPT
 """
