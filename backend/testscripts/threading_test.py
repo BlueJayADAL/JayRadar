@@ -208,19 +208,20 @@ def process_frames():
                 )
             result = results[0]  # Get the detection results from the first image in the batch
             
-            #Try to rewrite this using YOLOV8 documentation, generators, stream etc...
+            objects = []
+
             for index, box in enumerate(result.boxes):
                 name = 'object'+str(index)
-                id_name = name + '_id'
                 cx, cy, w, h = [
                     x for x in box.xywh[0].tolist()
                 ]  # Extract the bounding box coordinates and round them
                 class_id = box.cls[0].item()  # Get the class ID of the detected object
                 prob = round(box.conf[0].item(), 2)  # Get the detection probability
                 output = [cx, cy, w, h, prob]  # Append the bounding box information to the output list
-
+                objects.append(class_id)
                 nt.putNumberArray(name, output)
-                nt.putString(id_name, class_id)
+            nt.putStringArray('objects_key', objects)
+            
             # Annotate and display the frame for testing, will be removed in final version
             annotated_frame = results[0].plot()
 
