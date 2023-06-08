@@ -1,6 +1,6 @@
 from networktables import NetworkTables
 
-ip = str(input('Enter the ip address'))
+ip = '10.4.10.146'  #str(input('Enter the ip address'))
 
 NetworkTables.initialize(server = ip)
 
