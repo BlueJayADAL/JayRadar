@@ -9,8 +9,8 @@ from spinbox import Spinbox
 from networktables import NetworkTables
 
 # Start Network Tables
-NetworkTables.initialize("10.4.10.146")
-table = NetworkTables.getTable
+NetworkTables.initialize(server="10.4.10.146")
+table = NetworkTables.getTable('JayRadar')
 
 def filter_option_selected(selected_option):
     """Callback function when the filter dropdown is changed"""
@@ -30,10 +30,11 @@ def resize(event):
 
 def show_frames():
     """Retrieve frames from the socket and update the GUI"""
+    data = b""
+    payload_size = struct.calcsize("Q")
+    
     while True:
         # Receive frame size
-        data = b""
-        payload_size = struct.calcsize("Q")
         while len(data) < payload_size:
             packet = client_socket.recv(4 * 1024)  # 4K
             if not packet:

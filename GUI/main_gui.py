@@ -71,10 +71,10 @@ mainwin.grid_rowconfigure(0, weight=1, minsize=500)
 Tuning = tk.Label(frame_1, bg='grey', text="Tuning", font=("Arial Bold", 30, "underline")).grid(row=0, column=0)
 
 Conf_Thresh = tk.Label(frame_1, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=1, column=0)
-Conf_Thresh_Spin = Spinbox(frame_1, min=0, max=100, increment=1, default_value=50).grid(row=2, column=0)
+Conf_Thresh_Spin = Spinbox(frame_1, name="ConfThresh", min=0, max=100, increment=1, default_value=50).grid(row=2, column=0)
 
 NMS_Thresh = tk.Label(frame_1, bg='grey', text="NMS Threshold:", font=("Arial Bold", 12)).grid(row=3, column=0)
-NMS_Thresh_Spin = Spinbox(frame_1, min=0, max=100, increment=1, default_value=50).grid(row=4, column=0)
+NMS_Thresh_Spin = Spinbox(frame_1, name="NMSThresh", min=0, max=100, increment=1, default_value=50).grid(row=4, column=0)
 
 filter_type = tk.Label(frame_1, bg='grey', text="Filter mode: ", font=("Arial Bold", 12), justify="center").grid(row=5, column=0)
 selected_filter_option = tk.StringVar(mainwin)
@@ -89,7 +89,7 @@ model_type = tk.Label(frame_2, bg='grey', text="Model: ", font=("Arial Bold", 12
 
 selected_model_option = tk.StringVar(mainwin)
 selected_model_option.set("1")  # Set default option
-Model_Options = ["1", "2", "3", "4", "5"]
+Model_Options = ["1", "2", "3", "4"]
 Model_OptionMenu = OptionMenu(frame_2, selected_model_option, *Model_Options, command=model_option_selected)
 Model_OptionMenu.grid(row=2, column=0)
 
@@ -99,10 +99,10 @@ res_frame.grid(row=3, column=0, pady=20)
 res_label = tk.Label(res_frame, bg='grey', text="Resolution", font=("Arial Bold", 15, "underline"), justify="center").grid(row=0, column=0)
 
 res_width = tk.Label(res_frame, bg='grey', text="Width:", font=("Arial Bold", 12)).grid(row=1, column=0)
-res_width_spin = Spinbox(res_frame, min=100, max=9999, increment=1, default_value=400).grid(row=2, column=0)
+res_width_spin = Spinbox(res_frame, name="ResWidth", min=100, max=9999, increment=1, default_value=400).grid(row=2, column=0)
 
 res_height = tk.Label(res_frame, bg='grey', text="Height:", font=("Arial Bold", 12)).grid(row=3, column=0)
-res_height_spin = Spinbox(res_frame, min=100, max=9999, increment=1, default_value=400).grid(row=4, column=0)
+res_height_spin = Spinbox(res_frame, name="ResHeight", min=100, max=9999, increment=1, default_value=400).grid(row=4, column=0)
 
 # Create the widgets in camframe (camera output)
 cam = tk.Label(camframe)
