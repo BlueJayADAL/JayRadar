@@ -223,13 +223,12 @@ def process_frames():
                 cx, cy, w, h = [
                     x for x in box.xywh[0].tolist()
                 ]  # Extract the bounding box coordinates and round them
-                class_id = box.id[0].item()  # Get the class ID of the detected object
-                print(class_id)
+                class_id = box.cls[0].item()  # Get the class ID of the detected object
                 prob = round(box.conf[0].item(), 2)  # Get the detection probability
                 output = [cx, cy, w, h, prob]  # Append the bounding box information to the output list
-                objects.append(class_id)
+                objects.append(float(class_id))
                 nt.putNumberArray(name, output)
-            nt.putStringArray('objects_key', objects)
+            nt.putNumberArray('objects_key', objects)
             
             # Annotate and display the frame for testing, will be removed in final version
             annotated_frame = results[0].plot()

@@ -61,7 +61,7 @@ def show_frames():
         frame_data = data[:msg_size]
         data = data[msg_size:]
         frame = pickle.loads(frame_data)
-        objects_key = table.getStringArray('objects_key', ['-1'])
+        objects_key = table.getNumberArray('objects_key', [-1])
         print(objects_key)
         
         for index, key in enumerate(objects_key):

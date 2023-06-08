@@ -33,7 +33,7 @@ while True:
     data  = data[msg_size:]
     frame = pickle.loads(frame_data)
     
-    objects_key = nt.getStringArray('objects_key', ['-1'])
+    objects_key = nt.getNumberArray('objects_key', [-1])
     print(objects_key)
     
     for index, key in enumerate(objects_key):
