@@ -1,8 +1,4 @@
-yolov8n.pt
-backend/__pycache__/
-demo/__pycache__/
-GUI/__pycache__/
+**/__pycache__/**
 .gitignore
 venv/
-.gitignore
-backend/testscripts/*.pt
+backend/**/*.pt
