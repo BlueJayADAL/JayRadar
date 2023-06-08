@@ -1,3 +1,24 @@
+"""
+SCARP 2023 JayRadar
+Professor: Dr. Peilong Li
+Students: Steven Klinefelter, Nathan Brightup
+
+This file grabs feed from a connected webcam or CSI camera,
+then passes it through a the loaded YOLOV8 Model.
+Output data, such as center cordinates is then calculated and passed to NetworkTables
+The output video is passed through socket to a gui.
+
+To be implemented:
+
+1. Pass output values to networkTables
+2. Save pipelines/configs/presets to local file, and retrieve them.
+    ***or explore other options***
+3. Handle switching models?
+4. Explore AprilTag Detection
+
+Comments and documentation generated with the help of ChatGPT
+"""
+
 import cv2
 import socket
 import pickle
@@ -39,9 +60,6 @@ def capture_frames():
 
     cap.release()
 
-# Thread function to process frames from the frame queue
-import threading
-
 def process_frames():
     """
     Function to process frames from the frame queue using YOLOv8.
@@ -65,11 +83,14 @@ def process_frames():
     screenshot = False
     screenshot_data = False
     max_detections = 3
-    detected_classes = [0]
+    detected_classes = [-1]
     display_boxes = True
 
-    # Callback function to handle value changes in NetworkTables
     def value_changed(table, key, value, isNew):
+        """
+        Callback function to handle value changes in NetworkTables
+        There is a ton of typecasting and error handling, so it doesn't look pretty
+        """
         nonlocal confidence_threshold, iou_threshold, half_precision, processor, screenshot, screenshot_data, max_detections, detected_classes, display_boxes
         with nt_lock:
             if key == "confidence_threshold":
@@ -111,6 +132,7 @@ def process_frames():
                 except ValueError:
                     pass
             elif key == "classes":
+                #Need to figure out how I want to try to typecast/check for array
                 detected_classes = value
    
 
@@ -134,21 +156,37 @@ def process_frames():
                 max_det = max_detections
                 classes = detected_classes
 
-            # Process the frame using YOLOv8
-            results = model.predict(
-                frame.copy(),
-                conf=conf,
-                iou=iou,
-                half=half,
-                device=device,
-                save=save,
-                save_conf=save_conf,
-                max_det=max_det,
-                classes=classes
-            )
+            # If the first index of classes is -1
+            if (classes[0]==-1):
+                # Process the frame using YOLOv8 without class filter
+                results = model.predict(
+                    frame.copy(),
+                    conf=conf,
+                    iou=iou,
+                    half=half,
+                    device=device,
+                    save=save,
+                    save_conf=save_conf,
+                    max_det=max_det,
+                    )
+            else:
+            # Otherwise, process the frame using YOLOv8 with class filter
+                results = model.predict(
+                    frame.copy(),
+                    conf=conf,
+                    iou=iou,
+                    half=half,
+                    device=device,
+                    save=save,
+                    save_conf=save_conf,
+                    max_det=max_det,
+                    classes=classes
+                )
+
+            # Annotate and display the frame for testing, will be removed in final version
             annotated_frame = results[0].plot()
 
-            # Display the annotated frame
+            
             cv2.imshow('YOLOv8 Inference', annotated_frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
