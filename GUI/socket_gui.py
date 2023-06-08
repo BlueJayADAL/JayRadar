@@ -21,6 +21,9 @@ def model_option_selected(selected_option):
     """Callback function when the model dropdown is changed"""
     print("Model: ", selected_option)
 
+def update_values():
+    print(class_entry.get().split(','))
+
 def resize(event):
     """Adjust the size of the frames to fit the window"""
     mainwin.grid_columnconfigure(0, weight=1)
@@ -117,7 +120,7 @@ Model_OptionMenu = OptionMenu(frame_2, selected_model_option, *Model_Options, co
 Model_OptionMenu.grid(row=2, column=0)
 
 Max_Detect = tk.Label(frame_2, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
-Max_Detect_Spin = Spinbox(frame_2, name="max_detections", min=0, max=300, increment=1, default_value=5).grid(row=5, column=0)
+Max_Detect_Spin = Spinbox(frame_2, name="max_detections", min=0, max=300, increment=1, default_value=1).grid(row=5, column=0)
 
 res_frame = Frame(frame_2, bg='grey')
 res_frame.grid(row=3, column=0, pady=20)
@@ -129,6 +132,15 @@ res_width_spin = Spinbox(res_frame, name="ResWidth", min=100, max=9999, incremen
 
 res_height = tk.Label(res_frame, bg='grey', text="Height:", font=("Arial Bold", 12)).grid(row=3, column=0)
 res_height_spin = Spinbox(res_frame, name="ResHeight", min=100, max=9999, increment=1, default_value=400).grid(row=4, column=0)
+
+# Create the 'Class Filters' label and text box
+class_filters = tk.Label(res_frame, bg='grey', text="Width:", font=("Arial Bold", 12)).grid(row=5, column=0)
+class_entry = tk.Entry(res_frame)  # Set text color to green
+class_entry.insert(tk.END, '-1')  # Set default value '-1'
+class_entry.grid(row=6, column=0, pady=4)
+
+# Create the 'Update' button
+update_button = tk.Button(res_frame, text="Update", command=update_values).grid(row=7, column=0)
 
 # Create the widgets in camframe (camera output)
 cam = tk.Label(camframe)
