@@ -3,3 +3,4 @@ backend/__pycache__/
 demo/__pycache__/
 GUI/__pycache__/
 .gitignore
+venv/
