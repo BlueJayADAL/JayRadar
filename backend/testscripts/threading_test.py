@@ -5,6 +5,7 @@ import struct
 import threading
 from collections import deque
 from ultralytics import YOLO
+from networktables import NetworkTables
 
 # Maximum number of frames to keep in the deque
 MAX_FRAMES = 5
@@ -14,6 +15,7 @@ frame_queue = deque(maxlen=MAX_FRAMES)
 
 # Event to control frame processing
 process_event = threading.Event()
+
 
 # Thread function to capture video frames and add them to the frame queue
 def capture_frames():
@@ -38,12 +40,82 @@ def capture_frames():
     cap.release()
 
 # Thread function to process frames from the frame queue
+import threading
+
 def process_frames():
     """
     Function to process frames from the frame queue using YOLOv8.
     """
     # Load the YOLOv8 model
-    model = YOLO('best.pt')
+    model = YOLO('yolov8n.pt')
+    # Initialize NetworkTables
+    NetworkTables.initialize(server='10.1.80.32')
+
+    # Retrieve the default instance of NetworkTables
+    nt = NetworkTables.getTable("JayRadar")
+
+    # Lock for accessing NetworkTables values
+    nt_lock = threading.Lock()
+
+    # Variables to store the configuration values
+    confidence_threshold = 50
+    iou_threshold = 50
+    half_precision = False
+    processor = "cpu"
+    screenshot = False
+    screenshot_data = False
+    max_detections = 3
+    detected_classes = [0]
+    display_boxes = True
+
+    # Callback function to handle value changes in NetworkTables
+    def value_changed(table, key, value, isNew):
+        nonlocal confidence_threshold, iou_threshold, half_precision, processor, screenshot, screenshot_data, max_detections, detected_classes, display_boxes
+        with nt_lock:
+            if key == "confidence_threshold":
+                try:
+                    confidence_threshold = int(value)
+                except ValueError:
+                    pass
+            elif key == "iou_threshold":
+                try:
+                    iou_threshold = int(value)
+                except ValueError:
+                    pass
+            elif key == "half_precision":
+                try:
+                    half_precision = bool(value)
+                except ValueError:
+                    pass
+            elif key == "device":
+                if (value == "cpu"):
+                    processor = value
+                else:
+                    try:
+                        processor = int(value)
+                    except:
+                        pass
+            elif key == "screenshot":
+                try:
+                    screenshot = bool(value)
+                except ValueError:
+                    pass
+            elif key == "screenshot_data":
+                try:
+                    screenshot_data = bool(value)
+                except ValueError:
+                    pass
+            elif key == "max_detections":
+                try:
+                    max_detections = int(value)
+                except ValueError:
+                    pass
+            elif key == "classes":
+                detected_classes = value
+   
+
+    # Add an entry listener to monitor value changes
+    nt.addEntryListener(value_changed)
 
     while True:
         process_event.wait()  # Wait for the event to be set
@@ -52,8 +124,28 @@ def process_frames():
         if frame_queue:
             frame = frame_queue[-1]  # Get the newest frame from the deque
 
+            with nt_lock:
+                conf = confidence_threshold / 100
+                iou = iou_threshold / 100
+                half = half_precision
+                device = processor
+                save = screenshot
+                save_conf = screenshot_data
+                max_det = max_detections
+                classes = detected_classes
+
             # Process the frame using YOLOv8
-            results = model.predict(frame.copy())
+            results = model.predict(
+                frame.copy(),
+                conf=conf,
+                iou=iou,
+                half=half,
+                device=device,
+                save=save,
+                save_conf=save_conf,
+                max_det=max_det,
+                classes=classes
+            )
             annotated_frame = results[0].plot()
 
             # Display the annotated frame
@@ -62,6 +154,8 @@ def process_frames():
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
+
+
 # Thread function to send frames over a socket connection
 def send_frames():
     """
@@ -69,8 +163,8 @@ def send_frames():
     """
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     host_name = socket.gethostname()
-    #host_ip = socket.gethostbyname(host_name)
-    host_ip = "10.4.10.46"
+    host_ip = socket.gethostbyname(host_name)
+    #host_ip = "10.4.10.46"
     print('HOST IP:', host_ip)
     port = 9999
     socket_address = (host_ip, port)
