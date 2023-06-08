@@ -4,3 +4,5 @@ demo/__pycache__/
 GUI/__pycache__/
 .gitignore
 venv/
+.gitignore
+backend/testscripts/*.pt
