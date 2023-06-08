@@ -64,9 +64,9 @@ def process_frames():
     Function to process frames from the frame queue using YOLOv8.
     """
     # Load the YOLOv8 model
-    model = YOLO('yolov8n.pt')
+    model = YOLO('frc7ng.pt')
     # Initialize NetworkTables
-    NetworkTables.initialize(server='10.1.80.32')
+    NetworkTables.initialize(server='10.4.10.146')
 
     # Retrieve the JayRadar table for us to use
     nt = NetworkTables.getTable("JayRadar")
@@ -187,8 +187,8 @@ def process_frames():
                     frame.copy(),
                     conf=conf,
                     iou=iou,
-                    half=half,
-                    device=device,
+                    #half=half,
+                    #device=device,
                     save=save,
                     save_conf=save_conf,
                     max_det=max_det,
@@ -199,8 +199,8 @@ def process_frames():
                     frame.copy(),
                     conf=conf,
                     iou=iou,
-                    half=half,
-                    device=device,
+                    #half=half,
+                    #device=device,
                     save=save,
                     save_conf=save_conf,
                     max_det=max_det,
@@ -211,14 +211,16 @@ def process_frames():
             #Try to rewrite this using YOLOV8 documentation, generators, stream etc...
             for index, box in enumerate(result.boxes):
                 name = 'object'+str(index)
+                id_name = name + '_id'
                 cx, cy, w, h = [
-                    x for x in box.xywhn[0].tolist()
+                    x for x in box.xywh[0].tolist()
                 ]  # Extract the bounding box coordinates and round them
                 class_id = box.cls[0].item()  # Get the class ID of the detected object
                 prob = round(box.conf[0].item(), 2)  # Get the detection probability
                 output = [cx, cy, w, h, prob]  # Append the bounding box information to the output list
 
                 nt.putNumberArray(name, output)
+                nt.putString(id_name, class_id)
             # Annotate and display the frame for testing, will be removed in final version
             annotated_frame = results[0].plot()
 
@@ -237,8 +239,8 @@ def send_frames():
     """
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     host_name = socket.gethostname()
-    host_ip = socket.gethostbyname(host_name)
-    #host_ip = "10.4.10.46"
+    #host_ip = socket.gethostbyname(host_name)
+    host_ip = "10.4.10.46"
     print('HOST IP:', host_ip)
     port = 9999
     socket_address = (host_ip, port)
