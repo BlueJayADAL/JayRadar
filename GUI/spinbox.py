@@ -1,8 +1,13 @@
 import tkinter as tk
 
+def spinbox_change(name, change):
+    print(name,"changed to: ",change)
+
 class Spinbox(tk.Frame):
-    def __init__(self, parent, default_value=50, min=0, max=100, increment=1, **kwargs):
+    def __init__(self, parent, name, default_value=50, min=0, max=100, increment=1, **kwargs):
         super().__init__(parent, **kwargs)
+
+        self.name = name
 
         self.min = min
         self.max = max
@@ -24,6 +29,8 @@ class Spinbox(tk.Frame):
         self.add_button = tk.Button(self.buttonplus_frame, text="+", command=self.add, bg='grey')
         self.add_button.pack(side=tk.RIGHT)
 
+        self.entry.bind("<Return>", self.on_enter)
+    
     def subtract(self):
         current_value = self.get()
         new_value = current_value - self.increment
@@ -49,3 +56,8 @@ class Spinbox(tk.Frame):
         if self.min <= value <= self.max:
             self.entry.delete(0, tk.END)
             self.entry.insert(0, str(value))
+            spinbox_change(self.name,int(value))
+
+    def on_enter(self, event):
+        current_value = self.get()
+        spinbox_change(self.name, current_value)
