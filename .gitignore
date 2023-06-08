@@ -2,3 +2,4 @@
 .gitignore
 venv/
 backend/**/*.pt
+GUI/__pycache__/spinbox.cpython-311.pyc
