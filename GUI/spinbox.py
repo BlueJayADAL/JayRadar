@@ -1,6 +1,12 @@
 import tkinter as tk
+from networktables import NetworkTables
+
+# Start Network Tables
+NetworkTables.initialize(server="10.4.10.146")
+table = NetworkTables.getTable('JayRadar')
 
 def spinbox_change(name, change):
+    table.putNumber(name,change)
     print(name,"changed to: ",change)
 
 class Spinbox(tk.Frame):
