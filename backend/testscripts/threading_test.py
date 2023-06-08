@@ -69,13 +69,15 @@ def process_frames():
     # Initialize NetworkTables
     NetworkTables.initialize(server='10.1.80.32')
 
-    # Retrieve the default instance of NetworkTables
+    # Retrieve the JayRadar table for us to use
     nt = NetworkTables.getTable("JayRadar")
 
-    # Lock for accessing NetworkTables values
+    # Lock for accessing NetworkTables vairables. 
+    # This ensures that no other threads have access when this thread is trying to access them
     nt_lock = threading.Lock()
 
     # Variables to store the configuration values
+    # TODO: pull these from a default pipeline/config
     confidence_threshold = 50
     iou_threshold = 50
     half_precision = False
@@ -88,16 +90,28 @@ def process_frames():
 
     def value_changed(table, key, value, isNew):
         """
-        Callback function to handle value changes in NetworkTables
+        Callback function to handle value changes in NetworkTables.
+        This section looks really intimidating at first glance, but I promise it's not!
+        First, we will start by grabbing the default variables from an outside context.
+        Then we will 
         There is a ton of typecasting and error handling, so it doesn't look pretty
         """
+        # TODO: Add a pipeline/config listener and saver.
+
+        # Grab the variables from outside the function definition explicitly
         nonlocal confidence_threshold, iou_threshold, half_precision, processor, screenshot, screenshot_data, max_detections, detected_classes, display_boxes
+        
+        # With the lock, update the variables. This makes sure that no other threads can access it.
         with nt_lock:
+            # Check the variables in order
             if key == "confidence_threshold":
+                # Try typecasting to the correct type for the model. This is done because during testing NT was accidently posting strings
                 try:
-                    confidence_threshold = int(value)
+                    confidence_threshold = int(value) # Could be replaced with float. Choose int because there's no need for that precision
+                # If it fails, just don't update the value.
                 except ValueError:
                     pass
+            # Check for the next variable, and repeat.
             elif key == "iou_threshold":
                 try:
                     iou_threshold = int(value)
@@ -132,16 +146,27 @@ def process_frames():
                 except ValueError:
                     pass
             elif key == "classes":
-                #Need to figure out how I want to try to typecast/check for array
-                detected_classes = value
+                # Make sure it's a list first
+                if isinstance(value, list):  
+                    # Create/Wipe updated_classes   
+                    updated_classes = []        
+                    #Iterate through the value list
+                    for update in value:
+                        # Try to make the update an Integer and add it to updated classes
+                        try:
+                            updated_classes.append(int(update))
+                        # If it can't be an integer
+                        except ValueError:
+                        # Do nothing
+                            pass
+                    # Set detected_classes equal to updated classes
+                    detected_classes = updated_classes
    
 
-    # Add an entry listener to monitor value changes
-    nt.addEntryListener(value_changed)
+    # Add an entry listener to monitor value changes, with the above callback function exectuted on change
+    nt.addEntryListener(value_changed)  # This will run in the background.
 
     while True:
-        process_event.wait()  # Wait for the event to be set
-        process_event.clear()  # Clear the event
 
         if frame_queue:
             frame = frame_queue[-1]  # Get the newest frame from the deque
@@ -219,6 +244,10 @@ def send_frames():
         print('GOT CONNECTION FROM:', addr)
 
         while True:
+
+            process_event.wait()  # Wait for the event to be set, so we know there's a frame
+            process_event.clear()  # Clear the event, it will be set again next
+            
             if frame_queue:
                 frame = frame_queue[-1]  # Get the newest frame from the deque
 
