@@ -61,12 +61,12 @@ def show_frames():
         frame_data = data[:msg_size]
         data = data[msg_size:]
         frame = pickle.loads(frame_data)
-        objects_key = nt.getStringArray('objects_key', ['-1'])
+        objects_key = table.getStringArray('objects_key', ['-1'])
         print(objects_key)
         
         for index, key in enumerate(objects_key):
             name = 'object'+str(index)
-            box_info = nt.getNumberArray(name, [-1])
+            box_info = table.getNumberArray(name, [-1])
             print(box_info)
             if box_info[0] == -1:
                 break
