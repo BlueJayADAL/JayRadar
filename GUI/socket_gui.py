@@ -71,7 +71,7 @@ def show_frames():
             if box_info[0] == -1:
                 break
         
-        frame = draw_box_on_frame(frame.copy(), box_info)
+            frame = draw_box_on_frame(frame.copy(), box_info)
 
         # Convert the color channels from BGR to RGB
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
