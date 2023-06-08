@@ -12,6 +12,8 @@ from networktables import NetworkTables
 NetworkTables.initialize(server="10.4.10.146")
 table = NetworkTables.getTable('JayRadar')
 
+
+# Handle dropdown menu selections
 def filter_option_selected(selected_option):
     """Callback function when the filter dropdown is changed"""
     print("Filter Mode: ", selected_option)
@@ -21,9 +23,13 @@ def model_option_selected(selected_option):
     """Callback function when the model dropdown is changed"""
     print("Model: ", selected_option)
 
+
+# Execute the 'Update' button
 def update_values():
     print(class_entry.get().split(','))
 
+
+# Resize frames when to fit the window when the main window is resized
 def resize(event):
     """Adjust the size of the frames to fit the window"""
     mainwin.grid_columnconfigure(0, weight=1)
@@ -31,6 +37,7 @@ def resize(event):
     mainwin.grid_columnconfigure(2, weight=1)
     mainwin.grid_rowconfigure(0, weight=1)
 
+# Display video feed
 def show_frames():
     """Retrieve frames from the socket and update the GUI"""
     data = b""
@@ -68,6 +75,7 @@ def show_frames():
 
     client_socket.close()
 
+
 # Create the main window
 mainwin = tk.Tk()
 mainwin.title("Overall GUI")
@@ -76,10 +84,12 @@ mainwin.resizable(True, True)
 mainwin.minsize(width=889, height=500)
 mainwin.bind("<Configure>", resize)
 
-# Change the background color of the main window to green
+
+# Change the background color of the main window
 mainwin.configure(bg="blue")
 
-# Create the internal frames
+
+# Create the internal frames and balance them horizontally
 frame_1 = Frame(mainwin, bg='grey')
 frame_1.grid(row=0, column=0, sticky="nsew", padx=1)
 frame_1.grid_columnconfigure(0, weight=1)
@@ -93,59 +103,86 @@ camframe.grid(row=0, column=2, sticky="nw", padx=1)
 camframe.grid_columnconfigure(0, weight=1)
 camframe.grid_rowconfigure(0, weight=1)
 
+
 # Configure the layout of the main window
 mainwin.grid_columnconfigure(0, weight=1, minsize=180)
 mainwin.grid_columnconfigure(1, weight=1, minsize=160)
 mainwin.grid_columnconfigure(2, weight=2)
 mainwin.grid_rowconfigure(0, weight=1, minsize=500)
 
-# Create the widgets in frame_1 ('Tuning')
+
+# Label frame_1
 Tuning = tk.Label(frame_1, bg='grey', text="Tuning", font=("Arial Bold", 30, "underline")).grid(row=0, column=0)
 
+
+# Label and initialize the confidence threshold spinbox
 Conf_Thresh = tk.Label(frame_1, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=1, column=0)
 Conf_Thresh_Spin = Spinbox(frame_1, name="confidence_threshold", min=0, max=100, increment=1, default_value=50).grid(row=2, column=0)
 
+
+# Label and initialize the NMS threshold spinbox
 NMS_Thresh = tk.Label(frame_1, bg='grey', text="IOU Threshold:", font=("Arial Bold", 12)).grid(row=3, column=0)
 NMS_Thresh_Spin = Spinbox(frame_1, name="iou_threshold", min=0, max=100, increment=1, default_value=50).grid(row=4, column=0)
 
-# Create the widgets in frame_2 ('Model')
+
+# Label frame_2
 Model_Label = tk.Label(frame_2, bg='grey', text="Model", font=("Arial Bold", 30, "underline")).grid(row=0, column=0, sticky='nsew')
 
+
+# Label the 'Model' dropdown
 model_type = tk.Label(frame_2, bg='grey', text="Model: ", font=("Arial Bold", 12), justify="center").grid(row=1, column=0)
 
+
+# Create the 'Model' dropdown. Model_Options forms the list of options to choose from
 selected_model_option = tk.StringVar(mainwin)
 selected_model_option.set("1")  # Set default option
 Model_Options = ["1", "2", "3", "4", "5"]
 Model_OptionMenu = OptionMenu(frame_2, selected_model_option, *Model_Options, command=model_option_selected)
 Model_OptionMenu.grid(row=2, column=0)
 
+
+# Label and initialize the Max Detections spinbox
 Max_Detect = tk.Label(frame_2, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
 Max_Detect_Spin = Spinbox(frame_2, name="max_detections", min=0, max=300, increment=1, default_value=1).grid(row=5, column=0)
 
+
+# Create a new frame within frame_2 to house resolution options
 res_frame = Frame(frame_2, bg='grey')
 res_frame.grid(row=3, column=0, pady=20)
 
+
+# Label the new frame
 res_label = tk.Label(res_frame, bg='grey', text="Resolution", font=("Arial Bold", 15, "underline"), justify="center").grid(row=0, column=0)
 
+
+# Label and initialize the Resolution Width spinbox
 res_width = tk.Label(res_frame, bg='grey', text="Width:", font=("Arial Bold", 12)).grid(row=1, column=0)
 res_width_spin = Spinbox(res_frame, name="ResWidth", min=100, max=9999, increment=1, default_value=400).grid(row=2, column=0)
 
+
+# Label and initialize the Resolution Height spinbox
 res_height = tk.Label(res_frame, bg='grey', text="Height:", font=("Arial Bold", 12)).grid(row=3, column=0)
 res_height_spin = Spinbox(res_frame, name="ResHeight", min=100, max=9999, increment=1, default_value=400).grid(row=4, column=0)
 
+
 # Create the 'Class Filters' label and text box
 class_filters = tk.Label(res_frame, bg='grey', text="Width:", font=("Arial Bold", 12)).grid(row=5, column=0)
-class_entry = tk.Entry(res_frame)  # Set text color to green
-class_entry.insert(tk.END, '-1')  # Set default value '-1'
+class_entry = tk.Entry(res_frame)
+
+# Set the initial value to '-1' and place on the grid
+class_entry.insert(tk.END, '-1')
 class_entry.grid(row=6, column=0, pady=4)
+
 
 # Create the 'Update' button
 update_button = tk.Button(res_frame, text="Update", command=update_values).grid(row=7, column=0)
+
 
 # Create the widgets in camframe (camera output)
 cam = tk.Label(camframe)
 cam.grid(row=0, column=0)
 calc_disp = tk.Label(camframe, bg='grey', text="Output Information: (x, y, area)", font=("Arial Bold", 12)).grid(row=1, column=0)
+
 
 # Set up socket connection to receive frames
 host = '10.4.10.46'  # Change to the appropriate IP address
@@ -153,8 +190,10 @@ port = 9999  # Change to the appropriate port
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((host, port))
 
+
 # Start the thread to receive and display frames
 show_frames()
+
 
 # Start the main GUI event loop
 mainwin.mainloop()
