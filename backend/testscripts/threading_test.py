@@ -79,13 +79,14 @@ def process_frames():
     # TODO: pull these from a default pipeline/config
     confidence_threshold = 50
     iou_threshold = 50
-    half_precision = False
-    processor = "cpu"
+    half_precision = False      #Not very useful
+    processor = "cpu"           #Not very useful
     screenshot = False
     screenshot_data = False
-    max_detections = 3
+    max_detections = 5
     detected_classes = [-1]
-    display_boxes = True
+    
+    image_size = 640
 
     def value_changed(table, key, value, isNew):
         """
@@ -98,7 +99,7 @@ def process_frames():
         # TODO: Add a pipeline/config listener and saver.
 
         # Grab the variables from outside the function definition explicitly
-        nonlocal confidence_threshold, iou_threshold, half_precision, processor, screenshot, screenshot_data, max_detections, detected_classes, display_boxes
+        nonlocal confidence_threshold, iou_threshold, half_precision, processor, screenshot, screenshot_data, max_detections, detected_classes, image_size
         
         # With the lock, update the variables. This makes sure that no other threads can access it.
         with nt_lock:
@@ -142,6 +143,11 @@ def process_frames():
             elif key == "max_detections":
                 try:
                     max_detections = int(value)
+                except ValueError:
+                    pass
+            elif key == "image_size":
+                try:
+                    image_size = int(value)
                 except ValueError:
                     pass
             elif key == "classes":
@@ -192,6 +198,7 @@ def process_frames():
                     save=save,
                     save_conf=save_conf,
                     max_det=max_det,
+                    imgsz = image_size
                     )
             else:
             # Otherwise, process the frame using YOLOv8 with class filter
@@ -204,7 +211,8 @@ def process_frames():
                     save=save,
                     save_conf=save_conf,
                     max_det=max_det,
-                    classes=classes
+                    classes=classes,
+                    imgsz = image_size
                 )
             result = results[0]  # Get the detection results from the first image in the batch
             
@@ -215,7 +223,8 @@ def process_frames():
                 cx, cy, w, h = [
                     x for x in box.xywh[0].tolist()
                 ]  # Extract the bounding box coordinates and round them
-                class_id = box.cls[0].item()  # Get the class ID of the detected object
+                class_id = box.id[0].item()  # Get the class ID of the detected object
+                print(class_id)
                 prob = round(box.conf[0].item(), 2)  # Get the detection probability
                 output = [cx, cy, w, h, prob]  # Append the bounding box information to the output list
                 objects.append(class_id)
