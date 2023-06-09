@@ -129,12 +129,12 @@ Tuning = tk.Label(frame_1, bg='grey', text="Tuning", font=("Arial Bold", 30, "un
 
 # Label and initialize the confidence threshold spinbox
 Conf_Thresh = tk.Label(frame_1, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=1, column=0)
-Conf_Thresh_Spin = Spinbox(frame_1, name="confidence_threshold", min=0, max=100, increment=1, default_value=50).grid(row=2, column=0)
+Conf_Thresh_Spin = Spinbox(frame_1, name="confidence_threshold", min=0, max=100, increment=1, default_value=table.getNumber("confidence_threshold",50)).grid(row=2, column=0)
 
 
 # Label and initialize the NMS threshold spinbox
 NMS_Thresh = tk.Label(frame_1, bg='grey', text="IOU Threshold:", font=("Arial Bold", 12)).grid(row=3, column=0)
-NMS_Thresh_Spin = Spinbox(frame_1, name="iou_threshold", min=0, max=100, increment=1, default_value=50).grid(row=4, column=0)
+NMS_Thresh_Spin = Spinbox(frame_1, name="iou_threshold", min=0, max=100, increment=1, default_value=table.getNumber("iou_threshold",50)).grid(row=4, column=0)
 
 
 # Label frame_2
@@ -155,7 +155,7 @@ Model_OptionMenu.grid(row=2, column=0)
 
 # Label and initialize the Max Detections spinbox
 Max_Detect = tk.Label(frame_2, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
-Max_Detect_Spin = Spinbox(frame_2, name="max_detections", min=0, max=300, increment=1, default_value=1).grid(row=5, column=0)
+Max_Detect_Spin = Spinbox(frame_2, name="max_detections", min=0, max=300, increment=1, default_value=table.getNumber("max_detections",10)).grid(row=5, column=0)
 
 
 # Create a new frame within frame_2 to house resolution options
@@ -169,12 +169,12 @@ res_label = tk.Label(res_frame, bg='grey', text="Resolution", font=("Arial Bold"
 
 # Label and initialize the Resolution Width spinbox
 res_width = tk.Label(res_frame, bg='grey', text="Width:", font=("Arial Bold", 12)).grid(row=1, column=0)
-res_width_spin = Spinbox(res_frame, name="ResWidth", min=100, max=9999, increment=1, default_value=400).grid(row=2, column=0)
+res_width_spin = Spinbox(res_frame, name="image_size", min=100, max=9999, increment=1, default_value=table.getNumber("image_size",640)).grid(row=2, column=0)
 
 
 # Label and initialize the Resolution Height spinbox
 res_height = tk.Label(res_frame, bg='grey', text="Height:", font=("Arial Bold", 12)).grid(row=3, column=0)
-res_height_spin = Spinbox(res_frame, name="ResHeight", min=100, max=9999, increment=1, default_value=400).grid(row=4, column=0)
+res_height_spin = Spinbox(res_frame, name="image_size", min=100, max=9999, increment=1, default_value=table.getNumber("image_size",640)).grid(row=4, column=0)
 
 
 # Create the 'Class Filters' label and text box
