@@ -169,12 +169,12 @@ res_label = tk.Label(res_frame, bg='grey', text="Resolution", font=("Arial Bold"
 
 # Label and initialize the Resolution Width spinbox
 res_width = tk.Label(res_frame, bg='grey', text="Width:", font=("Arial Bold", 12)).grid(row=1, column=0)
-res_width_spin = Spinbox(res_frame, name="image_size", min=100, max=9999, increment=1, default_value=table.getNumber("image_size",640)).grid(row=2, column=0)
+res_width_spin = Spinbox(res_frame, name="image_size", min=100, max=9999, increment=32, default_value=table.getNumber("image_size",640)).grid(row=2, column=0)
 
 
 # Label and initialize the Resolution Height spinbox
 res_height = tk.Label(res_frame, bg='grey', text="Height:", font=("Arial Bold", 12)).grid(row=3, column=0)
-res_height_spin = Spinbox(res_frame, name="image_size", min=100, max=9999, increment=1, default_value=table.getNumber("image_size",640)).grid(row=4, column=0)
+res_height_spin = Spinbox(res_frame, name="image_size", min=100, max=9999, increment=32, default_value=table.getNumber("image_size",640)).grid(row=4, column=0)
 
 
 # Create the 'Class Filters' label and text box
