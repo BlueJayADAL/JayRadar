@@ -3,3 +3,4 @@
 venv/
 backend/**/*.pt
 /*.pt
+GUI/__pycache__/spinbox.cpython-311.pyc
