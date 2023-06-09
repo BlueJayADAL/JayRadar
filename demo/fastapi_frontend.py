@@ -52,6 +52,10 @@ def generate():
         # Yield the frame data as MJPEG response
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
+        cv2.imshow("RECEIVING VIDEO",frame_with_boxes)
+        key = cv2.waitKey(1) & 0xFF
+        if key  == ord('q'):
+            break
 
 @app.get('/')
 def index(request: Request):

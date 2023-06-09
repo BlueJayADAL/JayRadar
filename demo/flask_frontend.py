@@ -38,6 +38,10 @@ def generate():
         # Yield the encoded frame as a byte string
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+        cv2.imshow("RECEIVING VIDEO",frame_with_boxes)
+        key = cv2.waitKey(1) & 0xFF
+        if key  == ord('q'):
+            break
 
 @app.route('/')
 def index():
