@@ -1,6 +1,5 @@
 **/__pycache__/**
 .gitignore
 venv/
-backend/**/*.pt
-/*.pt
+**/yolo*.pt
 GUI/__pycache__/spinbox.cpython-311.pyc
