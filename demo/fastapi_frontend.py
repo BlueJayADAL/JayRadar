@@ -6,11 +6,11 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
 from backend import draw_bounding_boxes, detect_objects_on_image
-from concurrent.futures import ThreadPoolExecutor
 
 # Initialize FastAPI app
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
 
 # Set initial confidence threshold value
 confidence_threshold = 50
@@ -20,47 +20,42 @@ def generate():
     
     # Open video capture device
     cap = cv2.VideoCapture(0)
-    with ThreadPoolExecutor() as executor:
-        while True:
-            ret, frame = cap.read()
-            
-            # Convert frame to PIL Image
-            frame_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-            
-            # Perform object detection on the frame asynchronously
-            future = executor.submit(detect_objects_on_image, frame_pil, confidence_threshold)
-            
-            # Draw bounding boxes on the frame
-            frame_pil_with_boxes = draw_bounding_boxes(frame_pil.copy(), future.result())
+    while True:
+        ret, frame = cap.read()
         
-            # Convert the frame back to OpenCV format
-            frame_with_boxes = cv2.cvtColor(np.array(frame_pil_with_boxes), cv2.COLOR_RGB2BGR)
-            
-            # Print object information
-            for box in future.result():
-                x1, y1, x2, y2, object_type, probability = box
-                x_center = (x1 + x2) / 2
-                y_center = (y1 + y2) / 2
-                print("Object Type:", object_type)
-                print("Center coordinates: (x={}, y={})".format(x_center, y_center))
-                print("Confidence:", probability)
-                print()
-            
-            # Encode the frame as JPEG
-            ret, buffer = cv2.imencode('.jpg', frame_with_boxes)
-            frame_data = buffer.tobytes()
-            
-            # Yield the frame data as MJPEG response
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
-            cv2.imshow("RECEIVING VIDEO", frame_with_boxes)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                break
-
-# Rest of the code remains unchanged
-# ...
-
+        # Convert frame to PIL Image
+        frame_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        
+        # Perform object detection on the frame
+        results = detect_objects_on_image(frame_pil, confidence_threshold)
+        
+        # Draw bounding boxes on the frame
+        frame_pil_with_boxes = draw_bounding_boxes(frame_pil.copy(), results)
+    
+        # Convert the frame back to OpenCV format
+        frame_with_boxes = cv2.cvtColor(np.array(frame_pil_with_boxes), cv2.COLOR_RGB2BGR)
+        
+        # Print object information
+        for box in results:
+            x1, y1, x2, y2, object_type, probability = box
+            x_center = (x1 + x2) / 2
+            y_center = (y1 + y2) / 2
+            print("Object Type:", object_type)
+            print("Center coordinates: (x={}, y={})".format(x_center, y_center))
+            print("Confidence:", probability)
+            print()
+        
+        # Encode the frame as JPEG
+        ret, buffer = cv2.imencode('.jpg', frame_with_boxes)
+        frame_data = buffer.tobytes()
+        
+        # Yield the frame data as MJPEG response
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
+        cv2.imshow("RECEIVING VIDEO",frame_with_boxes)
+        key = cv2.waitKey(1) & 0xFF
+        if key  == ord('q'):
+            break
 
 @app.get('/')
 def index(request: Request):
