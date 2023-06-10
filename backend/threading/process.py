@@ -5,27 +5,6 @@ from networktables import NetworkTables
 from constants import MODEL_NAME, NT_SERVER_IP
 from capture import frame_queue, process_event
 
-def capture_frames():
-    """
-    Function to capture video frames and add them to the frame queue.
-    """
-    cap = cv2.VideoCapture(0)
-
-    while cap.isOpened():
-        success, frame = cap.read()
-
-        if success:
-            # Put frame in the deque for processing
-            frame_queue.append(frame)
-            process_event.set()  # Set the event to resume frame processing
-
-            #cv2.imshow('Capturing Video', frame)
-
-            #if cv2.waitKey(1) & 0xFF == ord('q'):
-                #break
-
-    cap.release()
-
 def process_frames():
     """
     Function to process frames from the frame queue using YOLOv8.
