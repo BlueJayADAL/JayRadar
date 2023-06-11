@@ -2,7 +2,7 @@ import threading
 from capture import capture_frames
 from process import process_frames
 from web import app
-#from socket import send_frames
+#from send import send_frames
 
 # Start the capture thread
 capture_thread = threading.Thread(target=capture_frames)
