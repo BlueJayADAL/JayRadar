@@ -2,7 +2,7 @@ import cv2
 import threading
 from ultralytics import YOLO
 from networktables import NetworkTables
-from constants import MODEL_NAME, NT_SERVER_IP
+from constants import MODEL_NAME, NT_SERVER_IP, DEFAULT_IOU, DEFAULT_CONF, DEFAULT_CLASSES, DEFAULT_IMGSZ, DEFAULT_MAX_DETECT, DEFAULT_PRECISION, DEFAULT_PROCESSOR, DEFAULT_SS, DEFAULT_SSD
 from capture import frame_queue, process_event
 
 def process_frames():
@@ -23,16 +23,15 @@ def process_frames():
 
     # Variables to store the configuration values
     # TODO: pull these from a default pipeline/config
-    confidence_threshold = 50
-    iou_threshold = 50
-    half_precision = False      #Not very useful
-    processor = "cpu"           #Not very useful
-    screenshot = False
-    screenshot_data = False
-    max_detections = 5
-    detected_classes = [-1]
-    
-    image_size = 640
+    confidence_threshold = DEFAULT_CONF
+    iou_threshold = DEFAULT_IOU
+    half_precision = DEFAULT_PRECISION      #Not very useful
+    processor = DEFAULT_PROCESSOR           #Not very useful
+    screenshot = DEFAULT_SS
+    screenshot_data = DEFAULT_SSD
+    max_detections = DEFAULT_MAX_DETECT
+    detected_classes = DEFAULT_CLASSES
+    image_size = DEFAULT_IMGSZ
 
     def value_changed(table, key, value, isNew):
         """
