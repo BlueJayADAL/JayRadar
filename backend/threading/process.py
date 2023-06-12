@@ -36,7 +36,19 @@ def process_frames():
     image_size = DEFAULT_IMGSZ
 
 
-    def save_config_to_file(config, filename):
+    def save_config_to_file(filename):
+        nonlocal confidence_threshold, iou_threshold, half_precision, processor, screenshot, screenshot_data, max_detections, detected_classes, image_size
+        config = {
+            "conf": confidence_threshold,
+            "iou": iou_threshold,
+            "half": half_precision,
+            "device": processor,
+            "ss": screenshot,
+            "ssd": screenshot_data,
+            "max": max_detections,
+            "img": image_size,
+            "class": detected_classes
+            }
         with open(filename, 'w') as file:
             json.dump(config, file, indent=4)
 
@@ -198,13 +210,15 @@ def process_frames():
                     detected_classes = updated_classes
             elif key == "load_config":
                 load_config_from_file(value)
+            elif key == "save_config":
+                save_config_to_file(value)
 
    
 
     # Add an entry listener to monitor value changes, with the above callback function exectuted on change
     nt.addEntryListener(value_changed)  # This will run in the background.
 
-    load_config_from_file('config.json')
+    load_config_from_file('default.json')
 
 
     while True:
