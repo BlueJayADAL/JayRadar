@@ -3,7 +3,7 @@ import cv2
 import socket
 import pickle
 import struct
-from tkinter import Frame, OptionMenu
+from tkinter import Frame, OptionMenu, ttk
 from PIL import ImageTk, Image
 from spinbox import Spinbox
 from networktables import NetworkTables
@@ -104,62 +104,73 @@ mainwin.configure(bg="blue")
 # Create the internal frames and balance them horizontally
 frame_1 = Frame(mainwin, bg='grey')
 frame_1.grid(row=0, column=0, sticky="nsew", padx=1)
-frame_1.grid_columnconfigure(0, weight=1)
-
-frame_2 = Frame(mainwin, bg='grey')
-frame_2.grid(row=0, column=1, sticky="nsew", padx=1)
-frame_2.grid_columnconfigure(0, weight=1)
 
 camframe = Frame(mainwin, bg='grey')
-camframe.grid(row=0, column=2, sticky="nw", padx=1)
+camframe.grid(row=0, column=2, sticky="nsew", padx=1)
 camframe.grid_columnconfigure(0, weight=1)
 camframe.grid_rowconfigure(0, weight=1)
 
 
 # Configure the layout of the main window
 mainwin.grid_columnconfigure(0, weight=1, minsize=180)
-mainwin.grid_columnconfigure(1, weight=1, minsize=160)
-mainwin.grid_columnconfigure(2, weight=2)
 mainwin.grid_rowconfigure(0, weight=1, minsize=500)
 
 
-# Label frame_1
-Tuning = tk.Label(frame_1, bg='grey', text="Tuning", font=("Arial Bold", 30, "underline")).grid(row=0, column=0)
+# Create a Notebook widget
+notebook = ttk.Notebook(frame_1)
+
+
+# Create tabs
+tab1 = tk.Frame(notebook, bg='purple')
+tab2 = tk.Frame(notebook, bg='grey')
+tab3 = tk.Frame(notebook, bg='green')
+
+
+# Add tabs to the Notebook widget
+notebook.add(tab1, text="Model")
+notebook.add(tab2, text="Tuning")
+notebook.add(tab3, text="Output")
+
+
+# Organize the contents of frame_1, centering and filling space appropriately
+frame_1.grid_columnconfigure(0, weight=1)
+frame_1.grid_rowconfigure(0, weight=1)
+notebook.grid(row=0, column=0, sticky="nsew")
+
+tab1.grid_columnconfigure(0, weight=1)
+tab2.grid_columnconfigure(0, weight=1)
+tab3.grid_columnconfigure(0, weight=1)
 
 
 # Label and initialize the confidence threshold spinbox
-Conf_Thresh = tk.Label(frame_1, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=1, column=0)
-Conf_Thresh_Spin = Spinbox(frame_1, name="confidence_threshold", min=0, max=100, increment=1, default_value=table.getNumber("confidence_threshold",50)).grid(row=2, column=0)
+Conf_Thresh = tk.Label(tab2, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=1, column=0)
+Conf_Thresh_Spin = Spinbox(tab2, name="confidence_threshold", min=0, max=100, increment=1, default_value=table.getNumber("confidence_threshold",50)).grid(row=2, column=0)
 
 
 # Label and initialize the NMS threshold spinbox
-NMS_Thresh = tk.Label(frame_1, bg='grey', text="IOU Threshold:", font=("Arial Bold", 12)).grid(row=3, column=0)
-NMS_Thresh_Spin = Spinbox(frame_1, name="iou_threshold", min=0, max=100, increment=1, default_value=table.getNumber("iou_threshold",50)).grid(row=4, column=0)
-
-
-# Label frame_2
-Model_Label = tk.Label(frame_2, bg='grey', text="Model", font=("Arial Bold", 30, "underline")).grid(row=0, column=0, sticky='nsew')
+NMS_Thresh = tk.Label(tab2, bg='grey', text="IOU Threshold:", font=("Arial Bold", 12)).grid(row=3, column=0)
+NMS_Thresh_Spin = Spinbox(tab2, name="iou_threshold", min=0, max=100, increment=1, default_value=table.getNumber("iou_threshold",50)).grid(row=4, column=0)
 
 
 # Label the 'Model' dropdown
-model_type = tk.Label(frame_2, bg='grey', text="Model: ", font=("Arial Bold", 12), justify="center").grid(row=1, column=0)
+model_type = tk.Label(tab1, bg='grey', text="Model", font=("Arial Bold", 12)).grid(row=1, column=0, pady=5)
 
 
 # Create the 'Model' dropdown. Model_Options forms the list of options to choose from
 selected_model_option = tk.StringVar(mainwin)
 selected_model_option.set("1")  # Set default option
 Model_Options = ["1", "2", "3", "4", "5"]
-Model_OptionMenu = OptionMenu(frame_2, selected_model_option, *Model_Options, command=model_option_selected)
+Model_OptionMenu = OptionMenu(tab1, selected_model_option, *Model_Options, command=model_option_selected)
 Model_OptionMenu.grid(row=2, column=0)
 
 
 # Label and initialize the Max Detections spinbox
-Max_Detect = tk.Label(frame_2, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
-Max_Detect_Spin = Spinbox(frame_2, name="max_detections", min=0, max=300, increment=1, default_value=table.getNumber("max_detections",10)).grid(row=5, column=0)
+Max_Detect = tk.Label(tab2, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
+Max_Detect_Spin = Spinbox(tab2, name="max_detections", min=0, max=300, increment=1, default_value=table.getNumber("max_detections",10)).grid(row=5, column=0)
 
 
 # Create a new frame within frame_2 to house resolution options
-res_frame = Frame(frame_2, bg='grey')
+res_frame = Frame(tab2, bg='grey')
 res_frame.grid(row=3, column=0, pady=20)
 
 
