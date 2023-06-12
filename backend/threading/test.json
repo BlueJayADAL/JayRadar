@@ -1,0 +1,13 @@
+{
+    "conf": 0,
+    "iou": 70,
+    "half": false,
+    "device": "0",
+    "ss": false,
+    "ssd": false,
+    "max": 5,
+    "img": 640,
+    "class": [
+        -1
+    ]
+}
