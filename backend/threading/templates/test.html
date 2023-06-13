@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Frames and Video</title>
+    <title>Frames and Object Detection</title>
     <style>
         body, html {
             height: 100%;
@@ -38,19 +38,21 @@
                 <input type="text" id="textbox" placeholder="Enter text">
                 <br>
                 <input type="number" id="spinbox" min="0" max="100" value="0">
+                <button onclick="updateNetworkTable()">Update</button>
             </div>
             <div id="frame2" class="tabcontent">
                 <label id="label"></label>
             </div>
         </div>
         <div id="right-frame">
-            <video id="video" width="640" height="480" controls>
-                <source src="path/to/video.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+            <h1>Object Detection</h1>
+            <!-- Image display -->
+            <img src="{{ url_for('video_feed') }}" width="640" height="480">
         </div>
     </div>
 
+    <script src="https://unpkg.com/wpilib-ws@latest"></script>
+    <script src="https://unpkg.com/ntcore@latest"></script>
     <script>
         function openTab(tabName) {
             var i, tabcontent, tablinks;
@@ -59,6 +61,17 @@
                 tabcontent[i].style.display = "none";
             }
             document.getElementById(tabName).style.display = "block";
+        }
+
+        function updateNetworkTable() {
+            var inputValue = document.getElementById('textbox').value;
+
+            // Connect to NetworkTables
+            NetworkTables.initialize(function () {
+                // Update the value on the specified NetworkTables key
+                NetworkTables.setValue('max_detections', inputValue);
+                console.log('Value updated on NetworkTable:', inputValue);
+            });
         }
     </script>
 </body>
