@@ -2,7 +2,7 @@
 NT_SERVER_IP = "10.4.10.146"
 
 # Socket IP address
-SOCKET_IP = "10.4.10.46"
+SOCKET_IP = "10.4.10.38" #"10.4.10.46" 
 
 # MODEL NAME string
 MODEL_NAME = "frc7ng.pt"
