@@ -13,16 +13,15 @@ process_thread = threading.Thread(target=process_frames)
 process_thread.start()
 
 # Start the frame sending thread
-send_thread = threading.Thread(target=send_frames)
-send_thread.start()
+#send_thread = threading.Thread(target=send_frames)
+#send_thread.start()
 
 # Wait for threads to finish
 
-send_thread.join()
-"""
+#send_thread.join()
+
 if __name__ == "__main__":
     import uvicorn
     from constants import SOCKET_IP
 
     uvicorn.run(app, host=SOCKET_IP, port=8000)
-"""
