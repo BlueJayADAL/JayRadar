@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .input-group input[type="text"],
+    .input-group input[type="range"],
+    .input-group input[type="number"],
+    .input-group button {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="input-group">
+      <label for="slider">Slider:</label>
+      <input type="range" id="slider" min="0" max="100" value="50" oninput="updateSpinboxValue(this.value)" />
+    </div>
+    <div class="input-group">
+      <label for="spinbox">Spin Box:</label>
+      <input type="number" id="spinbox" min="0" max="100" value="50" oninput="updateSliderValue(this.value)" />
+    </div>
+  </div>
+
+  <script>
+    function updateSpinboxValue(value) {
+      document.getElementById('spinbox').value = value;
+    }
+    
+    function updateSliderValue(value) {
+      document.getElementById('slider').value = value;
+    }
+  </script>
+</body>
+</html>
