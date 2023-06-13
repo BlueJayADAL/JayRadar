@@ -38,6 +38,7 @@
                 <input type="text" id="textbox" placeholder="Enter text">
                 <br>
                 <input type="number" id="spinbox" min="0" max="100" value="0">
+                <button onclick="getData()">Submit</button>
             </div>
             <div id="frame2" class="tabcontent">
                 <label id="label"></label>
@@ -59,6 +60,14 @@
             }
             document.getElementById(tabName).style.display = "block";
         }
+
+        function getData() {
+            var input_1 = document.getElementById('textbox').value
+            console.log(input_1)
+
+        }
+
+
     </script>
 </body>
 </html>
