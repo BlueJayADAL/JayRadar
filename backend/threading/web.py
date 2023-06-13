@@ -6,6 +6,7 @@ from capture import frame_queue, process_event
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse
+from constants import HTML_PAGE
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -32,7 +33,7 @@ def get_frame():
 @app.get('/')
 def index(request: Request):
     # Render the index.html template with current confidence threshold value
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(HTML_PAGE, {"request": request})
 
 @app.get('/video_feed')
 def video_feed():

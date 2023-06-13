@@ -237,7 +237,7 @@ def process_frames():
                 classes = detected_classes
 
             # If the first index of classes is -1
-            print(f'Conf: {confidence_threshold}')
+            print(f'Max_det: {max_det}')
             if (classes[0]==-1):
                 # Process the frame using YOLOv8 without class filter
                 results = model.predict(
