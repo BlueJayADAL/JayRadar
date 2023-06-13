@@ -40,3 +40,8 @@ def video_feed():
     # Route for streaming video feed
     return StreamingResponse(get_frame(), media_type='multipart/x-mixed-replace; boundary=frame')
 
+if __name__ == "__main__":
+    import uvicorn
+    from constants import SOCKET_IP
+
+    uvicorn.run(app, host=SOCKET_IP, port=8000)
