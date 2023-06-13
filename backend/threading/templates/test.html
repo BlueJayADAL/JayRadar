@@ -67,6 +67,7 @@
             var inputValue = document.getElementById('textbox').value;
 
             // Connect to NetworkTables
+            NetworkTables.setIPAddress("10.4.10.146"); // Replace with the actual IP address of the NetworkTables server
             NetworkTables.initialize(function () {
                 // Update the value on the specified NetworkTables key
                 NetworkTables.setValue('max_detections', inputValue);
