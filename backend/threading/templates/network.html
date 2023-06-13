@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .input-group input[type="text"],
+    .input-group input[type="range"],
+    .input-group input[type="number"],
+    .input-group button {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="input-group">
+      <label for="slider">Slider:</label>
+      <input type="range" id="slider" min="0" max="100" value="50" oninput="updateValue('slider', this.value)" />
+    </div>
+    <div class="input-group">
+      <label for="spinbox">Spin Box:</label>
+      <input type="number" id="spinbox" min="0" max="100" value="50" oninput="updateValue('spinbox', this.value)" />
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pureweb-ntcore/4.3.0/ntcore.min.js"></script>
+  <script>
+    var connection;
+
+    // Establish a connection with the NetworkTables server
+    function connect() {
+      connection = NetworkTables.createWebSocket();
+      connection.start();
+    }
+
+    // Update the value in NetworkTables and synchronize the other input element
+    function updateValue(key, value) {
+      NetworkTables.putValue('/SmartDashboard/' + key, parseFloat(value));
+      synchronizeInputs(key, value);
+    }
+
+    // Synchronize the values between the input elements
+    function synchronizeInputs(key, value) {
+      if (key === 'slider') {
+        document.getElementById('spinbox').value = value;
+      } else if (key === 'spinbox') {
+        document.getElementById('slider').value = value;
+      }
+    }
+
+    // Callback function to handle NetworkTables value changes
+    function valueChanged(key, value) {
+      if (key === 'slider' || key === 'spinbox') {
+        synchronizeInputs(key, value);
+      }
+    }
+
+    // Add a listener to handle NetworkTables value changes
+    function addValueChangeListener(key) {
+      NetworkTables.addKeyListener('/SmartDashboard/' + key, valueChanged);
+    }
+
+    // Connect to NetworkTables and add listeners
+    connect();
+    addValueChangeListener('slider');
+    addValueChangeListener('spinbox');
+  </script>
+</body>
+</html>
