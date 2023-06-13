@@ -1,61 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style>
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 50px;
-    }
-    
-    .input-group {
-      margin-bottom: 20px;
-    }
-    
-    .input-group label {
-      display: block;
-      margin-bottom: 5px;
-    }
-    
-    .input-group input[type="text"],
-    .input-group input[type="range"],
-    .input-group input[type="number"],
-    .input-group button {
-      margin-top: 5px;
-    }
-  </style>
+    <title>Frames and Video</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #container {
+            height: 100%;
+            display: flex;
+        }
+        #left-frame {
+            flex: 1;
+            height: 100%;
+            border: 1px solid black;
+        }
+        #right-frame {
+            flex: 2;
+            height: 100%;
+            border: 1px solid black;
+        }
+        .tabcontent {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="input-group">
-      <label for="textbox">Text Box:</label>
-      <input type="text" id="textbox" />
+    <div id="container">
+        <div id="left-frame">
+            <div id="tab-buttons">
+                <button class="tablink" onclick="openTab('frame1')">Frame 1</button>
+                <button class="tablink" onclick="openTab('frame2')">Frame 2</button>
+            </div>
+            <div id="frame1" class="tabcontent">
+                <input type="text" id="textbox" placeholder="Enter text">
+                <br>
+                <input type="number" id="spinbox" min="0" max="100" value="0">
+            </div>
+            <div id="frame2" class="tabcontent">
+                <label id="label"></label>
+            </div>
+        </div>
+        <div id="right-frame">
+            <video id="video" width="640" height="480" controls>
+                <source src="path/to/video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
     </div>
-    <div class="input-group">
-      <label for="slider">Slider:</label>
-      <input type="range" id="slider" min="0" max="100" value="50" />
-    </div>
-    <div class="input-group">
-      <label for="spinbox">Spin Box:</label>
-      <input type="number" id="spinbox" min="0" max="100" value="50" />
-    </div>
-    <div class="input-group">
-      <button type="button" onclick="submitForm()">Submit</button>
-    </div>
-  </div>
 
-  <script>
-    function submitForm() {
-      var textboxValue = document.getElementById('textbox').value;
-      var sliderValue = document.getElementById('slider').value;
-      var spinboxValue = document.getElementById('spinbox').value;
-
-      // Do something with the values (e.g., submit the form)
-      console.log('Text Box Value:', textboxValue);
-      console.log('Slider Value:', sliderValue);
-      console.log('Spin Box Value:', spinboxValue);
-    }
-  </script>
+    <script>
+        function openTab(tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            document.getElementById(tabName).style.display = "block";
+        }
+    </script>
 </body>
 </html>

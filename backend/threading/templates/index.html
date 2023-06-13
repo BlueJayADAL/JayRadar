@@ -1,12 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Object Detection</title>
+    <title>Frames and Object Detection</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #container {
+            height: 100%;
+            display: flex;
+        }
+        #left-frame {
+            flex: 1;
+            height: 100%;
+            border: 1px solid black;
+        }
+        #right-frame {
+            flex: 2;
+            height: 100%;
+            border: 1px solid black;
+        }
+        .tabcontent {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Object Detection</h1>
-    
-    <!-- Image display -->
-    <img src="{{ url_for('video_feed') }}" width="640" height="480">
+    <div id="container">
+        <div id="left-frame">
+            <div id="tab-buttons">
+                <button class="tablink" onclick="openTab('frame1')">Frame 1</button>
+                <button class="tablink" onclick="openTab('frame2')">Frame 2</button>
+            </div>
+            <div id="frame1" class="tabcontent">
+                <input type="text" id="textbox" placeholder="Enter text">
+                <br>
+                <input type="number" id="spinbox" min="0" max="100" value="0">
+            </div>
+            <div id="frame2" class="tabcontent">
+                <label id="label"></label>
+            </div>
+        </div>
+        <div id="right-frame">
+            <h1>Object Detection</h1>
+            <!-- Image display -->
+            <img src="{{ url_for('video_feed') }}" width="640" height="480">
+        </div>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            document.getElementById(tabName).style.display = "block";
+        }
+    </script>
 </body>
 </html>
