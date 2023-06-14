@@ -1,11 +1,13 @@
 # NetworkTables IP address
-NT_SERVER_IP = "10.4.10.146"
+NT_SERVER_IP = "10.1.32.27"
+
+TABLE_NAME = "JayRadar"
 
 # Socket IP address
-SOCKET_IP = "10.4.10.38" #"10.4.10.46" 
+SOCKET_IP = "10.1.32.27" #"10.4.10.46" 
 
 # MODEL NAME string
-MODEL_NAME = "frc7ng.pt"
+MODEL_NAME = "yolov8n.pt"
 
 # MAX FRAMES int
 MAX_FRAMES = 5
@@ -23,3 +25,14 @@ DEFAULT_SSD = False
 DEFAULT_MAX_DETECT = 5
 DEFAULT_CLASSES = [-1]
 DEFAULT_IMGSZ = 640
+
+CONFIG_TYPES = {
+    "conf": int,
+    "iou": int,
+    "half": bool,
+    "ss": bool,
+    "ssd": bool,
+    "max": int,
+    "img": int,
+    "class": list
+}
