@@ -45,7 +45,7 @@ def load_config(filename, config):
                 # Failed to typecast, use original value
                 typecasted_config[key] = config[key]
     
-        nt.putValue(key, config[key])
+        #nt.putValue(key, config[key])
 
 
     return typecasted_config
@@ -72,7 +72,7 @@ def frontend():
         print()
         with nt_lock:
             print("Network_Thread acquired lock")
-            if key in CONFIG_TYPES.items():
+            if key in CONFIG_TYPES:
                 if key == "class":
                     try:
                         typecasted_value = [int(v) for v in value]
@@ -91,7 +91,7 @@ def frontend():
                         typecasted_value = CONFIG_TYPES[key](value)
                         config[key] = typecasted_value
                         print()
-                        print('CONFIG UPDATED')
+                        print(f'CONFIG UPDATED: config[{key}] = {typecasted_value}')
                         print()
                     except (ValueError, TypeError):
                         # Failed to typecast, use original value
@@ -104,10 +104,6 @@ def frontend():
     time.sleep(1)
     nt.addEntryListener(value_changed)
     network_setup_event.set()
-    i=0
-    time.sleep(10)
-    while True:
-        nt.putNumber('conf',i)
-        time.sleep(3)
-        i+= 1
-    #uvicorn.run(app, host=SOCKET_IP, port=8000)
+
+    
+    uvicorn.run(app, host=SOCKET_IP, port=8000)
