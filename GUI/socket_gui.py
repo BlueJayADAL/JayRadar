@@ -38,6 +38,7 @@ def resize(event):
     mainwin.grid_columnconfigure(2, weight=1)
     mainwin.grid_rowconfigure(0, weight=1)
 
+
 # Display video feed
 def show_frames():
     """Retrieve frames from the socket and update the GUI"""
@@ -146,10 +147,8 @@ tab3.grid_columnconfigure(0, weight=1)
 Conf_Thresh = tk.Label(tab2, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=1, column=0)
 Conf_Thresh_Spin = Spinbox(tab2, name="confidence_threshold", min=0, max=100, increment=1, default_value=table.getNumber("confidence_threshold",50)).grid(row=2, column=0)
 
-
-# Label and initialize the NMS threshold spinbox
-NMS_Thresh = tk.Label(tab2, bg='grey', text="IOU Threshold:", font=("Arial Bold", 12)).grid(row=3, column=0)
-NMS_Thresh_Spin = Spinbox(tab2, name="iou_threshold", min=0, max=100, increment=1, default_value=table.getNumber("iou_threshold",50)).grid(row=4, column=0)
+IoU_Thresh = tk.Label(tab2, bg='grey', text="IoU Threshold:", font=("Arial Bold", 12)).grid(row=3, column=0)
+IoU_Thresh_Spin = Spinbox(tab2, name="iou_threshold", min=0, max=100, increment=1, default_value=table.getNumber("iou_threshold",50)).grid(row=4, column=0)
 
 
 # Label the 'Model' dropdown
@@ -165,31 +164,22 @@ Model_OptionMenu.grid(row=2, column=0)
 
 
 # Label and initialize the Max Detections spinbox
-Max_Detect = tk.Label(tab2, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
-Max_Detect_Spin = Spinbox(tab2, name="max_detections", min=0, max=300, increment=1, default_value=table.getNumber("max_detections",10)).grid(row=5, column=0)
+Max_Detect = tk.Label(tab2, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=5, column=0)
+Max_Detect_Spin = Spinbox(tab2, name="max_detections", min=0, max=300, increment=1, default_value=table.getNumber("max_detections",10)).grid(row=6, column=0)
 
 
 # Create a new frame within frame_2 to house resolution options
 res_frame = Frame(tab2, bg='grey')
-res_frame.grid(row=3, column=0, pady=20)
-
-
-# Label the new frame
-res_label = tk.Label(res_frame, bg='grey', text="Resolution", font=("Arial Bold", 15, "underline"), justify="center").grid(row=0, column=0)
+res_frame.grid(row=7, column=0, pady=20)
 
 
 # Label and initialize the Resolution Width spinbox
-res_width = tk.Label(res_frame, bg='grey', text="Width:", font=("Arial Bold", 12)).grid(row=1, column=0)
-res_width_spin = Spinbox(res_frame, name="image_size", min=100, max=9999, increment=32, default_value=table.getNumber("image_size",640)).grid(row=2, column=0)
-
-
-# Label and initialize the Resolution Height spinbox
-res_height = tk.Label(res_frame, bg='grey', text="Height:", font=("Arial Bold", 12)).grid(row=3, column=0)
-res_height_spin = Spinbox(res_frame, name="image_size", min=100, max=9999, increment=32, default_value=table.getNumber("image_size",640)).grid(row=4, column=0)
+img_size = tk.Label(res_frame, bg='grey', text="Image Size:", font=("Arial Bold", 12)).grid(row=1, column=0)
+img_size_spin = Spinbox(res_frame, name="image_size", min=100, max=9999, increment=32, default_value=table.getNumber("image_size",640)).grid(row=2, column=0)
 
 
 # Create the 'Class Filters' label and text box
-class_filters = tk.Label(res_frame, bg='grey', text="Width:", font=("Arial Bold", 12)).grid(row=5, column=0)
+class_filters = tk.Label(res_frame, bg='grey', text="Filter:", font=("Arial Bold", 12)).grid(row=5, column=0)
 class_entry = tk.Entry(res_frame)
 
 # Set the initial value to '-1' and place on the grid
@@ -208,7 +198,7 @@ calc_disp = tk.Label(camframe, bg='grey', text="Output Information: (x, y, area)
 
 
 # Set up socket connection to receive frames
-host = '10.4.10.46'  # Change to the appropriate IP address
+host = '10.4.10.38'  # Change to the appropriate IP address
 port = 9999  # Change to the appropriate port
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((host, port))
