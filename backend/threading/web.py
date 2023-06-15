@@ -1,7 +1,5 @@
 import cv2
 from fastapi import FastAPI, Request
-from PIL import Image
-from io import BytesIO
 from capture import frame_queue, process_event
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles

@@ -1,13 +1,23 @@
 import threading
 from network import frontend, network_setup_event
-from prints import print_tests
+from process_test import test_process
+from capture import capture_frames, process_event
+from send import send_frames
+
+capture_thread = threading.Thread(target = capture_frames)
+capture_thread.start()
+
+process_event.wait()
 
 network_thread = threading.Thread(target=frontend)
 network_thread.start()
 
 network_setup_event.wait()
 
-print_thread = threading.Thread(target=print_tests)
-print_thread.start()
+send_thread = threading.Thread(target=send_frames)
+send_thread.start()
 
-print_thread.join()
+processing_thread = threading.Thread(target= test_process)
+processing_thread.start()
+
+processing_thread.join()

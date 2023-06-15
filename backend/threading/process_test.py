@@ -1,10 +1,9 @@
 import cv2
 from ultralytics import YOLO
-from constants import MODEL_NAME, NT_SERVER_IP
+from constants import MODEL_NAME, NT_SERVER_IP, TABLE_NAME
 from capture import frame_queue
 from networktables import NetworkTables
 from network import config, nt_lock
-import time
 
 def test_process():
     """
@@ -16,7 +15,7 @@ def test_process():
     NetworkTables.initialize(NT_SERVER_IP)
 
     # Retrieve the JayRadar table for us to use
-    nt = NetworkTables.getTable("JayRadar")
+    nt = NetworkTables.getTable(TABLE_NAME)
 
     while True:
 
@@ -34,8 +33,6 @@ def test_process():
                 image_size = config['img']
                 classes = config['class']
                 print("Process_Thread released lock")
-
-            time.sleep(2)
             # If the first index of classes is -1
             print(f'Max_det: {max_det}')
             print(f'conf: {conf}')
