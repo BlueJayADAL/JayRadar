@@ -25,6 +25,28 @@ def model_option_selected(selected_option):
     print("Model: ", selected_option)
 
 
+# Handle checkbox selections
+#HalfPrecision
+def half_checkbox_changed():
+    if half_checkbox_var.get() == 1:
+        print("Half Precision checkbox checked")
+    else:
+        print("Half Precision checkbox unchecked")
+
+#Screenshot
+def ss_checkbox_changed():
+    if ss_checkbox_var.get() == 1:
+        print("Screenshot checkbox checked")
+    else:
+        print("Screenshot checkbox unchecked")
+#Screenshot data
+def ssd_checkbox_changed():
+    if ssd_checkbox_var.get() == 1:
+        print("Screenshot Data checkbox checked")
+    else:
+        print("Screenshot Data checkbox unchecked")
+
+
 # Execute the 'Update' button
 def update_values():
     print(class_entry.get().split(','))
@@ -107,7 +129,7 @@ frame_1 = Frame(mainwin, bg='grey')
 frame_1.grid(row=0, column=0, sticky="nsew", padx=1)
 
 camframe = Frame(mainwin, bg='grey')
-camframe.grid(row=0, column=2, sticky="nsew", padx=1)
+camframe.grid(row=0, column=1, sticky="nsew", padx=1)
 camframe.grid_columnconfigure(0, weight=1)
 camframe.grid_rowconfigure(0, weight=1)
 
@@ -144,15 +166,15 @@ tab3.grid_columnconfigure(0, weight=1)
 
 
 # Label and initialize the confidence threshold spinbox
-Conf_Thresh = tk.Label(tab2, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=1, column=0)
-Conf_Thresh_Spin = Spinbox(tab2, name="confidence_threshold", min=0, max=100, increment=1, default_value=table.getNumber("confidence_threshold",50)).grid(row=2, column=0)
+Conf_Thresh = tk.Label(tab2, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=0, column=0)
+Conf_Thresh_Spin = Spinbox(tab2, name="confidence_threshold", min=0, max=100, increment=1, default_value=table.getNumber("confidence_threshold",50)).grid(row=1, column=0)
 
-IoU_Thresh = tk.Label(tab2, bg='grey', text="IoU Threshold:", font=("Arial Bold", 12)).grid(row=3, column=0)
-IoU_Thresh_Spin = Spinbox(tab2, name="iou_threshold", min=0, max=100, increment=1, default_value=table.getNumber("iou_threshold",50)).grid(row=4, column=0)
+IoU_Thresh = tk.Label(tab2, bg='grey', text="IoU Threshold:", font=("Arial Bold", 12)).grid(row=2, column=0)
+IoU_Thresh_Spin = Spinbox(tab2, name="iou_threshold", min=0, max=100, increment=1, default_value=table.getNumber("iou_threshold",50)).grid(row=3, column=0)
 
 
 # Label the 'Model' dropdown
-model_type = tk.Label(tab1, bg='grey', text="Model", font=("Arial Bold", 12)).grid(row=1, column=0, pady=5)
+model_type = tk.Label(tab1, bg='grey', text="Model", font=("Arial Bold", 12)).grid(row=0, column=0, pady=5)
 
 
 # Create the 'Model' dropdown. Model_Options forms the list of options to choose from
@@ -160,35 +182,42 @@ selected_model_option = tk.StringVar(mainwin)
 selected_model_option.set("1")  # Set default option
 Model_Options = ["1", "2", "3", "4", "5"]
 Model_OptionMenu = OptionMenu(tab1, selected_model_option, *Model_Options, command=model_option_selected)
-Model_OptionMenu.grid(row=2, column=0)
+Model_OptionMenu.grid(row=1, column=0)
 
 
 # Label and initialize the Max Detections spinbox
-Max_Detect = tk.Label(tab2, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=5, column=0)
-Max_Detect_Spin = Spinbox(tab2, name="max_detections", min=0, max=300, increment=1, default_value=table.getNumber("max_detections",10)).grid(row=6, column=0)
-
-
-# Create a new frame within frame_2 to house resolution options
-res_frame = Frame(tab2, bg='grey')
-res_frame.grid(row=7, column=0, pady=20)
+Max_Detect = tk.Label(tab2, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
+Max_Detect_Spin = Spinbox(tab2, name="max_detections", min=0, max=300, increment=1, default_value=table.getNumber("max_detections",10)).grid(row=5, column=0)
 
 
 # Label and initialize the Resolution Width spinbox
-img_size = tk.Label(res_frame, bg='grey', text="Image Size:", font=("Arial Bold", 12)).grid(row=1, column=0)
-img_size_spin = Spinbox(res_frame, name="image_size", min=100, max=9999, increment=32, default_value=table.getNumber("image_size",640)).grid(row=2, column=0)
+img_size = tk.Label(tab2, bg='grey', text="Image Size:", font=("Arial Bold", 12)).grid(row=6, column=0)
+img_size_spin = Spinbox(tab2, name="image_size", min=100, max=9999, increment=32, default_value=table.getNumber("image_size",640)).grid(row=7, column=0)
 
 
 # Create the 'Class Filters' label and text box
-class_filters = tk.Label(res_frame, bg='grey', text="Filter:", font=("Arial Bold", 12)).grid(row=5, column=0)
-class_entry = tk.Entry(res_frame)
+class_filters = tk.Label(tab2, bg='grey', text="Class:", font=("Arial Bold", 12)).grid(row=8, column=0)
+class_entry = tk.Entry(tab2)
 
 # Set the initial value to '-1' and place on the grid
 class_entry.insert(tk.END, '-1')
-class_entry.grid(row=6, column=0, pady=4)
+class_entry.grid(row=9, column=0, pady=4)
 
 
 # Create the 'Update' button
-update_button = tk.Button(res_frame, text="Update", command=update_values).grid(row=7, column=0)
+update_button = tk.Button(tab2, text="Update", command=update_values).grid(row=10, column=0)
+
+
+# Create the checkboxes
+    # Create a variable to hold the checkbox state, then create and display the checkbox widget
+half_checkbox_var = tk.IntVar()
+half_checkbox = tk.Checkbutton(tab2, text="Half Precision Checkbox", variable=half_checkbox_var, command=half_checkbox_changed).grid(row=11, column=0)
+
+ss_checkbox_var = tk.IntVar()
+ss_checkbox = tk.Checkbutton(tab2, text="Screenshot Checkbox", variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=12, column=0)
+
+ssd_checkbox_var = tk.IntVar()
+ssd_checkbox = tk.Checkbutton(tab2, text="Screenshot Data Checkbox", variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=13, column=0)
 
 
 # Create the widgets in camframe (camera output)
