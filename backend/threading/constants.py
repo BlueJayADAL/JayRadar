@@ -1,10 +1,13 @@
 # NetworkTables IP address
-NT_SERVER_IP = "10.4.10.146"
+NT_SERVER_IP = "10.4.10.146" 
+#Laptop: 10.4.10.146
+#Mypc: 10.1.32.27
 
 TABLE_NAME = "JayRadar"
 
 # Socket IP address
-SOCKET_IP = "10.4.10.46" #"10.4.10.46" 
+SOCKET_IP = "10.4.10.46" 
+#Recomputer: "10.4.10.46" 
 
 # MODEL NAME string
 MODEL_NAME = "yolov8n.pt"
