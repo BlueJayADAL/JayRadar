@@ -39,6 +39,7 @@ def ss_checkbox_changed():
         print("Screenshot checkbox checked")
     else:
         print("Screenshot checkbox unchecked")
+
 #Screenshot data
 def ssd_checkbox_changed():
     if ssd_checkbox_var.get() == 1:
@@ -211,13 +212,13 @@ update_button = tk.Button(tab2, text="Update", command=update_values).grid(row=1
 # Create the checkboxes
     # Create a variable to hold the checkbox state, then create and display the checkbox widget
 half_checkbox_var = tk.IntVar()
-half_checkbox = tk.Checkbutton(tab2, text="Half Precision Checkbox", variable=half_checkbox_var, command=half_checkbox_changed).grid(row=11, column=0)
+half_checkbox = tk.Checkbutton(tab2, text="Half Precision Checkbox", bg="grey",variable=half_checkbox_var, command=half_checkbox_changed).grid(row=11, column=0)
 
 ss_checkbox_var = tk.IntVar()
-ss_checkbox = tk.Checkbutton(tab2, text="Screenshot Checkbox", variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=12, column=0)
+ss_checkbox = tk.Checkbutton(tab2, text="Screenshot Checkbox", bg="grey", variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=12, column=0)
 
 ssd_checkbox_var = tk.IntVar()
-ssd_checkbox = tk.Checkbutton(tab2, text="Screenshot Data Checkbox", variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=13, column=0)
+ssd_checkbox = tk.Checkbutton(tab2, text="Screenshot Data Checkbox", bg="grey", variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=13, column=0)
 
 
 # Create the widgets in camframe (camera output)
