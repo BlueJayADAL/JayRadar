@@ -86,12 +86,12 @@ def show_frames():
         data = data[msg_size:]
         frame = pickle.loads(frame_data)
         objects_key = table.getNumberArray('objects_key', [-1])
-        print(objects_key)
+        #print(objects_key)
         
         for index, key in enumerate(objects_key):
             name = 'object'+str(index)
             box_info = table.getNumberArray(name, [-1])
-            print(box_info)
+            #print(box_info)
             if box_info[0] == -1:
                 break
         
@@ -168,10 +168,10 @@ tab3.grid_columnconfigure(0, weight=1)
 
 # Label and initialize the confidence threshold spinbox
 Conf_Thresh = tk.Label(tab2, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=0, column=0)
-Conf_Thresh_Spin = Spinbox(tab2, name="confidence_threshold", min=0, max=100, increment=1, default_value=table.getNumber("confidence_threshold",50)).grid(row=1, column=0)
+Conf_Thresh_Spin = Spinbox(tab2, name="conf", min=0, max=100, increment=1, default_value=table.getNumber("confidence_threshold",50)).grid(row=1, column=0)
 
 IoU_Thresh = tk.Label(tab2, bg='grey', text="IoU Threshold:", font=("Arial Bold", 12)).grid(row=2, column=0)
-IoU_Thresh_Spin = Spinbox(tab2, name="iou_threshold", min=0, max=100, increment=1, default_value=table.getNumber("iou_threshold",50)).grid(row=3, column=0)
+IoU_Thresh_Spin = Spinbox(tab2, name="iou", min=0, max=100, increment=1, default_value=table.getNumber("iou_threshold",50)).grid(row=3, column=0)
 
 
 # Label the 'Model' dropdown
@@ -188,12 +188,12 @@ Model_OptionMenu.grid(row=1, column=0)
 
 # Label and initialize the Max Detections spinbox
 Max_Detect = tk.Label(tab2, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
-Max_Detect_Spin = Spinbox(tab2, name="max_detections", min=0, max=300, increment=1, default_value=table.getNumber("max_detections",10)).grid(row=5, column=0)
+Max_Detect_Spin = Spinbox(tab2, name="max", min=0, max=300, increment=1, default_value=table.getNumber("max_detections",10)).grid(row=5, column=0)
 
 
 # Label and initialize the Resolution Width spinbox
 img_size = tk.Label(tab2, bg='grey', text="Image Size:", font=("Arial Bold", 12)).grid(row=6, column=0)
-img_size_spin = Spinbox(tab2, name="image_size", min=100, max=9999, increment=32, default_value=table.getNumber("image_size",640)).grid(row=7, column=0)
+img_size_spin = Spinbox(tab2, name="img", min=100, max=9999, increment=32, default_value=table.getNumber("image_size",640)).grid(row=7, column=0)
 
 
 # Create the 'Class Filters' label and text box
@@ -228,7 +228,7 @@ calc_disp = tk.Label(camframe, bg='grey', text="Output Information: (x, y, area)
 
 
 # Set up socket connection to receive frames
-host = '10.4.10.38'  # Change to the appropriate IP address
+host = '10.4.10.46'  # Change to the appropriate IP address
 port = 9999  # Change to the appropriate port
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((host, port))
