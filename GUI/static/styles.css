@@ -1,0 +1,12 @@
+.container {
+    display: flex;
+  }
+  
+  .left-column {
+    flex: 1;
+  }
+  
+  .right-column {
+    flex: 2;
+  }
+  
