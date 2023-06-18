@@ -1,71 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Frames and Object Detection</title>
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        #container {
-            height: 100%;
-            display: flex;
-        }
-        #left-frame {
-            flex: 1;
-            height: 100%;
-            border: 1px solid black;
-        }
-        #right-frame {
-            flex: 2;
-            height: 100%;
-            border: 1px solid black;
-        }
-        .tabcontent {
-            display: none;
-        }
-    </style>
+    <title>Object Detection</title>
+    <script src="{{ url_for('static', path='/script.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/styles.css') }}">
 </head>
 <body>
-    <div id="container">
-        <div id="left-frame">
-            <div id="tab-buttons">
-                <button class="tablink" onclick="openTab('frame1')">Frame 1</button>
-                <button class="tablink" onclick="openTab('frame2')">Frame 2</button>
+    <div class="container">
+        <div class="column">
+            <h1>Object Detection</h1>
+            <div class="sliders">
+                <div>
+                    <label for="conf">Conf:</label>
+                    <input type="range" id="conf" name="conf" min="0" max="100" step="1">
+                    <span id="confValue">0</span>
+                </div>
+                <div>
+                    <label for="iou">IOU:</label>
+                    <input type="range" id="iou" name="iou" min="0" max="100" step="1">
+                    <span id="iouValue">0</span>
+                </div>
+                <div>
+                    <label for="max">Max:</label>
+                    <input type="range" id="max" name="max" min="0" max="100" step="1">
+                    <span id="maxValue">0</span>
+                </div>
+                <div>
+                    <label for="img">Img:</label>
+                    <input type="range" id="img" name="img" min="160" max="640" step="32">
+                    <span id="imgValue">160</span>
+                </div>
             </div>
-            <div id="frame1" class="tabcontent">
-                <input type="text" id="textbox" placeholder="Enter text">
-                <br>
-                <input type="number" id="spinbox" min="0" max="100" value="0">
-                <button onclick="getData()">Submit</button>
+            <div class="checkboxes">
+                <div>
+                    <input type="checkbox" id="ss" name="ss">
+                    <label for="ss">SS</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="ssd" name="ssd">
+                    <label for="ssd">SSD</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="half" name="half">
+                    <label for="half">Half</label>
+                </div>
             </div>
-            <div id="frame2" class="tabcontent">
-                <label id="label"></label>
+            <div class="textbox">
+                <label for="class">Class:</label>
+                <input type="text" id="class" name="class">
+            </div>
+            <div class="submit">
+                <button id="submitButton">Submit</button>
             </div>
         </div>
-        <div id="right-frame">
-            <h1>Object Detection</h1>
-            <!-- Image display -->
-            <img src="{{ url_for('video_feed') }}" width="640" height="480">
+        <div class="column">
+            <img id="videoFeed" src="{{ url_for('video_feed') }}" width="640" height="480">
+            <form id="message-form">
+                <input type="text" id="user-input" placeholder="Enter username" value="key">
+                <input type="text" id="message-input" placeholder="Enter message" value="value">
+                <button type="submit">Send</button>
+            </form>
         </div>
     </div>
-
-    <script>
-        function openTab(tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            document.getElementById(tabName).style.display = "block";
-        }
-
-        function getData() {
-            var input_1 = document.getElementById('textbox').value
-            console.log(input_1)
-        }
-
-    </script>
 </body>
 </html>

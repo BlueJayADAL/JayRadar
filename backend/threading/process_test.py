@@ -4,6 +4,7 @@ from constants import MODEL_NAME, NT_SERVER_IP, TABLE_NAME
 from capture import frame_queue
 from networktables import NetworkTables
 from network import config, nt_lock
+#import time
 
 def test_process():
     """
@@ -18,7 +19,7 @@ def test_process():
     nt = NetworkTables.getTable(TABLE_NAME)
 
     while True:
-
+        #time.sleep(2)
         if frame_queue:
             frame = frame_queue[-1]  # Get the newest frame from the deque
 
