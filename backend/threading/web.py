@@ -1,10 +1,11 @@
 import cv2
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket
 from capture import frame_queue, process_event
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import StreamingResponse
-from constants import HTML_PAGE
+from fastapi.responses import StreamingResponse, FileResponse
+from constants import CONFIG_TYPES
+from complete_process import nt_lock, config
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -28,15 +29,77 @@ def get_frame():
             yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
 
-@app.get('/')
-def index(request: Request):
-    # Render the index.html template with current confidence threshold value
-    return templates.TemplateResponse(HTML_PAGE, {"request": request})
+
+# Maintain a list of active connections
+connections = []
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    global config
+    await websocket.accept()
+    # Add the new connection to the list
+    connections.append(websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            key, value = data.split(": ")
+            print(f"Key: {key}, Value: {value}")
+            global config
+            print()
+            print('UPDATE FROM WEB GUI FOUND')
+            print(f"DATA: {key} = {value}")
+            print()
+            with nt_lock:
+                print("Network_Thread acquired lock")
+                if key in CONFIG_TYPES:
+                    if key == "class":
+                        try:
+                            typecasted_value = [int(v) for v in value]
+                            config[key] = typecasted_value
+                            print()
+                            print('CLASSES UPDATED')
+                            print()
+                        except (ValueError, TypeError):
+                            # Failed to typecast, use original value
+                            print()
+                            print('ERROR: TYPECASTING FAILED')
+                            print()
+                            pass
+                    else:
+                        try:
+                            typecasted_value = CONFIG_TYPES[key](value)
+                            config[key] = typecasted_value
+                            print()
+                            print(f'CONFIG UPDATED: config[{key}] = {typecasted_value}')
+                            print()
+                        except (ValueError, TypeError):
+                            # Failed to typecast, use original value
+                            print()
+                            print('ERROR: TYPECASTING FAILED')
+                            print()
+                            pass
+                print("Network_Thread released lock")
+            # Broadcast the received message to all connected clients
+            for connection in connections:
+                await connection.send_text(data)
+    finally:
+        # Remove the closed connection from the list
+        connections.remove(websocket)
+
+
+@app.get("/")
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get('/video_feed')
 def video_feed():
     # Route for streaming video feed
     return StreamingResponse(get_frame(), media_type='multipart/x-mixed-replace; boundary=frame')
+
+@app.get("/favicon.ico")
+async def get_favicon():
+    return FileResponse("standard.png")
 
 if __name__ == "__main__":
     import uvicorn
