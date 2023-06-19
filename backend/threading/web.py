@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
 from constants import CONFIG_TYPES
-from complete_process import nt_lock, config
+from complete_process import nt_lock, config, load_config, save_config
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -44,11 +44,12 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             global config
             data = await websocket.receive_text()
-            key, value = data.split(": ")
             print()
             print('UPDATE FROM WEB GUI FOUND')
-            print(f"DATA: {key} = {value}")
+            print(f"DATA: {data}")
             print()
+            key, value = data.split(": ")
+            
             with nt_lock:
                 print("Network_Thread acquired lock")
                 if key in CONFIG_TYPES:

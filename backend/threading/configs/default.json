@@ -2,7 +2,6 @@
     "conf": 25,
     "iou": 70,
     "half": false,
-    "device": "0",
     "ss": false,
     "ssd": false,
     "max": 5,

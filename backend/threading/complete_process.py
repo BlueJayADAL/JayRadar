@@ -21,10 +21,12 @@ nt_lock = threading.Lock()
 config_event = threading.Event()
 
 def save_config(filename, config):
+    filename = f'./configs/{filename}.json'
     with open(filename, 'w') as file:
         json.dump(config, file, indent=4)
 
 def load_config(filename, config):
+    filename = f'./configs/{filename}.json'
     try:    
         with open(filename, 'r') as file:
             new_config = json.load(file)
@@ -32,7 +34,7 @@ def load_config(filename, config):
         print(f"File {filename} not found!")
         return config
     typecasted_config = {}
-    for key, value in CONFIG_TYPES.items():
+    for key, value in new_config.items():
         if key == "class":
             try:
                 typecasted_value = [int(v) for v in value]
@@ -64,7 +66,7 @@ config = {
             -1
         ]
     }
-config = load_config('default.json', config)
+config = load_config('default', config)
 
 def test_process():
     global config
