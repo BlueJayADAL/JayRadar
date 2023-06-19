@@ -42,10 +42,9 @@ async def websocket_endpoint(websocket: WebSocket):
 
     try:
         while True:
+            global config
             data = await websocket.receive_text()
             key, value = data.split(": ")
-            print(f"Key: {key}, Value: {value}")
-            global config
             print()
             print('UPDATE FROM WEB GUI FOUND')
             print(f"DATA: {key} = {value}")

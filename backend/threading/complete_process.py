@@ -87,6 +87,10 @@ def test_process():
         print()
         with nt_lock:
             print("Network_Thread acquired lock")
+            if key == "load_config":
+                config = load_config(value, config)
+            if key == "save_config":
+                save_config(value, config)
             if key in CONFIG_TYPES:
                 if key == "class":
                     try:
