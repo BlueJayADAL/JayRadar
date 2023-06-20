@@ -228,7 +228,7 @@ calc_disp = tk.Label(camframe, bg='grey', text="Output Information: (x, y, area)
 
 
 # Set up socket connection to receive frames
-host = '10.4.10.46'  # Change to the appropriate IP address
+host = '10.4.10.38'  # Change to the appropriate IP address
 port = 9999  # Change to the appropriate port
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((host, port))
