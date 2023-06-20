@@ -42,7 +42,6 @@ async def websocket_endpoint(websocket: WebSocket):
 
     try:
         while True:
-            global config
             data = await websocket.receive_text()
             print()
             print('UPDATE FROM WEB GUI FOUND')
@@ -52,6 +51,14 @@ async def websocket_endpoint(websocket: WebSocket):
             
             with nt_lock:
                 print("Network_Thread acquired lock")
+                if key == "config":
+                    load_config(value)
+                    for key, value in config.items():
+                        for connection in connections:
+                            data = f'{key}: {value}'
+                            await connection.send_text(data)
+                if key == "save_config":
+                    save_config(value)
                 if key in CONFIG_TYPES:
                     if key == "class":
                         try:

@@ -20,53 +20,51 @@ nt_lock = threading.Lock()
 
 config_event = threading.Event()
 
-def save_config(filename, config):
-    filename = f'./configs/{filename}.json'
-    with open(filename, 'w') as file:
-        json.dump(config, file, indent=4)
-
-def load_config(filename, config):
-    filename = f'./configs/{filename}.json'
-    try:    
-        with open(filename, 'r') as file:
-            new_config = json.load(file)
-    except FileNotFoundError:
-        print(f"File {filename} not found!")
-        return config
-    typecasted_config = {}
-    for key, value in new_config.items():
-        if key == "class":
-            try:
-                typecasted_value = [int(v) for v in value]
-                typecasted_config[key] = typecasted_value
-            except (ValueError, TypeError):
-                # Failed to typecast, use original value
-                typecasted_config[key] = config[key]
-        else:
-            try:
-                typecasted_value = CONFIG_TYPES[key](value)
-                typecasted_config[key] = typecasted_value
-            except (ValueError, TypeError):
-                # Failed to typecast, use original value
-                typecasted_config[key] = config[key]
-    
-        #nt.putValue(key, config[key])
-
-
-    return typecasted_config
 config = {  
         "conf": 25,
         "iou": 70,
         "half": False,
         "ss": False,
         "ssd": False,
-        "max": 5,
-        "img": 480,
+        "max": 7,
+        "img": 640,
         "class": [
             -1
         ]
     }
-config = load_config('default', config)
+
+def save_config(filename):
+    global config
+    filename = f'./configs/{filename}.json'
+    with open(filename, 'w') as file:
+        json.dump(config, file, indent=4)
+
+def load_config(filename):
+    global config
+    filename = f'./configs/{filename}.json'
+    try:    
+        with open(filename, 'r') as file:
+            print(f'Sucessfully loaded {filename}')
+            new_config = json.load(file)
+    except FileNotFoundError:
+        print(f"File {filename} not found!")
+        return -1
+    for key, value in new_config.items():
+        if key == "class":
+            try:
+                typecasted_value = [int(v) for v in value]
+                config[key] = typecasted_value
+            except (ValueError, TypeError):
+                # Failed to typecast, use original value
+                pass
+        else:
+            try:
+                typecasted_value = CONFIG_TYPES[key](value)
+                config[key] = typecasted_value
+            except (ValueError, TypeError):
+                # Failed to typecast, use original value
+                pass
+    return 0
 
 def test_process():
     global config
@@ -80,6 +78,8 @@ def test_process():
 
     # Retrieve the JayRadar table for us to use
     nt = NetworkTables.getTable(TABLE_NAME)
+    with nt_lock:
+        load_config('default')
     
     def value_changed(table, key, value, isNew):
         global config
