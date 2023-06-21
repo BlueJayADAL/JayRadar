@@ -42,7 +42,6 @@ async def websocket_endpoint(websocket: WebSocket):
 
     try:
         while True:
-            global config
             data = await websocket.receive_text()
             print()
             print('UPDATE FROM WEB GUI FOUND')
@@ -52,20 +51,48 @@ async def websocket_endpoint(websocket: WebSocket):
             
             with nt_lock:
                 print("Network_Thread acquired lock")
+                if key == "config":
+                    load_config(value)
+                    for key, value in config.items():
+                        for connection in connections:
+                            data = f'{key}: {value}'
+                            await connection.send_text(data)
+                    print()
+                    print('Config Loaded')
+                    print()
+                if key == "save_config":
+                    save_config(value)
                 if key in CONFIG_TYPES:
                     if key == "class":
                         try:
-                            typecasted_value = [int(v) for v in value]
+                            temp = value.split(',')
+                            typecasted_value = [int(v) for v in temp]
                             config[key] = typecasted_value
                             print()
-                            print('CLASSES UPDATED')
+                            print(f'CONFIG UPDATED: config[{key}] = {typecasted_value}')
                             print()
-                        except (ValueError, TypeError):
+                        except (ValueError, TypeError, AttributeError):
                             # Failed to typecast, use original value
                             print()
                             print('ERROR: TYPECASTING FAILED')
                             print()
                             pass
+                    elif CONFIG_TYPES[key] == bool:
+                        if value.lower() == 'true':
+                            config[key] = True
+                            print()
+                            print(f'CONFIG UPDATED: config[{key}] = {config[key]}')
+                            print()
+                        elif value.lower() == 'false':
+                            config[key] = False
+                            print()
+                            print(f'CONFIG UPDATED: config[{key}] = {config[key]}')
+                            print()
+                        else:
+                            # Handle case when the value is neither 'true' nor 'false'
+                            print()
+                            print('ERROR: Invalid boolean value')
+                            print()
                     else:
                         try:
                             typecasted_value = CONFIG_TYPES[key](value)
@@ -105,4 +132,4 @@ if __name__ == "__main__":
     import uvicorn
     from constants import SOCKET_IP
 
-    uvicorn.run(app, host=SOCKET_IP, port=8000)
+    uvicorn.run(app, host='0.0.0.0', port=8000)

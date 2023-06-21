@@ -1,8 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const messagesDiv = document.getElementById("messages");
-    const messageForm = document.getElementById("message-form");
-    const userInput = document.getElementById("user-input");
-    const messageInput = document.getElementById("message-input");
+    const debuggingForm = document.getElementById("debugging-form");
+    const keyInput = document.getElementById("key-input");
+    const valueInput = document.getElementById("value-input");
     const sliders = document.querySelectorAll('input[type="range"]');
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     const configDropdown = document.getElementById("config");
@@ -15,14 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const sendMessage = (user, message) => {
       const formattedMessage = `${user}: ${message}`;
       socket.send(formattedMessage);
-      messageInput.value = "";
     };
   
-    messageForm.addEventListener("submit", (event) => {
+    debuggingForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      const user = userInput.value;
-      const message = messageInput.value;
+      const user = keyInput.value;
+      const message = valueInput.value;
       sendMessage(user, message);
+      valueInput.value = "";
     });
   
     sliders.forEach(slider => {
@@ -55,7 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
   
       socket.addEventListener('message', (event) => {
         const receivedMessage = event.data;
-        const [key, value] = receivedMessage.split(": ");
+        const [key, receivedValue] = receivedMessage.split(": ");
+        const value = receivedValue.toLowerCase();  // Assign the converted lowercase value to a new variable
+
         const checkbox = document.getElementById(key);
         if (checkbox) {
           checkbox.checked = value === 'true';
