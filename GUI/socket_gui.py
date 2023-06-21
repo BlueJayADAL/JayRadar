@@ -193,7 +193,7 @@ Max_Detect_Spin = Spinbox(tab2, name="max", min=0, max=300, increment=1, default
 
 # Label and initialize the Resolution Width spinbox
 img_size = tk.Label(tab2, bg='grey', text="Image Size:", font=("Arial Bold", 12)).grid(row=6, column=0)
-img_size_spin = Spinbox(tab2, name="img", min=100, max=9999, increment=32, default_value=table.getNumber("img",640)).grid(row=7, column=0)
+img_size_spin = Spinbox(tab2, name="img", min=128, max=6400, increment=32, default_value=table.getNumber("img",640)).grid(row=7, column=0)
 
 
 # Create the 'Class Filters' label and text box
@@ -212,13 +212,13 @@ update_button = tk.Button(tab2, text="Update", command=update_values).grid(row=1
 # Create the checkboxes
     # Create a variable to hold the checkbox state, then create and display the checkbox widget
 half_checkbox_var = tk.IntVar()
-half_checkbox = tk.Checkbutton(tab2, text="Half Precision Checkbox", bg="grey",variable=half_checkbox_var, command=half_checkbox_changed).grid(row=11, column=0)
+half_checkbox = tk.Checkbutton(tab3, text="Half Precision Checkbox", bg="grey",variable=half_checkbox_var, command=half_checkbox_changed).grid(row=0, column=0)
 
 ss_checkbox_var = tk.IntVar()
-ss_checkbox = tk.Checkbutton(tab2, text="Screenshot Checkbox", bg="grey", variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=12, column=0)
+ss_checkbox = tk.Checkbutton(tab3, text="Screenshot Checkbox", bg="grey", variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=1, column=0)
 
 ssd_checkbox_var = tk.IntVar()
-ssd_checkbox = tk.Checkbutton(tab2, text="Screenshot Data Checkbox", bg="grey", variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=13, column=0)
+ssd_checkbox = tk.Checkbutton(tab3, text="Screenshot Data Checkbox", bg="grey", variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=2, column=0)
 
 
 # Create the widgets in camframe (camera output)
