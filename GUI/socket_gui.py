@@ -9,10 +9,8 @@ from spinbox import Spinbox
 from networktables import NetworkTables
 from boundingbox import draw_box_on_frame
 
-# Start Network Tables
 NetworkTables.initialize(server="10.4.10.146")
 table = NetworkTables.getTable('JayRadar')
-
 
 # Handle dropdown menu selections
 def filter_option_selected(selected_option):
@@ -86,6 +84,8 @@ def show_frames():
         data = data[msg_size:]
         frame = pickle.loads(frame_data)
         objects_key = table.getNumberArray('objects_key', [-1])
+        table.putNumberArray('objects_key', objects_key)
+
         #print(objects_key)
         
         for index, key in enumerate(objects_key):
@@ -94,7 +94,7 @@ def show_frames():
             #print(box_info)
             if box_info[0] == -1:
                 break
-        
+
             frame = draw_box_on_frame(frame.copy(), box_info)
 
         # Convert the color channels from BGR to RGB
@@ -145,15 +145,13 @@ notebook = ttk.Notebook(frame_1)
 
 
 # Create tabs
-tab1 = tk.Frame(notebook, bg='purple')
-tab2 = tk.Frame(notebook, bg='grey')
-tab3 = tk.Frame(notebook, bg='green')
+tab1 = tk.Frame(notebook, bg='blue2')
+tab2 = tk.Frame(notebook, bg='gray25')
 
 
 # Add tabs to the Notebook widget
-notebook.add(tab1, text="Model")
-notebook.add(tab2, text="Tuning")
-notebook.add(tab3, text="Output")
+notebook.add(tab1, text="Configuration")
+notebook.add(tab2, text="Options")
 
 
 # Organize the contents of frame_1, centering and filling space appropriately
@@ -163,42 +161,41 @@ notebook.grid(row=0, column=0, sticky="nsew")
 
 tab1.grid_columnconfigure(0, weight=1)
 tab2.grid_columnconfigure(0, weight=1)
-tab3.grid_columnconfigure(0, weight=1)
 
 
 # Label and initialize the confidence threshold spinbox
-Conf_Thresh = tk.Label(tab2, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=0, column=0)
-Conf_Thresh_Spin = Spinbox(tab2, name="conf", min=0, max=100, increment=1, default_value=table.getNumber("conf",50)).grid(row=1, column=0)
+Conf_Thresh = tk.Label(tab1, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=0, column=0)
+Conf_Thresh_Spin = Spinbox(tab1, name="conf", min=0, max=100, increment=1, default_value=table.getNumber("conf",50)).grid(row=1, column=0)
 
-IoU_Thresh = tk.Label(tab2, bg='grey', text="IoU Threshold:", font=("Arial Bold", 12)).grid(row=2, column=0)
-IoU_Thresh_Spin = Spinbox(tab2, name="iou", min=0, max=100, increment=1, default_value=table.getNumber("iou",50)).grid(row=3, column=0)
+IoU_Thresh = tk.Label(tab1, bg='grey', text="IoU Threshold:", font=("Arial Bold", 12)).grid(row=2, column=0)
+IoU_Thresh_Spin = Spinbox(tab1, name="iou", min=0, max=100, increment=1, default_value=table.getNumber("iou",50)).grid(row=3, column=0)
 
 
 # Label the 'Model' dropdown
-model_type = tk.Label(tab1, bg='grey', text="Model", font=("Arial Bold", 12)).grid(row=0, column=0, pady=5)
+#model_type = tk.Label(tab1, bg='grey', text="Model", font=("Arial Bold", 12)).grid(row=0, column=0, pady=5)
 
 
 # Create the 'Model' dropdown. Model_Options forms the list of options to choose from
-selected_model_option = tk.StringVar(mainwin)
-selected_model_option.set("1")  # Set default option
-Model_Options = ["1", "2", "3", "4", "5"]
-Model_OptionMenu = OptionMenu(tab1, selected_model_option, *Model_Options, command=model_option_selected)
-Model_OptionMenu.grid(row=1, column=0)
+#selected_model_option = tk.StringVar(mainwin)
+#selected_model_option.set("1")  # Set default option
+#Model_Options = ["1", "2", "3", "4", "5"]
+#Model_OptionMenu = OptionMenu(tab1, selected_model_option, *Model_Options, command=model_option_selected)
+#Model_OptionMenu.grid(row=1, column=0)
 
 
 # Label and initialize the Max Detections spinbox
-Max_Detect = tk.Label(tab2, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
-Max_Detect_Spin = Spinbox(tab2, name="max", min=0, max=300, increment=1, default_value=table.getNumber("max",10)).grid(row=5, column=0)
+Max_Detect = tk.Label(tab1, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
+Max_Detect_Spin = Spinbox(tab1, name="max", min=0, max=300, increment=1, default_value=table.getNumber("max",10)).grid(row=5, column=0)
 
 
 # Label and initialize the Resolution Width spinbox
-img_size = tk.Label(tab2, bg='grey', text="Image Size:", font=("Arial Bold", 12)).grid(row=6, column=0)
-img_size_spin = Spinbox(tab2, name="img", min=128, max=6400, increment=32, default_value=table.getNumber("img",640)).grid(row=7, column=0)
+img_size = tk.Label(tab1, bg='grey', text="Image Size:", font=("Arial Bold", 12)).grid(row=6, column=0)
+img_size_spin = Spinbox(tab1, name="img", min=128, max=6400, increment=32, default_value=table.getNumber("img",640)).grid(row=7, column=0)
 
 
 # Create the 'Class Filters' label and text box
-class_filters = tk.Label(tab2, bg='grey', text="Class:", font=("Arial Bold", 12)).grid(row=8, column=0)
-class_entry = tk.Entry(tab2)
+class_filters = tk.Label(tab1, bg='grey', text="Class:", font=("Arial Bold", 12)).grid(row=8, column=0)
+class_entry = tk.Entry(tab1)
 
 # Set the initial value to '-1' and place on the grid
 class_entry.insert(tk.END, '-1')
@@ -206,19 +203,19 @@ class_entry.grid(row=9, column=0, pady=4)
 
 
 # Create the 'Update' button
-update_button = tk.Button(tab2, text="Update", command=update_values).grid(row=10, column=0)
+update_button = tk.Button(tab1, text="Update", command=update_values).grid(row=10, column=0)
 
 
 # Create the checkboxes
     # Create a variable to hold the checkbox state, then create and display the checkbox widget
 half_checkbox_var = tk.IntVar()
-half_checkbox = tk.Checkbutton(tab3, text="Half Precision Checkbox", bg="grey",variable=half_checkbox_var, command=half_checkbox_changed).grid(row=0, column=0)
+half_checkbox = tk.Checkbutton(tab2, text="Half Precision Checkbox", bg="grey",variable=half_checkbox_var, command=half_checkbox_changed).grid(row=0, column=0)
 
 ss_checkbox_var = tk.IntVar()
-ss_checkbox = tk.Checkbutton(tab3, text="Screenshot Checkbox", bg="grey", variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=1, column=0)
+ss_checkbox = tk.Checkbutton(tab2, text="Screenshot Checkbox", bg="grey", variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=1, column=0)
 
 ssd_checkbox_var = tk.IntVar()
-ssd_checkbox = tk.Checkbutton(tab3, text="Screenshot Data Checkbox", bg="grey", variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=2, column=0)
+ssd_checkbox = tk.Checkbutton(tab2, text="Screenshot Data Checkbox", bg="grey", variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=2, column=0)
 
 
 # Create the widgets in camframe (camera output)
