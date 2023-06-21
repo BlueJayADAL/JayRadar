@@ -54,6 +54,7 @@ def load_config(filename):
             try:
                 typecasted_value = [int(v) for v in value]
                 config[key] = typecasted_value
+                print(f'config[{key}] = {config[key]}')
             except (ValueError, TypeError):
                 # Failed to typecast, use original value
                 pass
@@ -61,6 +62,7 @@ def load_config(filename):
             try:
                 typecasted_value = CONFIG_TYPES[key](value)
                 config[key] = typecasted_value
+                print(f'config[{key}] = {config[key]}')
             except (ValueError, TypeError):
                 # Failed to typecast, use original value
                 pass
@@ -88,7 +90,7 @@ def test_process():
         print(f"Value changed: {key} = {value}")
         print()
         with nt_lock:
-            print("Network_Thread acquired lock")
+            print("Processing_Thread acquired lock")
             if key == "load_config":
                 config = load_config(value, config)
             if key == "save_config":
@@ -122,7 +124,7 @@ def test_process():
                         print('ERROR: TYPECASTING FAILED')
                         print()
                         pass
-            print("Network_Thread released lock")
+            print("Processing_Thread released lock")
     
     time.sleep(1)
     nt.addEntryListener(value_changed)
