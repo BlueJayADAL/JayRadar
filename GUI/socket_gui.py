@@ -9,8 +9,17 @@ from spinbox import Spinbox
 from networktables import NetworkTables
 from boundingbox import draw_box_on_frame
 
-NetworkTables.initialize(server="10.4.10.146")
-table = NetworkTables.getTable('JayRadar')
+nt_ip = "10.4.10.146"
+table_name = 'JayRadar'
+socket_ip = '10.4.10.38'  # Change to the appropriate IP address
+port = 9999  # Change to the appropriate port
+default_conf = 1
+default_img = 640
+default_iou = 0
+default_max = 1
+
+NetworkTables.initialize(server=nt_ip)
+table = NetworkTables.getTable(table_name)
 
 # Handle dropdown menu selections
 def filter_option_selected(selected_option):
@@ -165,10 +174,10 @@ tab2.grid_columnconfigure(0, weight=1)
 
 # Label and initialize the confidence threshold spinbox
 Conf_Thresh = tk.Label(tab1, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=0, column=0)
-Conf_Thresh_Spin = Spinbox(tab1, name="conf", min=0, max=100, increment=1, default_value=table.getNumber("conf",50)).grid(row=1, column=0)
+Conf_Thresh_Spin = Spinbox(tab1, name="conf", min=0, max=100, increment=1, default_value=table.getNumber("conf",default_conf)).grid(row=1, column=0)
 
 IoU_Thresh = tk.Label(tab1, bg='grey', text="IoU Threshold:", font=("Arial Bold", 12)).grid(row=2, column=0)
-IoU_Thresh_Spin = Spinbox(tab1, name="iou", min=0, max=100, increment=1, default_value=table.getNumber("iou",50)).grid(row=3, column=0)
+IoU_Thresh_Spin = Spinbox(tab1, name="iou", min=0, max=100, increment=1, default_value=table.getNumber("iou",default_iou)).grid(row=3, column=0)
 
 
 # Label the 'Model' dropdown
@@ -185,12 +194,12 @@ IoU_Thresh_Spin = Spinbox(tab1, name="iou", min=0, max=100, increment=1, default
 
 # Label and initialize the Max Detections spinbox
 Max_Detect = tk.Label(tab1, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
-Max_Detect_Spin = Spinbox(tab1, name="max", min=0, max=300, increment=1, default_value=table.getNumber("max",10)).grid(row=5, column=0)
+Max_Detect_Spin = Spinbox(tab1, name="max", min=0, max=300, increment=1, default_value=table.getNumber("max",default_max)).grid(row=5, column=0)
 
 
 # Label and initialize the Resolution Width spinbox
 img_size = tk.Label(tab1, bg='grey', text="Image Size:", font=("Arial Bold", 12)).grid(row=6, column=0)
-img_size_spin = Spinbox(tab1, name="img", min=128, max=6400, increment=32, default_value=table.getNumber("img",640)).grid(row=7, column=0)
+img_size_spin = Spinbox(tab1, name="img", min=128, max=6400, increment=32, default_value=table.getNumber("img",default_img)).grid(row=7, column=0)
 
 
 # Create the 'Class Filters' label and text box
@@ -225,10 +234,8 @@ calc_disp = tk.Label(camframe, bg='grey', text="Output Information: (x, y, area)
 
 
 # Set up socket connection to receive frames
-host = '10.4.10.38'  # Change to the appropriate IP address
-port = 9999  # Change to the appropriate port
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect((host, port))
+client_socket.connect((socket_ip, port))
 
 
 # Start the thread to receive and display frames
