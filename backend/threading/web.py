@@ -130,6 +130,11 @@ async def get_favicon():
 
 if __name__ == "__main__":
     import uvicorn
+    import threading
+    from capture import capture_frames
     from constants import SOCKET_IP
+
+    capture_thread = threading.Thread(target = capture_frames)
+    capture_thread.start()
 
     uvicorn.run(app, host='0.0.0.0', port=8000)

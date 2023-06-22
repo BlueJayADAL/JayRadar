@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const sliders = document.querySelectorAll('input[type="range"]');
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     const configDropdown = document.getElementById("config");
+    const saveButton = document.getElementById("saveButton");
+    const resetButton = document.getElementById("resetButton");
     const socket = new WebSocket(`ws://${location.host}/ws`);
   
     socket.onopen = () => {
@@ -67,6 +69,17 @@ document.addEventListener("DOMContentLoaded", () => {
     configDropdown.addEventListener("change", (event) => {
       const value = event.target.value;
       const key = event.target.id;
+      sendMessage(key, value);
+    });
+    saveButton.addEventListener("click", () => {
+      const key = "save_config";
+      const value = configDropdown.value;
+      sendMessage(key, value);
+    });
+  
+    resetButton.addEventListener("click", () => {
+      const key = "config";
+      const value = configDropdown.value;
       sendMessage(key, value);
     });
   });
