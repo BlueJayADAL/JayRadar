@@ -151,7 +151,7 @@ tab2 = tk.Frame(notebook, bg='gray25')
 
 # Add tabs to the Notebook widget
 notebook.add(tab1, text="Configuration")
-notebook.add(tab2, text="Options")
+notebook.add(tab2, text="Filters")
 
 
 # Organize the contents of frame_1, centering and filling space appropriately
@@ -194,28 +194,28 @@ img_size_spin = Spinbox(tab1, name="img", min=128, max=6400, increment=32, defau
 
 
 # Create the 'Class Filters' label and text box
-class_filters = tk.Label(tab1, bg='grey', text="Class:", font=("Arial Bold", 12)).grid(row=8, column=0)
-class_entry = tk.Entry(tab1)
+class_filters = tk.Label(tab2, bg='grey', text="Class:", font=("Arial Bold", 12)).grid(row=0, column=0)
+class_entry = tk.Entry(tab2)
 
 # Set the initial value to '-1' and place on the grid
 class_entry.insert(tk.END, '-1')
-class_entry.grid(row=9, column=0, pady=4)
+class_entry.grid(row=1, column=0, pady=4)
 
 
 # Create the 'Update' button
-update_button = tk.Button(tab1, text="Update", command=update_values).grid(row=10, column=0)
+update_button = tk.Button(tab2, text="Update", command=update_values).grid(row=2, column=0)
 
 
 # Create the checkboxes
     # Create a variable to hold the checkbox state, then create and display the checkbox widget
 half_checkbox_var = tk.IntVar()
-half_checkbox = tk.Checkbutton(tab2, text="Half Precision Checkbox", bg="grey",variable=half_checkbox_var, command=half_checkbox_changed).grid(row=0, column=0)
+half_checkbox = tk.Checkbutton(tab2, text="Half Precision Checkbox", bg="grey",variable=half_checkbox_var, command=half_checkbox_changed).grid(row=8, column=0)
 
 ss_checkbox_var = tk.IntVar()
-ss_checkbox = tk.Checkbutton(tab2, text="Screenshot Checkbox", bg="grey", variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=1, column=0)
+ss_checkbox = tk.Checkbutton(tab2, text="Screenshot Checkbox", bg="grey", variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=9, column=0)
 
 ssd_checkbox_var = tk.IntVar()
-ssd_checkbox = tk.Checkbutton(tab2, text="Screenshot Data Checkbox", bg="grey", variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=2, column=0)
+ssd_checkbox = tk.Checkbutton(tab2, text="Screenshot Data Checkbox", bg="grey", variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=10, column=0)
 
 
 # Create the widgets in camframe (camera output)
