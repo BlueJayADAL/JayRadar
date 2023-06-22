@@ -6,9 +6,9 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/styles.css') }}">
 </head>
 <body>
+    <h1>Object Detection</h1>
     <div class="container">
-        <div class="column">
-            <h1>Object Detection</h1>
+        <div class="left-column">
             <select id="config">
                 <option value="default">Config: Default</option>
                 <option value="0">Config: 0</option>
@@ -59,15 +59,17 @@
                     <label for="half">Half</label>
                 </div>
             </div>
-            <div class="textbox">
+            <div class="classes">
                 <label for="class">Class:</label>
                 <input type="text" id="class" name="class">
-            </div>
-            <div class="submit">
                 <button id="submitButton">Submit</button>
             </div>
+            <div class="bottom-buttons">
+                <button id="resetButton">Reset</button>
+                <button id="saveButton">Save</button>
+            </div>
         </div>
-        <div class="column">
+        <div class="right-column">
             <img id="videoFeed" src="{{ url_for('video_feed') }}" width="640" height="480">
             <form id="debugging-form">
                 <input type="text" id="key-input" placeholder="Key" value="key">

@@ -1,12 +1,15 @@
+body {
+  background-color: #c8c8c8;
+}
+
 .container {
-    display: flex;
-  }
-  
-  .left-column {
-    flex: 1;
-  }
-  
-  .right-column {
-    flex: 2;
-  }
-  
+  display: flex;
+}
+
+.left-column {
+  flex: 1;
+}
+
+.right-column {
+  flex: 2;
+}
