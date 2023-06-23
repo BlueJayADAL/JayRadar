@@ -4,8 +4,9 @@
     "half": false,
     "ss": false,
     "ssd": false,
+    "raw": false,
     "max": 5,
-    "img": 480,
+    "img": 160,
     "class": [
         -1
     ]

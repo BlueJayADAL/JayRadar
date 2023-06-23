@@ -1,11 +1,18 @@
 import cv2
 import json
 import threading
+from collections import deque
 from ultralytics import YOLO
-from constants import MODEL_NAME, NT_SERVER_IP, TABLE_NAME, CONFIG_TYPES
+from constants import MODEL_NAME, NT_SERVER_IP, TABLE_NAME, CONFIG_TYPES, MAX_FRAMES
 from capture import frame_queue
 from networktables import NetworkTables
 import time
+
+debugging = False
+
+debugging_queue = deque(maxlen=MAX_FRAMES)
+
+debugging_event = threading.Event()
 
 network_setup_event = threading.Event()
 
@@ -26,6 +33,7 @@ config = {
         "half": False,
         "ss": False,
         "ssd": False,
+        "raw": False,
         "max": 7,
         "img": 640,
         "class": [
@@ -69,7 +77,7 @@ def load_config(filename):
     return 0
 
 def test_process():
-    global config
+    global config, debugging
     """
     Function to process frames from the frame queue using YOLOv8.
     """
@@ -141,6 +149,7 @@ def test_process():
                 half = config['half']
                 save = config['ss']
                 save_conf = config['ssd']
+                debugging = config['raw']
                 max_det = config['max']
                 image_size = config['img']
                 classes = config['class']
@@ -192,10 +201,14 @@ def test_process():
             nt.putNumberArray('objects_key', objects)
             
             # Annotate and display the frame for testing, will be removed in final version
-            annotated_frame = results[0].plot()
+            if debugging:
+                annotated_frame = results[0].plot()
 
-            
-            cv2.imshow('YOLOv8 Inference', annotated_frame)
+                debugging_queue.append(annotated_frame) 
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+                debugging_event.set()
+
+                cv2.imshow('YOLOv8 Inference', annotated_frame)
+
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break

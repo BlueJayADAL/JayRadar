@@ -17,8 +17,8 @@ capture_thread.start()
 
 #network_setup_event.wait()
 
-send_thread = threading.Thread(target=send_frames)
-send_thread.start()
+#send_thread = threading.Thread(target=send_frames)
+#send_thread.start()
 
 processing_thread = threading.Thread(target= test_process)
 processing_thread.start()

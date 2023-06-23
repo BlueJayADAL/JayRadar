@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
 from constants import CONFIG_TYPES
-from complete_process import nt_lock, config, load_config, save_config
+from complete_process import nt_lock, config, debugging_queue, debugging_event, debugging, load_config, save_config
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -16,18 +16,32 @@ def get_frame():
         
     while True:
         # Get the latest frame from the queue
-        process_event.wait()  # Wait for the event to be set, so we know there's a frame
-        process_event.clear()  # Clear the event, it will be set again next time
-
-        frame = frame_queue[-1] if frame_queue else None
-
-        if frame is not None:
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame_data = buffer.tobytes()
+        if debugging:
+            debugging_event.wait()
+            debugging_event.clear()
             
-            # Yield the frame data as MJPEG response
-            yield (b'--frame\r\n'
-                b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
+            frame = debugging_queue[-1] if debugging_queue else None
+
+            if frame is not None:
+                ret, buffer = cv2.imencode('.jpg', frame)
+                frame_data = buffer.tobytes()
+                
+                # Yield the frame data as MJPEG response
+                yield (b'--frame\r\n'
+                    b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
+        else:
+            process_event.wait()  # Wait for the event to be set, so we know there's a frame
+            process_event.clear()  # Clear the event, it will be set again next time
+
+            frame = frame_queue[-1] if frame_queue else None
+
+            if frame is not None:
+                ret, buffer = cv2.imencode('.jpg', frame)
+                frame_data = buffer.tobytes()
+                
+                # Yield the frame data as MJPEG response
+                yield (b'--frame\r\n'
+                    b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
 
 
 # Maintain a list of active connections

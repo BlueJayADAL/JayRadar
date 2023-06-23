@@ -1,11 +1,12 @@
 {
-    "conf": 1,
-    "iou": 0,
+    "conf": 25,
+    "iou": 70,
     "half": false,
     "ss": false,
     "ssd": false,
-    "max": 1,
-    "img": 640,
+    "raw": true,
+    "max": 5,
+    "img": 160,
     "class": [
         -1
     ]
