@@ -104,7 +104,7 @@ mainwin.configure(bg=dark_blue)
 
 
 # Create the internal frames and balance them horizontally
-frame_1 = Frame(mainwin, bg=cool_gray)
+frame_1 = Frame(mainwin, bg=primary_blue)
 frame_1.grid(row=0, column=0, sticky="nsew", padx=1)
 
 camframe = Frame(mainwin, bg=cool_gray)
@@ -142,10 +142,10 @@ tab2.grid_columnconfigure(0, weight=1)
 
 
 # Label and initialize the confidence threshold spinbox
-Conf_Thresh = tk.Label(tab1, bg=cool_gray, text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=0, column=0)
+Conf_Thresh = tk.Label(tab1, bg=cool_gray, text="Confidence Threshold:", pady=4, font=("Arial Bold", 12)).grid(row=0, column=0)
 Conf_Thresh_Spin = Spinbox(tab1, name="conf", min=0, max=100, increment=1, default_value=table.getNumber("conf",default_conf)).grid(row=1, column=0)
 
-IoU_Thresh = tk.Label(tab1, bg=cool_gray, text="IoU Threshold:", font=("Arial Bold", 12)).grid(row=2, column=0)
+IoU_Thresh = tk.Label(tab1, bg=cool_gray, text="IoU Threshold:", pady=4, font=("Arial Bold", 12)).grid(row=2, column=0)
 IoU_Thresh_Spin = Spinbox(tab1, name="iou", min=0, max=100, increment=1, default_value=table.getNumber("iou",default_iou)).grid(row=3, column=0)
 
 
@@ -162,12 +162,12 @@ IoU_Thresh_Spin = Spinbox(tab1, name="iou", min=0, max=100, increment=1, default
 
 
 # Label and initialize the Max Detections spinbox
-Max_Detect = tk.Label(tab1, bg=cool_gray, text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
+Max_Detect = tk.Label(tab1, bg=cool_gray, text="Max Detections:", pady=4, font=("Arial Bold", 12)).grid(row=4, column=0)
 Max_Detect_Spin = Spinbox(tab1, name="max", min=0, max=300, increment=1, default_value=table.getNumber("max",default_max)).grid(row=5, column=0)
 
 
 # Label and initialize the Resolution Width spinbox
-img_size = tk.Label(tab1, bg=cool_gray, text="Image Size:", font=("Arial Bold", 12)).grid(row=6, column=0)
+img_size = tk.Label(tab1, bg=cool_gray, text="Image Size:", pady=4, font=("Arial Bold", 12)).grid(row=6, column=0)
 img_size_spin = Spinbox(tab1, name="img", min=128, max=6400, increment=32, default_value=table.getNumber("img",default_img)).grid(row=7, column=0)
 
 
