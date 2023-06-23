@@ -5,7 +5,9 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
 from constants import CONFIG_TYPES
-from complete_process import nt_lock, config, debugging_queue, debugging_event, debugging, load_config, save_config
+from complete_process import nt_lock, config, debugging_queue, debugging_event, load_config, save_config
+
+debugging = False
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -13,6 +15,7 @@ templates = Jinja2Templates(directory="templates")
 
 
 def get_frame():
+    global debugging
         
     while True:
         # Get the latest frame from the queue
@@ -49,10 +52,16 @@ connections = []
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    global config
+    global config, debugging
     await websocket.accept()
     # Add the new connection to the list
     connections.append(websocket)
+
+    with nt_lock:
+        for key, value in config.items():
+            data = f'{key}: {value}'
+            await websocket.send_text(data)
+
 
     try:
         while True:
@@ -94,11 +103,15 @@ async def websocket_endpoint(websocket: WebSocket):
                     elif CONFIG_TYPES[key] == bool:
                         if value.lower() == 'true':
                             config[key] = True
+                            if key == 'raw':
+                                debugging = True
                             print()
                             print(f'CONFIG UPDATED: config[{key}] = {config[key]}')
                             print()
                         elif value.lower() == 'false':
                             config[key] = False
+                            if key == 'raw':
+                                debugging = False
                             print()
                             print(f'CONFIG UPDATED: config[{key}] = {config[key]}')
                             print()

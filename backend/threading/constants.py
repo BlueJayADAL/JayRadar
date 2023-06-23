@@ -1,5 +1,5 @@
 # NetworkTables IP address
-NT_SERVER_IP = "10.1.80.32" 
+NT_SERVER_IP = "10.1.32.27" 
 #Laptop: 10.4.10.146
 #Flex: 10.1.80.32
 #Mypc: 10.1.32.27
@@ -7,7 +7,7 @@ NT_SERVER_IP = "10.1.80.32"
 TABLE_NAME = "JayRadar"
 
 # Socket IP address
-SOCKET_IP = "10.1.80.32" 
+SOCKET_IP = "10.1.32.27" 
 #Recomputer: "10.4.10.46" 
 
 # MODEL NAME string
@@ -36,6 +36,7 @@ CONFIG_TYPES = {
     "half": bool,
     "ss": bool,
     "ssd": bool,
+    "raw": bool,
     "max": int,
     "img": int,
     "class": list
