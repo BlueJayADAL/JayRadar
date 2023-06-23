@@ -19,20 +19,20 @@ class Spinbox(tk.Frame):
         self.max = max
         self.increment = increment
 
-        self.button_frame = tk.Frame(self)
+        self.button_frame = tk.Frame(self, bg='#c8c8c8')
         self.button_frame.pack(side=tk.LEFT)
 
-        self.subtract_button = tk.Button(self.button_frame, text="-", command=self.subtract, bg='grey')
+        self.subtract_button = tk.Button(self.button_frame, text="-", command=self.subtract, bg='#c8c8c8')
         self.subtract_button.pack(side=tk.LEFT)
 
         self.entry = tk.Entry(self, width=8)
         self.entry.pack(side=tk.LEFT)
         self.set(default_value)
 
-        self.buttonplus_frame = tk.Frame(self)
+        self.buttonplus_frame = tk.Frame(self, bg='#c8c8c8')
         self.buttonplus_frame.pack(side=tk.RIGHT)
 
-        self.add_button = tk.Button(self.buttonplus_frame, text="+", command=self.add, bg='grey')
+        self.add_button = tk.Button(self.buttonplus_frame, text="+", command=self.add, bg='#c8c8c8')
         self.add_button.pack(side=tk.RIGHT)
 
         self.entry.bind("<Return>", self.on_enter)
