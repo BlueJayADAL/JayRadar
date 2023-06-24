@@ -6,7 +6,7 @@
     "ssd": false,
     "raw": false,
     "max": 5,
-    "img": 160,
+    "img": 640,
     "class": [
         -1
     ]

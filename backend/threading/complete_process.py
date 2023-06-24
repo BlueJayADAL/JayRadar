@@ -6,6 +6,7 @@ from ultralytics import YOLO
 from constants import MODEL_NAME, NT_SERVER_IP, TABLE_NAME, CONFIG_TYPES, MAX_FRAMES
 from capture import frame_queue
 from networktables import NetworkTables
+from filters import filter_edge_crosshair
 import time
 
 debugging = False
@@ -160,7 +161,7 @@ def test_process():
             if (classes[0]==-1):
                 # Process the frame using YOLOv8 without class filter
                 results = model.predict(
-                    frame.copy(),
+                    frame,
                     conf=conf,
                     iou=iou,
                     #half=half,
@@ -173,7 +174,7 @@ def test_process():
             else:
             # Otherwise, process the frame using YOLOv8 with class filter
                 results = model.predict(
-                    frame.copy(),
+                    frame,
                     conf=conf,
                     iou=iou,
                     #half=half,
@@ -184,10 +185,23 @@ def test_process():
                     classes=classes,
                     imgsz = image_size
                 )
-            result = results[0]  # Get the detection results from the first image in the batch
-            
-            objects = []
+            box, success_filter = filter_edge_crosshair(results[0], 320, 240)
 
+            if success_filter:
+                cx, cy, w, h = [round(x) for x in box.xywh[0].tolist()]
+                a = w*h / (image_size * image_size * 3/4)
+                nt.putBoolean('te', True)
+                nt.putNumber('tx', cx)
+                nt.putNumber('ty', cy)
+                nt.putNumber('tw', w)
+                nt.putNumber('th', h)
+                nt.putNumber('ta', a)
+            else:
+                nt.putBoolean('te', False)
+                nt.putNumber('tx', -1)
+            """
+            objects = []
+            
             for index, box in enumerate(result.boxes):
                 name = 'object'+str(index)
                 cx, cy, w, h = [
@@ -199,7 +213,7 @@ def test_process():
                 objects.append(float(class_id))
                 nt.putNumberArray(name, output)
             nt.putNumberArray('objects_key', objects)
-            
+            """           
             # Annotate and display the frame for testing, will be removed in final version
             if debugging:
                 annotated_frame = results[0].plot()
@@ -207,8 +221,3 @@ def test_process():
                 debugging_queue.append(annotated_frame) 
 
                 debugging_event.set()
-
-                cv2.imshow('YOLOv8 Inference', annotated_frame)
-
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break

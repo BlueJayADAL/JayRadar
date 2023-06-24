@@ -4,8 +4,14 @@ from capture import frame_queue, process_event
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
-from constants import CONFIG_TYPES
+from constants import CONFIG_TYPES, NT_SERVER_IP, TABLE_NAME
 from complete_process import nt_lock, config, debugging_queue, debugging_event, load_config, save_config
+from networktables import NetworkTables
+
+NetworkTables.initialize(NT_SERVER_IP)
+
+# Retrieve the JayRadar table for us to use
+nt = NetworkTables.getTable(TABLE_NAME)
 
 debugging = False
 
@@ -13,6 +19,17 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+def draw_bounding_box(frame, x, y, w, h):
+    x1, y1 = int(x - w/2), int(y - h/2)  # Calculate top-left corner coordinates
+    x2, y2 = int(x + w/2), int(y + h/2)  # Calculate bottom-right corner coordinates
+
+    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)  # Draw the bounding box
+
+    return frame
+
+def draw_crosshair(frame, x, y):
+    cv2.drawMarker(frame, (x, y), (0, 0, 255), cv2.MARKER_CROSS, 5, 2)
+    return frame
 
 def get_frame():
     global debugging
@@ -36,10 +53,26 @@ def get_frame():
             process_event.wait()  # Wait for the event to be set, so we know there's a frame
             process_event.clear()  # Clear the event, it will be set again next time
 
-            frame = frame_queue[-1] if frame_queue else None
+            frame = frame_queue[-1].copy() if frame_queue else None
 
             if frame is not None:
-                ret, buffer = cv2.imencode('.jpg', frame)
+                te = nt.getBoolean('te', False)
+                print(f'te = {te}')
+                nt.putBoolean('te', te)
+                if te:
+                    tx = nt.getNumber('tx', -1)
+
+                    ty = nt.getNumber('ty', -1)
+
+                    tw = nt.getNumber('tw', -1)
+
+                    th = nt.getNumber('th', -1)
+
+                    frame_box = draw_bounding_box(frame, tx, ty, tw, th)
+                else:
+                    frame_box = frame
+                frame_final = draw_crosshair(frame_box, 320, 240)
+                ret, buffer = cv2.imencode('.jpg', frame_box)
                 frame_data = buffer.tobytes()
                 
                 # Yield the frame data as MJPEG response
