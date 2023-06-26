@@ -17,6 +17,10 @@ default_conf = 1
 default_img = 640
 default_iou = 0
 default_max = 1
+primary_blue = '#004B98'
+dark_blue = '#0A2240'
+light_blue = '#3DB5E6'
+cool_gray = '#c8c8c8'
 
 NetworkTables.initialize(server=nt_ip)
 table = NetworkTables.getTable(table_name)
@@ -65,7 +69,6 @@ def resize(event):
     """Adjust the size of the frames to fit the window"""
     mainwin.grid_columnconfigure(0, weight=1)
     mainwin.grid_columnconfigure(1, weight=1)
-    mainwin.grid_columnconfigure(2, weight=1)
     mainwin.grid_rowconfigure(0, weight=1)
 
 
@@ -131,14 +134,14 @@ mainwin.bind("<Configure>", resize)
 
 
 # Change the background color of the main window
-mainwin.configure(bg="blue")
+mainwin.configure(bg=dark_blue)
 
 
 # Create the internal frames and balance them horizontally
-frame_1 = Frame(mainwin, bg='grey')
+frame_1 = Frame(mainwin, bg=primary_blue)
 frame_1.grid(row=0, column=0, sticky="nsew", padx=1)
 
-camframe = Frame(mainwin, bg='grey')
+camframe = Frame(mainwin, bg=cool_gray)
 camframe.grid(row=0, column=1, sticky="nsew", padx=1)
 camframe.grid_columnconfigure(0, weight=1)
 camframe.grid_rowconfigure(0, weight=1)
@@ -154,8 +157,8 @@ notebook = ttk.Notebook(frame_1)
 
 
 # Create tabs
-tab1 = tk.Frame(notebook, bg='blue2')
-tab2 = tk.Frame(notebook, bg='gray25')
+tab1 = tk.Frame(notebook, bg=primary_blue)
+tab2 = tk.Frame(notebook, bg=primary_blue)
 
 
 # Add tabs to the Notebook widget
@@ -173,15 +176,15 @@ tab2.grid_columnconfigure(0, weight=1)
 
 
 # Label and initialize the confidence threshold spinbox
-Conf_Thresh = tk.Label(tab1, bg='grey', text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=0, column=0)
-Conf_Thresh_Spin = Spinbox(tab1, name="conf", min=0, max=100, increment=1, default_value=table.getNumber("conf",default_conf)).grid(row=1, column=0)
+Conf_Thresh = tk.Label(tab1, bg=cool_gray, text="Confidence Threshold:", font=("Arial Bold", 12)).grid(row=0, column=0, pady=1)
+Conf_Thresh_Spin = Spinbox(tab1, name="conf", min=0, max=100, increment=1, default_value=table.getNumber("conf",default_conf)).grid(row=1, column=0, pady=3)
 
-IoU_Thresh = tk.Label(tab1, bg='grey', text="IoU Threshold:", font=("Arial Bold", 12)).grid(row=2, column=0)
-IoU_Thresh_Spin = Spinbox(tab1, name="iou", min=0, max=100, increment=1, default_value=table.getNumber("iou",default_iou)).grid(row=3, column=0)
+IoU_Thresh = tk.Label(tab1, bg=cool_gray, text="IoU Threshold:", font=("Arial Bold", 12)).grid(row=2, column=0, pady=1)
+IoU_Thresh_Spin = Spinbox(tab1, name="iou", min=0, max=100, increment=1, default_value=table.getNumber("iou",default_iou)).grid(row=3, column=0, pady=3)
 
 
 # Label the 'Model' dropdown
-#model_type = tk.Label(tab1, bg='grey', text="Model", font=("Arial Bold", 12)).grid(row=0, column=0, pady=5)
+#model_type = tk.Label(tab1, bg=cool_gray, text="Model", font=("Arial Bold", 12)).grid(row=0, column=0, pady=5)
 
 
 # Create the 'Model' dropdown. Model_Options forms the list of options to choose from
@@ -193,17 +196,17 @@ IoU_Thresh_Spin = Spinbox(tab1, name="iou", min=0, max=100, increment=1, default
 
 
 # Label and initialize the Max Detections spinbox
-Max_Detect = tk.Label(tab1, bg='grey', text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0)
-Max_Detect_Spin = Spinbox(tab1, name="max", min=0, max=300, increment=1, default_value=table.getNumber("max",default_max)).grid(row=5, column=0)
+Max_Detect = tk.Label(tab1, bg=cool_gray, text="Max Detections:", font=("Arial Bold", 12)).grid(row=4, column=0, pady=1)
+Max_Detect_Spin = Spinbox(tab1, name="max", min=0, max=300, increment=1, default_value=table.getNumber("max",default_max)).grid(row=5, column=0, pady=3)
 
 
 # Label and initialize the Resolution Width spinbox
-img_size = tk.Label(tab1, bg='grey', text="Image Size:", font=("Arial Bold", 12)).grid(row=6, column=0)
-img_size_spin = Spinbox(tab1, name="img", min=128, max=6400, increment=32, default_value=table.getNumber("img",default_img)).grid(row=7, column=0)
+img_size = tk.Label(tab1, bg=cool_gray, text="Image Size:", font=("Arial Bold", 12)).grid(row=6, column=0, pady=1)
+img_size_spin = Spinbox(tab1, name="img", min=128, max=6400, increment=32, default_value=table.getNumber("img",default_img)).grid(row=7, column=0, pady=3)
 
 
 # Create the 'Class Filters' label and text box
-class_filters = tk.Label(tab2, bg='grey', text="Class:", font=("Arial Bold", 12)).grid(row=0, column=0)
+class_filters = tk.Label(tab2, bg=cool_gray, text="Class:", font=("Arial Bold", 12)).grid(row=0, column=0)
 class_entry = tk.Entry(tab2)
 
 # Set the initial value to '-1' and place on the grid
@@ -218,26 +221,22 @@ update_button = tk.Button(tab2, text="Update", command=update_values).grid(row=2
 # Create the checkboxes
     # Create a variable to hold the checkbox state, then create and display the checkbox widget
 half_checkbox_var = tk.IntVar()
-half_checkbox = tk.Checkbutton(tab1, text="Half Precision Checkbox", bg="grey",variable=half_checkbox_var, command=half_checkbox_changed).grid(row=8, column=0)
+half_checkbox = tk.Checkbutton(tab1, text="Half Precision Checkbox", bg=cool_gray, variable=half_checkbox_var, command=half_checkbox_changed).grid(row=8, column=0, pady=3)
 
 ss_checkbox_var = tk.IntVar()
-ss_checkbox = tk.Checkbutton(tab1, text="Screenshot Checkbox", bg="grey", variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=9, column=0)
+ss_checkbox = tk.Checkbutton(tab1, text="Screenshot Checkbox", bg=cool_gray, variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=9, column=0, pady=3)
 
 ssd_checkbox_var = tk.IntVar()
-ssd_checkbox = tk.Checkbutton(tab1, text="Screenshot Data Checkbox", bg="grey", variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=10, column=0)
+ssd_checkbox = tk.Checkbutton(tab1, text="Screenshot Data Checkbox", bg=cool_gray, variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=10, column=0, pady=3)
 
 
 # Create the widgets in camframe (camera output)
 cam = tk.Label(camframe)
 cam.grid(row=0, column=0)
-calc_disp = tk.Label(camframe, bg='grey', text="Output Information: (x, y, area)", font=("Arial Bold", 12)).grid(row=1, column=0)
+calc_disp = tk.Label(camframe, bg=cool_gray, text="Output Information: (x, y, area)", font=("Arial Bold", 12)).grid(row=1, column=0)
 
 
-# Set up socket connection to receive frames
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect((socket_ip, port))
-
-
+cap = cv2.VideoCapture(0)
 # Start the thread to receive and display frames
 show_frames()
 
