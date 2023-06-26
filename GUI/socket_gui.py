@@ -236,7 +236,11 @@ cam.grid(row=0, column=0)
 calc_disp = tk.Label(camframe, bg=cool_gray, text="Output Information: (x, y, area)", font=("Arial Bold", 12)).grid(row=1, column=0)
 
 
-cap = cv2.VideoCapture(0)
+# Set up socket connection to receive frames
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.connect((socket_ip, port))
+
+
 # Start the thread to receive and display frames
 show_frames()
 
