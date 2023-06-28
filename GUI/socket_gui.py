@@ -7,8 +7,7 @@ from tkinter import Frame, ttk#, OptionMenu
 from PIL import ImageTk, Image
 from spinbox import Spinbox
 from networktables import NetworkTables
-from boundingbox import draw_box_on_frame
-
+from boundingbox import draw_box_on_frame, draw_raw_bounding_box
 
 nt_ip = "10.4.10.146"
 table_name = 'JayRadar'
@@ -22,6 +21,7 @@ primary_blue = '#004B98'
 dark_blue = '#0A2240'
 light_blue = '#3DB5E6'
 cool_gray = '#c8c8c8'
+debugging = False
 
 NetworkTables.initialize(server=nt_ip)
 table = NetworkTables.getTable(table_name)
@@ -38,26 +38,33 @@ def model_option_selected(selected_option):
 
 
 # Handle checkbox selections
-#HalfPrecision
+# HalfPrecision
 def half_checkbox_changed():
     if half_checkbox_var.get() == 1:
         print("Half Precision checkbox checked")
     else:
         print("Half Precision checkbox unchecked")
 
-#Screenshot
+# Screenshot
 def ss_checkbox_changed():
     if ss_checkbox_var.get() == 1:
         print("Screenshot checkbox checked")
     else:
         print("Screenshot checkbox unchecked")
 
-#Screenshot data
+# Screenshot data
 def ssd_checkbox_changed():
     if ssd_checkbox_var.get() == 1:
         print("Screenshot Data checkbox checked")
     else:
         print("Screenshot Data checkbox unchecked")
+
+# Debugging
+def debug_checkbox_changed():
+    if debug_checkbox_var.get() == 1:
+        debugging = True
+    else:
+        debugging = False
 
 
 # Execute the 'Update' button
@@ -76,6 +83,7 @@ def resize(event):
 # Display video feed
 def show_frames():
     """Retrieve frames from the socket and update the GUI"""
+    global debugging
     data = b""
     payload_size = struct.calcsize("Q")
     
@@ -97,30 +105,59 @@ def show_frames():
         data = data[msg_size:]
         frame = pickle.loads(frame_data)
         objects_key = table.getNumberArray('objects_key', [-1])
-        table.putNumberArray('objects_key', objects_key)
+
 
         #print(objects_key)
         
-        for index, key in enumerate(objects_key):
-            name = 'object'+str(index)
-            box_info = table.getNumberArray(name, [-1])
-            #print(box_info)
-            if box_info[0] == -1:
-                break
+        if debugging:
+            for index, key in enumerate(objects_key):
+                name = 'object'+str(index)
+                box_info = table.getNumberArray(name, [-1])
+                #print(box_info)
+                if box_info[0] == -1:
+                    break
 
-            frame = draw_box_on_frame(frame.copy(), box_info)
+                frame = draw_box_on_frame(frame.copy(), box_info)
 
-        # Convert the color channels from BGR to RGB
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # Convert the color channels from BGR to RGB
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        # Create a PIL ImageTk object
-        img = ImageTk.PhotoImage(image=Image.fromarray(frame_rgb))
+            # Create a PIL ImageTk object
+            img = ImageTk.PhotoImage(image=Image.fromarray(frame_rgb))
 
-        cam.imgtk = img  # Keep a reference to the image to prevent garbage collection
-        cam.configure(image=img)  # Update the Label widget with the new image
+            cam.imgtk = img  # Keep a reference to the image to prevent garbage collection
+            cam.configure(image=img)  # Update the Label widget with the new image
 
-        # Update GUI
-        mainwin.update()
+            # Update GUI
+            mainwin.update()
+        else:
+            te = table.getBoolean('te', False)
+            print(f'te = {te}')
+            table.putBoolean('te', te)
+            if te:
+                tx = table.getNumber('tx', -1)
+
+                ty = table.getNumber('ty', -1)
+
+                tw = table.getNumber('tw', -1)
+
+                th = table.getNumber('th', -1)
+
+                frame_box = draw_raw_bounding_box(frame, tx, ty, tw, th)
+            else:
+                frame_box = frame
+
+            # Convert the color channels from BGR to RGB
+            frame_rgb = cv2.cvtColor(frame_box, cv2.COLOR_BGR2RGB)
+                
+            img = ImageTk.PhotoImage(image=Image.fromarray(frame_rgb))
+
+            cam.imgtk = img  # Keep a reference to the image to prevent garbage collection
+            cam.configure(image=img)  # Update the Label widget with the new image
+
+            # Update GUI
+            mainwin.update()
+            
 
     client_socket.close()
 
@@ -220,7 +257,7 @@ update_button = tk.Button(tab2, text="Update", command=update_values).grid(row=2
 
 
 # Create the checkboxes
-    # Create a variable to hold the checkbox state, then create and display the checkbox widget
+# Create a variable to hold the checkbox state, then create and display the checkbox widget
 half_checkbox_var = tk.IntVar()
 half_checkbox = tk.Checkbutton(tab1, text="Half Precision Checkbox", bg=cool_gray, variable=half_checkbox_var, command=half_checkbox_changed).grid(row=8, column=0, pady=3)
 
@@ -229,6 +266,9 @@ ss_checkbox = tk.Checkbutton(tab1, text="Screenshot Checkbox", bg=cool_gray, var
 
 ssd_checkbox_var = tk.IntVar()
 ssd_checkbox = tk.Checkbutton(tab1, text="Screenshot Data Checkbox", bg=cool_gray, variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=10, column=0, pady=3)
+
+debug_checkbox_var = tk.IntVar()
+debug_checkbox = tk.Checkbutton(tab1, text="Debugging Checkbox", bg=cool_gray, variable=debug_checkbox_var, command=debug_checkbox_changed).grid(row=11, column=0, pady=3)
 
 
 # Create the widgets in camframe (camera output)
