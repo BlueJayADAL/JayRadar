@@ -3,11 +3,12 @@ import cv2
 import socket
 import pickle
 import struct
-from tkinter import Frame, OptionMenu, ttk
+from tkinter import Frame, ttk#, OptionMenu
 from PIL import ImageTk, Image
 from spinbox import Spinbox
 from networktables import NetworkTables
 from boundingbox import draw_box_on_frame
+
 
 nt_ip = "10.4.10.146"
 table_name = 'JayRadar'
