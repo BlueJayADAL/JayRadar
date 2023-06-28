@@ -61,6 +61,7 @@ def ssd_checkbox_changed():
 
 # Debugging
 def debug_checkbox_changed():
+    global debugging
     if debug_checkbox_var.get() == 1:
         debugging = True
     else:
@@ -78,6 +79,12 @@ def resize(event):
     mainwin.grid_columnconfigure(0, weight=1)
     mainwin.grid_columnconfigure(1, weight=1)
     mainwin.grid_rowconfigure(0, weight=1)
+
+
+# Draw crosshair in the center of the screen
+def draw_crosshair(frame, x, y):
+    cv2.drawMarker(frame, (x, y), (152, 75, 0), cv2.MARKER_CROSS, 5, 2)
+    return frame
 
 
 # Display video feed
@@ -108,7 +115,6 @@ def show_frames():
 
 
         #print(objects_key)
-        
         if debugging:
             for index, key in enumerate(objects_key):
                 name = 'object'+str(index)
@@ -132,8 +138,7 @@ def show_frames():
             mainwin.update()
         else:
             te = table.getBoolean('te', False)
-            print(f'te = {te}')
-            table.putBoolean('te', te)
+
             if te:
                 tx = table.getNumber('tx', -1)
 
@@ -147,8 +152,11 @@ def show_frames():
             else:
                 frame_box = frame
 
+            # Draw crosshair on frame when filtering
+            frame_final = draw_crosshair(frame_box, 320, 240)
+
             # Convert the color channels from BGR to RGB
-            frame_rgb = cv2.cvtColor(frame_box, cv2.COLOR_BGR2RGB)
+            frame_rgb = cv2.cvtColor(frame_final, cv2.COLOR_BGR2RGB)
                 
             img = ImageTk.PhotoImage(image=Image.fromarray(frame_rgb))
 
@@ -259,16 +267,16 @@ update_button = tk.Button(tab2, text="Update", command=update_values).grid(row=2
 # Create the checkboxes
 # Create a variable to hold the checkbox state, then create and display the checkbox widget
 half_checkbox_var = tk.IntVar()
-half_checkbox = tk.Checkbutton(tab1, text="Half Precision Checkbox", bg=cool_gray, variable=half_checkbox_var, command=half_checkbox_changed).grid(row=8, column=0, pady=3)
+half_checkbox = tk.Checkbutton(tab1, text="Half Precision", bg=cool_gray, variable=half_checkbox_var, command=half_checkbox_changed).grid(row=8, column=0, pady=3)
 
 ss_checkbox_var = tk.IntVar()
-ss_checkbox = tk.Checkbutton(tab1, text="Screenshot Checkbox", bg=cool_gray, variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=9, column=0, pady=3)
+ss_checkbox = tk.Checkbutton(tab1, text="Screenshot", bg=cool_gray, variable=ss_checkbox_var, command=ss_checkbox_changed).grid(row=9, column=0, pady=3)
 
 ssd_checkbox_var = tk.IntVar()
-ssd_checkbox = tk.Checkbutton(tab1, text="Screenshot Data Checkbox", bg=cool_gray, variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=10, column=0, pady=3)
+ssd_checkbox = tk.Checkbutton(tab1, text="Screenshot Data", bg=cool_gray, variable=ssd_checkbox_var, command=ssd_checkbox_changed).grid(row=10, column=0, pady=3)
 
 debug_checkbox_var = tk.IntVar()
-debug_checkbox = tk.Checkbutton(tab1, text="Debugging Checkbox", bg=cool_gray, variable=debug_checkbox_var, command=debug_checkbox_changed).grid(row=11, column=0, pady=3)
+debug_checkbox = tk.Checkbutton(tab1, text="Debug", bg=cool_gray, variable=debug_checkbox_var, command=debug_checkbox_changed).grid(row=11, column=0, pady=3)
 
 
 # Create the widgets in camframe (camera output)
