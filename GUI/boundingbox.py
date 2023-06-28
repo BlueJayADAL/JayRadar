@@ -18,3 +18,11 @@ def draw_box_on_frame(frame, box):
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), thickness=2)
 
     return frame
+
+def draw_raw_bounding_box(frame, x, y, w, h):
+    x1, y1 = int(x - w/2), int(y - h/2)  # Calculate top-left corner coordinates
+    x2, y2 = int(x + w/2), int(y + h/2)  # Calculate bottom-right corner coordinates
+
+    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)  # Draw the bounding box
+
+    return frame
