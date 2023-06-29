@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const debuggingForm = document.getElementById("debugging-form");
     const keyInput = document.getElementById("key-input");
     const valueInput = document.getElementById("value-input");
-    const sliders = document.querySelectorAll('input[type="range"]');
+//  const sliders = document.querySelectorAll('input[type="range"]');
+    const spinboxes = document.querySelectorAll('input[type="number"]');
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     const configDropdown = document.getElementById("config");
     const saveButton = document.getElementById("saveButton");
@@ -25,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sendMessage(user, message);
       valueInput.value = "";
     });
-  
+/* 
     sliders.forEach(slider => {
       const sliderValue = document.getElementById(`${slider.id}Value`);
       sliderValue.textContent = slider.value;
@@ -46,7 +47,28 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     });
-  
+  */
+    spinBoxes.forEach(spinBox => {
+      const spinBoxValue = document.getElementById(`${spinBox.id}Value`);
+      spinBoxValue.textContent = spinBox.value;
+    
+      spinBox.addEventListener('input', (event) => {
+        event.preventDefault();
+        const key = spinBox.id;
+        const value = spinBox.value;
+        sendMessage(key, value);
+      });
+    
+      socket.addEventListener('message', (event) => {
+        const receivedMessage = event.data;
+        const [key, value] = receivedMessage.split(": ");
+        if (key === spinBox.id) {
+          spinBox.value = value;
+          spinBoxValue.textContent = value;
+        }
+      });
+    });
+
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener('change', (event) => {
         const key = checkbox.id;
