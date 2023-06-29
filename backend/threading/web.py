@@ -57,7 +57,6 @@ def get_frame():
 
             if frame is not None:
                 te = nt.getBoolean('te', False)
-                print(f'te = {te}')
                 nt.putBoolean('te', te)
                 if te:
                     tx = nt.getNumber('tx', -1)
