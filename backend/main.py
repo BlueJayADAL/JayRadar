@@ -1,7 +1,7 @@
 import threading
 import uvicorn
 #from network import frontend, network_setup_event, app
-from detection import test_process
+from detection import process_frames
 from capture import capture_frames#, process_event
 from web import app
 from constants import SOCKET_IP
@@ -20,7 +20,7 @@ capture_thread.start()
 #send_thread = threading.Thread(target=send_frames)
 #send_thread.start()
 
-processing_thread = threading.Thread(target= test_process)
+processing_thread = threading.Thread(target= process_frames)
 processing_thread.start()
 
 uvicorn.run(app, host=SOCKET_IP, port=8000)

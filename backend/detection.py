@@ -74,7 +74,7 @@ def load_config(filename):
                 pass
     return 0
 
-def test_process():
+def process_frames():
     global config
     """
     Function to process frames from the frame queue using YOLOv8.
