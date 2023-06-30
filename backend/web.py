@@ -1,5 +1,5 @@
 import cv2
-from fastapi import FastAPI, Request, WebSocket
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from capture import frame_queue, process_event
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -95,8 +95,8 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.send_text(data)
 
 
-    try:
-        while True:
+    while True:
+        try:
             data = await websocket.receive_text()
             print()
             print('UPDATE FROM WEB GUI FOUND')
@@ -170,9 +170,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 # Broadcast the received message to all connected clients
             for connection in connections:
                 await connection.send_text(data)
-    finally:
-        # Remove the closed connection from the list
-        connections.remove(websocket)
+        except ValueError:
+            print("Value Error in Try statement")
+        except WebSocketDisconnect:
+            connections.remove(websocket)
+            break
 
 
 @app.get("/")
@@ -192,7 +194,6 @@ if __name__ == "__main__":
     import uvicorn
     import threading
     from capture import capture_frames
-    from constants import SOCKET_IP
 
     capture_thread = threading.Thread(target = capture_frames)
     capture_thread.start()
