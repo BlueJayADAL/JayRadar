@@ -159,7 +159,7 @@ def process_frames():
                 #half=half,
                 #device=device,
                 save=save,
-                save_conf=save_conf,
+                save_txt=save_conf,
                 max_det=max_det,
                 classes=classes,
                 imgsz = image_size
