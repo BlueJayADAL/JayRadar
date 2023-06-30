@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
 from constants import CONFIG_TYPES, NT_SERVER_IP, TABLE_NAME
-from complete_process import nt_lock, config, debugging_queue, debugging_event, load_config, save_config
+from detection import nt_lock, config, debugging_queue, debugging_event, load_config, save_config
 from networktables import NetworkTables
 
 NetworkTables.initialize(NT_SERVER_IP)

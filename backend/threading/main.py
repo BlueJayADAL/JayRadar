@@ -1,23 +1,26 @@
 import threading
-from capture import capture_frames
-from process import process_frames
+import uvicorn
+#from network import frontend, network_setup_event, app
+from detection import test_process
+from capture import capture_frames#, process_event
 from web import app
+from constants import SOCKET_IP
 from send import send_frames
 
-# Start the capture thread
-capture_thread = threading.Thread(target=capture_frames)
+capture_thread = threading.Thread(target = capture_frames)
 capture_thread.start()
 
-# Start the processing thread
-process_thread = threading.Thread(target=process_frames)
-process_thread.start()
+#process_event.wait()
 
-# Start the frame sending thread
-send_thread = threading.Thread(target=send_frames)
-send_thread.start()
+#network_thread = threading.Thread(target=frontend)
+#network_thread.start()
 
-if __name__ == "__main__":
-    import uvicorn
-    from constants import SOCKET_IP
+#network_setup_event.wait()
 
-    uvicorn.run(app, host=SOCKET_IP, port=8000)
+#send_thread = threading.Thread(target=send_frames)
+#send_thread.start()
+
+processing_thread = threading.Thread(target= test_process)
+processing_thread.start()
+
+uvicorn.run(app, host=SOCKET_IP, port=8000)
