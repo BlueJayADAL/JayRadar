@@ -162,7 +162,8 @@ def process_frames():
                 save_txt=save_conf,
                 max_det=max_det,
                 classes=classes,
-                imgsz = image_size
+                imgsz = image_size,
+                verbose=False
             )
             box, success_filter = filter_edge_crosshair(results[0], 320, 240)
 
