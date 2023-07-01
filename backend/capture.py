@@ -18,6 +18,8 @@ def capture_frames():
     """
     cap = cv2.VideoCapture(0)
 
+    print("Camera Aquired")
+
     while cap.isOpened():
         success, frame = cap.read()
 
