@@ -1,7 +1,7 @@
 import cv2
 
 # Initialize the webcam
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)
 
 # Check if the camera is opened successfully
 if not cap.isOpened():
@@ -25,22 +25,26 @@ while True:
     # Adjust brightness and contrast based on key presses
     if key == ord('w'):  # Increase brightness
         brightness += 1
+        cap.set(cv2.CAP_PROP_BRIGHTNESS, brightness)
         print(f"Brightness: {brightness}")
     elif key == ord('s'):  # Decrease brightness
         brightness -= 1
+        cap.set(cv2.CAP_PROP_BRIGHTNESS, brightness)
         print(f"Brightness: {brightness}")
     elif key == ord('e'):  # Increase contrast
         contrast += 1
+        cap.set(cv2.CAP_PROP_CONTRAST, contrast)
         print(f"Contrast: {contrast}")
     elif key == ord('d'):  # Decrease contrast
         contrast -= 1
+        cap.set(cv2.CAP_PROP_CONTRAST, contrast)
         print(f"Contrast: {contrast}")
     elif key == ord('q'):  # Quit the program
         break
 
     # Set the adjusted brightness and contrast values
-    cap.set(cv2.CAP_PROP_BRIGHTNESS, brightness)
-    cap.set(cv2.CAP_PROP_CONTRAST, contrast)
+    
+    
 
 # Release the webcam and close all windows
 cap.release()
