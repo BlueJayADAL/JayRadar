@@ -102,6 +102,8 @@ async def websocket_endpoint(websocket: WebSocket):
             print('UPDATE FROM WEB GUI FOUND')
             print(f"DATA: {data}")
             print()
+            for connection in connections:
+                await connection.send_text(data)
             key, value = data.split(": ")
             if key == 'raw':
                 if value.lower() == 'true':
@@ -168,8 +170,6 @@ async def websocket_endpoint(websocket: WebSocket):
                                 pass
                     print("Network_Thread released lock")
                 # Broadcast the received message to all connected clients
-            for connection in connections:
-                await connection.send_text(data)
         except ValueError:
             print("Value Error in Try statement")
         except WebSocketDisconnect:
