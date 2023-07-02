@@ -9,6 +9,11 @@ detector = Detector(families='tag16h5')
 # Initialize the webcam
 cap = cv2.VideoCapture(0)
 
+# Initial property values
+brightness = cap.get(cv2.CAP_PROP_BRIGHTNESS)
+contrast = cap.get(cv2.CAP_PROP_CONTRAST)
+exposure = cap.get(cv2.CAP_PROP_EXPOSURE)
+
 # Define the minimum and maximum area thresholds
 min_area = 1000
 max_area = 409600
@@ -40,7 +45,7 @@ while True:
                 cv2.polylines(frame, [corners], True, (0, 255, 0), 2)
                 center = (int(tag.center[0]), int(tag.center[1]))  # Convert center coordinates to integers
                 cv2.circle(frame, center, 5, (0, 0, 255), -1)
-                print(tag)
+                #print(tag)
 
     elapsed_time = time.time() - start_time
 
@@ -51,7 +56,35 @@ while True:
     cv2.imshow('Frame', frame)
 
     # Exit the loop if 'q' is pressed
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    # Capture keyboard events
+    key = cv2.waitKey(1)
+
+    # Adjust brightness and contrast based on key presses
+    if key == ord('w'):  # Increase brightness
+        brightness += 1
+        cap.set(cv2.CAP_PROP_BRIGHTNESS, brightness)
+        print(f"Brightness: {brightness}")
+    elif key == ord('s'):  # Decrease brightness
+        brightness -= 1
+        cap.set(cv2.CAP_PROP_BRIGHTNESS, brightness)
+        print(f"Brightness: {brightness}")
+    elif key == ord('e'):  # Increase contrast
+        contrast += 1
+        cap.set(cv2.CAP_PROP_CONTRAST, contrast)
+        print(f"Contrast: {contrast}")
+    elif key == ord('d'):  # Decrease contrast
+        contrast -= 1
+        cap.set(cv2.CAP_PROP_CONTRAST, contrast)
+        print(f"Contrast: {contrast}")
+    elif key == ord('r'):  # Increase contrast
+        exposure += 1
+        cap.set(cv2.CAP_PROP_EXPOSURE, exposure)
+        print(f"Expsure: {exposure}")
+    elif key == ord('f'):  # Decrease contrast
+        exposure -= 1
+        cap.set(cv2.CAP_PROP_EXPOSURE, exposure)
+        print(f"Expsure: {exposure}")
+    elif key == ord('q'):  # Quit the program
         break
 
 # Calculate the average time per iteration
