@@ -1,15 +1,41 @@
-body {
-  background-color: #c8c8c8;
-}
-
 .container {
   display: flex;
 }
 
 .left-column {
   flex: 1;
+  padding-right: 10px;
 }
 
 .right-column {
-  flex: 2;
+  flex: 1;
+  padding-left: 10px;
+}
+
+.tabs {
+  display: flex;
+}
+
+.tab-link {
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #eee;
+  border: none;
+  cursor: pointer;
+}
+
+.tab-link.active {
+  background-color: #c8c8c8;
+}
+
+.tab-contents {
+  margin-top: 10px;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
 }

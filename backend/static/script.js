@@ -1,3 +1,26 @@
+function openTab(evt, tabName) {
+  // Declare variables
+  var i, tabContent, tabLinks;
+
+  // Hide all tab content
+  tabContent = document.getElementsByClassName("tab-content");
+  for (i = 0; i < tabContent.length; i++) {
+    tabContent[i].style.display = "none";
+  }
+
+  // Remove 'active' class from tab links
+  tabLinks = document.getElementsByClassName("tab-link");
+  for (i = 0; i < tabLinks.length; i++) {
+    tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+  }
+
+  // Show the selected tab content
+  document.getElementById(tabName).style.display = "block";
+
+  // Add 'active' class to the clicked tab link
+  evt.currentTarget.className += " active";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const debuggingForm = document.getElementById("debugging-form");
   const keyInput = document.getElementById("key-input");
@@ -6,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveButton = document.getElementById("saveButton");
   const resetButton = document.getElementById("resetButton");
   const socket = new WebSocket(`ws://${location.host}/ws`);
+  // Set the first tab as active by default
+  document.getElementsByClassName("tab-link")[0].click();
 
   socket.onopen = () => {
     console.log("WebSocket connection established.");
