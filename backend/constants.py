@@ -11,7 +11,7 @@ SOCKET_IP = "10.1.32.27"
 #Recomputer: "10.4.10.46" 
 
 # MODEL NAME string
-MODEL_NAME = "yolov8n.pt"
+MODEL_NAME = "frc7ng.pt"
 
 # MAX FRAMES int
 MAX_FRAMES = 5
@@ -40,3 +40,9 @@ CONFIG_TYPES = {
     "img": int,
     "class": list
 }
+
+CLASSES = [
+    'Cone',
+    'Cube',
+    'Tipped_Cone'
+]
