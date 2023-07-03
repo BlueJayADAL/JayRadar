@@ -90,8 +90,4 @@ This file is the main file that imports the functions targeted by the threads an
 Standard.png is the icon displayed for the webpage.
 frc7ng.pt is our PyTorch model trained on google Colab for FRC Charged Up.
 yolov8n.pt is the provided yolov8 nano model used for testing and troubleshooting.
-
-## Test Sripts
-
-These are short scripts I used during testing to isolate the errors and issues.
-They will be removed before making the repository public
+The testscripts folder contains scripts that are used in testing and may be useful for troubleshooting
