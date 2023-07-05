@@ -88,6 +88,9 @@ def process_frames():
     nt = NetworkTables.getTable(TABLE_NAME)
     with nt_lock:
         load_config('default')
+    total_time = 0
+    iteration_count = 0
+    warmup_iterations = 5
     
     def value_changed(table, key, value, isNew):
         global config
@@ -138,6 +141,8 @@ def process_frames():
     while True:
         #time.sleep(2)
         if frame_queue:
+            if warmup_iterations == 0:
+                start_time = time.time()
             frame = frame_queue[-1]  # Get the newest frame from the deque
 
             with nt_lock:
@@ -199,3 +204,17 @@ def process_frames():
             debugging_queue.append(annotated_frame) 
 
             debugging_event.set()
+            if warmup_iterations == 0:
+                elapsed_time = time.time() - start_time
+
+                # Accumulate the total time and increment the iteration count
+                total_time += elapsed_time
+                iteration_count += 1
+                # Calculate the average time per iteration
+                average_time = total_time / iteration_count
+
+                # Print the average time
+                print(f"Average Time per Iteration: {average_time} seconds")
+                print(f"Frames per Second: {1/average_time}")
+            else:
+                warmup_iterations -=1
