@@ -1,12 +1,15 @@
 import cv2
-import public
+from ultralytics import YOLO
 
 cap = cv2.VideoCapture(0)
+
+model = YOLO('yolov8n.pt')
+
 while cap.isOpened():
         success, frame = cap.read()
 
         if success:
-            results = public.model.predict(frame)
+            results = model.predict(frame)
             result = results[0]
             annotated_frame = result.plot()
 
