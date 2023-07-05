@@ -1,23 +1,113 @@
 import cv2
+import json
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from capture import frame_queue, process_event
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
-from constants import CONFIG_TYPES, NT_SERVER_IP, TABLE_NAME
-from detection import nt_lock, config, debugging_queue, debugging_event, load_config, save_config
+from constants import NT_SERVER_IP, TABLE_NAME
+from detection import nn_lock, nn_config, nn_updated, nn_queue, nn_event
 from networktables import NetworkTables
+
+complete_config = {  
+    "cam": 0,
+    "auto_exp": False,
+    "exp": -5,
+    "bri": 0,
+    "cont": 1.0,
+    "red": 0,
+    "gre": 0,
+    "blu": 0,
+    "conf": 25,
+    "iou": 70,
+    "half": False,
+    "ss": False,
+    "ssd": False,
+    "max": 7,
+    "img": 640,
+    "class": [
+        -1
+    ]
+}
+
+nn_keys = {  
+        "conf": int,
+        "iou": int,
+        "half": bool,
+        "ss": bool,
+        "ssd": bool,
+        "max": int,
+        "class": list
+    }
 
 NetworkTables.initialize(NT_SERVER_IP)
 
 # Retrieve the JayRadar table for us to use
 nt = NetworkTables.getTable(TABLE_NAME)
 
-debugging = False
+# Maintain a list of active connections
+connections = []
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+def update_config(key, value):
+    global complete_config, nn_keys, nn_lock, nn_config, nn_updated
+    if key == "config":
+        load_config(value)
+    if key == "save_config":
+        save_config(value)
+    if key in nn_keys:
+        nn_updated = True
+        with nn_lock:
+            if key == "class":
+                try:
+                    typecasted_value = [int(v) for v in value]
+                    nn_config[key] = typecasted_value
+                    complete_config[key] = typecasted_value
+                    print(f"nn_config[{key}] = {nn_config[key]}")
+                except (ValueError, TypeError):
+                    pass
+            else:
+                try:
+                    typecasted_value = nn_keys[key](value)
+                    nn_config[key] = typecasted_value
+                    complete_config[key] = typecasted_value
+                    print(f"nn_config[{key}] = {nn_config[key]}")
+                except (ValueError, TypeError):
+                    # Failed to typecast, use original value
+                    pass
+
+def save_config(filename):
+    global complete_config
+    filename = f'./configs/{filename}.json'
+    with open(filename, 'w') as file:
+        json.dump(complete_config, file, indent=4)
+
+def load_config(filename):
+    filename = f'./configs/{filename}.json'
+    try:    
+        with open(filename, 'r') as file:
+            print(f'Sucessfully loaded {filename}')
+            new_config = json.load(file)
+    except FileNotFoundError:
+        print(f"File {filename} not found!")
+        return -1
+    
+
+    for key, value in new_config.items():
+        update_config(key, value)
+    return 0
+
+def value_changed(table, key, value, isNew):
+        print()
+        print('UPDATE TO JAYRADAR FOUND')
+        print(f"Value changed: {key} = {value}")
+        print()
+        update_config(key, value)
+            
+nt.addEntryListener(value_changed)
 
 def draw_bounding_box(frame, x, y, w, h):
     x1, y1 = int(x - w/2), int(y - h/2)  # Calculate top-left corner coordinates
@@ -32,15 +122,12 @@ def draw_crosshair(frame, x, y):
     return frame
 
 def get_frame():
-    global debugging
-        
     while True:
         # Get the latest frame from the queue
-        if debugging:
-            debugging_event.wait()
-            debugging_event.clear()
-            
-            frame = debugging_queue[-1] if debugging_queue else None
+        process_event.wait()  # Wait for the event to be set, so we know there's a frame
+        process_event.clear()  # Clear the event, it will be set again next time
+        if nn_queue:
+            frame = frame_queue[-1].copy()
 
             if frame is not None:
                 ret, buffer = cv2.imencode('.jpg', frame)
@@ -49,48 +136,32 @@ def get_frame():
                 # Yield the frame data as MJPEG response
                 yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
-        else:
-            process_event.wait()  # Wait for the event to be set, so we know there's a frame
-            process_event.clear()  # Clear the event, it will be set again next time
 
-            frame = frame_queue[-1].copy() if frame_queue else None
+def get_nn_frame():
+    while True:
+        # Get the latest frame from the queue
+        nn_event.wait()  # Wait for the event to be set, so we know there's a frame
+        nn_event.clear()  # Clear the event, it will be set again next time
+        if nn_queue:
+            frame = nn_queue[-1].copy()
 
             if frame is not None:
-                te = nt.getBoolean('te', False)
-                nt.putBoolean('te', te)
-                if te:
-                    tx = nt.getNumber('tx', -1)
-
-                    ty = nt.getNumber('ty', -1)
-
-                    tw = nt.getNumber('tw', -1)
-
-                    th = nt.getNumber('th', -1)
-
-                    frame_box = draw_bounding_box(frame, tx, ty, tw, th)
-                else:
-                    frame_box = frame
-                frame_final = draw_crosshair(frame_box, 320, 240)
-                ret, buffer = cv2.imencode('.jpg', frame_box)
+                ret, buffer = cv2.imencode('.jpg', frame)
                 frame_data = buffer.tobytes()
                 
                 # Yield the frame data as MJPEG response
                 yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
 
-
-# Maintain a list of active connections
-connections = []
-
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    global config, debugging
+    global nn_config
     await websocket.accept()
     # Add the new connection to the list
     connections.append(websocket)
 
-    with nt_lock:
-        for key, value in config.items():
+    with nn_lock:
+        for key, value in complete_config.items():
             data = f'{key}: {value}'
             await websocket.send_text(data)
 
@@ -105,71 +176,14 @@ async def websocket_endpoint(websocket: WebSocket):
             for connection in connections:
                 await connection.send_text(data)
             key, value = data.split(": ")
-            if key == 'raw':
-                if value.lower() == 'true':
-                    debugging = True
-                if value.lower() == 'false':
-                    debugging = False
-            else:
-                with nt_lock:
-                    print("Network_Thread acquired lock")
-                    if key == "config":
-                        load_config(value)
-                        for key, value in config.items():
-                            for connection in connections:
-                                data = f'{key}: {value}'
-                                await connection.send_text(data)
-                        print()
-                        print('Config Loaded')
-                        print()
-                    if key == "save_config":
-                        save_config(value)
-                    if key in CONFIG_TYPES:
-                        if key == "class":
-                            try:
-                                temp = value.split(',')
-                                typecasted_value = [int(v) for v in temp]
-                                config[key] = typecasted_value
-                                print()
-                                print(f'CONFIG UPDATED: config[{key}] = {typecasted_value}')
-                                print()
-                            except (ValueError, TypeError, AttributeError):
-                                # Failed to typecast, use original value
-                                print()
-                                print('ERROR: TYPECASTING FAILED')
-                                print()
-                                pass
-                        elif CONFIG_TYPES[key] == bool:
-                            if value.lower() == 'true':
-                                config[key] = True
-                                print()
-                                print(f'CONFIG UPDATED: config[{key}] = {config[key]}')
-                                print()
-                            elif value.lower() == 'false':
-                                config[key] = False
-                                print()
-                                print(f'CONFIG UPDATED: config[{key}] = {config[key]}')
-                                print()
-                            else:
-                                # Handle case when the value is neither 'true' nor 'false'
-                                print()
-                                print('ERROR: Invalid boolean value')
-                                print()
-                        else:
-                            try:
-                                typecasted_value = CONFIG_TYPES[key](value)
-                                config[key] = typecasted_value
-                                print()
-                                print(f'CONFIG UPDATED: config[{key}] = {typecasted_value}')
-                                print()
-                            except (ValueError, TypeError):
-                                # Failed to typecast, use original value
-                                print()
-                                print('ERROR: TYPECASTING FAILED')
-                                print()
-                                pass
-                    print("Network_Thread released lock")
-                # Broadcast the received message to all connected clients
+            update_config(key, value)
+            if key == 'config':
+                for key, value in complete_config.items():
+                    data = f'{key}: {value}'
+                    for connection in connections:
+                        await connection.send_text(data)
+
+
         except ValueError:
             print("Value Error in Try statement")
         except WebSocketDisconnect:
@@ -185,6 +199,11 @@ async def index(request: Request):
 def video_feed():
     # Route for streaming video feed
     return StreamingResponse(get_frame(), media_type='multipart/x-mixed-replace; boundary=frame')
+
+@app.get('/nn_feed')
+def nn_feed():
+    # Route for streaming video feed
+    return StreamingResponse(get_nn_frame(), media_type='multipart/x-mixed-replace; boundary=frame')
 
 @app.get("/favicon.ico")
 async def get_favicon():
