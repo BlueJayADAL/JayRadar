@@ -16,7 +16,7 @@ def capture_frames():
     """
     Function to capture video frames and add them to the frame queue.
     """
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
     print("Camera Aquired")
 
