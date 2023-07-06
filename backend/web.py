@@ -1,6 +1,6 @@
 import cv2
 import json
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, UploadFile, File
 from capture import frame_queue, process_event
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -9,6 +9,7 @@ from constants import NT_SERVER_IP, TABLE_NAME
 from detection import nn_lock, nn_config, nn_queue, nn_event
 from send import filtered_queue, filtered_event
 from networktables import NetworkTables
+import os
 
 complete_config = {  
     "cam": 0,
@@ -19,6 +20,7 @@ complete_config = {
     "red": 0,
     "gre": 0,
     "blu": 0,
+    "model": "./models/yolov8n.pt",
     "conf": 25,
     "iou": 70,
     "half": False,
@@ -31,14 +33,15 @@ complete_config = {
     ]
 }
 
-nn_keys = {  
-        "conf": int,
-        "iou": int,
-        "half": bool,
-        "ss": bool,
-        "ssd": bool,
-        "max": int,
-        "class": list
+nn_keys = { 
+    "model": str,        
+    "conf": int,
+    "iou": int,
+    "half": bool,
+    "ss": bool,
+    "ssd": bool,
+    "max": int,
+    "class": list
     }
 
 NetworkTables.initialize(NT_SERVER_IP)
@@ -52,6 +55,15 @@ connections = []
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+folder_path = './models'
+
+def list_files():
+    file_list = []
+    for root, dirs, files in os.walk(folder_path):
+        for file_name in files:
+            file_path = os.path.join(root, file_name)
+            file_list.append(file_path)
+    return file_list
 
 def update_config(key, value):
     global complete_config, nn_keys, nn_lock, nn_config
@@ -198,7 +210,8 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get("/")
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    files = list_files()
+    return templates.TemplateResponse("index.html", {"request": request, "files": files})
 
 @app.get('/video_feed')
 def video_feed():
@@ -218,6 +231,17 @@ def filtered_feed():
 @app.get("/favicon.ico")
 async def get_favicon():
     return FileResponse("standard.png")
+
+@app.post("/upload")
+async def upload_file(request: Request, upload_file: UploadFile = File(...)):
+    if upload_file.filename:
+        filename = upload_file.filename
+        file_path = os.path.join(folder_path, filename)
+        with open(file_path, "wb") as f:
+            f.write(await upload_file.read())
+    files = list_files()
+    return templates.TemplateResponse("index.html", {"request": request, "files": files})
+   
 
 if __name__ == "__main__":
     import uvicorn

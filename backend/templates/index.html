@@ -45,6 +45,13 @@
 
                 </div>
                 <div id="tab3" class="tab-content">
+                    <div>
+                        <select id="model">
+                            {% for file in files %}
+                            <option>{{ file }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                     <div class="sliders">
                         <div>
                             <label for="conf">Conf:</label>
@@ -80,6 +87,10 @@
                             <input type="checkbox" id="half" name="half">
                             <label for="half">Half Precision</label>
                         </div>
+                        <form method="post" action="/upload" enctype="multipart/form-data">
+                            <input type="file" name="upload_file">
+                            <button type="submit">Upload</button>
+                        </form>
                     </div>
                 </div>
             </div>

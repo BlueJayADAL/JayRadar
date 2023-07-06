@@ -13,7 +13,8 @@ nn_event = threading.Event()
 
 nn_lock = threading.Lock()
 
-nn_config = {  
+nn_config = {
+    "model": './models/yolov8n.pt',  
     "conf": 25,
     "iou": 70,
     "half": False,
@@ -31,8 +32,12 @@ def average_last_iterations(times, iterations):
 
 def process_frames():
     global nn_config
+    current_model = MODEL_NAME
     model = YOLO(MODEL_NAME)
-
+    if current_model != nn_config['model']:
+        del(model)
+        current_model = nn_config['model']
+        model = YOLO(current_model)
     conf = nn_config['conf'] / 100
     iou = nn_config['iou'] / 100
     half = nn_config['half']
@@ -43,7 +48,7 @@ def process_frames():
     classes = nn_config['class']
 
     times = []
-    max_iterations = 250  # Adjust this value to set the maximum size of the 'times' list
+    max_iterations = 50  # Adjust this value to set the maximum size of the 'times' list
     iterations = 0  
 
     while True:
@@ -51,7 +56,10 @@ def process_frames():
         if frame_queue:
             #Start of the Yolov8 Detection
             frame = frame_queue[-1]
-
+            if current_model != nn_config['model']:
+                del(model)
+                current_model = nn_config['model']
+                model = YOLO(current_model)
             conf = nn_config['conf'] / 100
             iou = nn_config['iou'] / 100
             half = nn_config['half']
