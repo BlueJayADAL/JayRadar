@@ -6,7 +6,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
 from constants import NT_SERVER_IP, TABLE_NAME
-from detection import nn_lock, nn_config, nn_updated, nn_queue, nn_event
+from detection import nn_lock, nn_config, nn_queue, nn_event
+from send import filtered_queue, filtered_event
 from networktables import NetworkTables
 
 complete_config = {  
@@ -53,13 +54,12 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 def update_config(key, value):
-    global complete_config, nn_keys, nn_lock, nn_config, nn_updated
+    global complete_config, nn_keys, nn_lock, nn_config
     if key == "config":
         load_config(value)
     if key == "save_config":
         save_config(value)
     if key in nn_keys:
-        nn_updated = True
         with nn_lock:
             if key == "class":
                 try:
@@ -109,24 +109,12 @@ def value_changed(table, key, value, isNew):
             
 nt.addEntryListener(value_changed)
 
-def draw_bounding_box(frame, x, y, w, h):
-    x1, y1 = int(x - w/2), int(y - h/2)  # Calculate top-left corner coordinates
-    x2, y2 = int(x + w/2), int(y + h/2)  # Calculate bottom-right corner coordinates
-
-    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)  # Draw the bounding box
-
-    return frame
-
-def draw_crosshair(frame, x, y):
-    cv2.drawMarker(frame, (x, y), (0, 0, 255), cv2.MARKER_CROSS, 5, 2)
-    return frame
-
 def get_frame():
     while True:
         # Get the latest frame from the queue
         process_event.wait()  # Wait for the event to be set, so we know there's a frame
         process_event.clear()  # Clear the event, it will be set again next time
-        if nn_queue:
+        if frame_queue:
             frame = frame_queue[-1].copy()
 
             if frame is not None:
@@ -144,6 +132,23 @@ def get_nn_frame():
         nn_event.clear()  # Clear the event, it will be set again next time
         if nn_queue:
             frame = nn_queue[-1].copy()
+
+            if frame is not None:
+                ret, buffer = cv2.imencode('.jpg', frame)
+                frame_data = buffer.tobytes()
+                
+                # Yield the frame data as MJPEG response
+                yield (b'--frame\r\n'
+                    b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
+                
+
+def get_filtered_frame():
+    while True:
+        # Get the latest frame from the queue
+        filtered_event.wait()  # Wait for the event to be set, so we know there's a frame
+        filtered_event.clear()  # Clear the event, it will be set again next time
+        if filtered_queue:
+            frame = filtered_queue[-1].copy()
 
             if frame is not None:
                 ret, buffer = cv2.imencode('.jpg', frame)
@@ -204,6 +209,11 @@ def video_feed():
 def nn_feed():
     # Route for streaming video feed
     return StreamingResponse(get_nn_frame(), media_type='multipart/x-mixed-replace; boundary=frame')
+
+@app.get('/filtered_feed')
+def filtered_feed():
+    # Route for streaming video feed
+    return StreamingResponse(get_filtered_frame(), media_type='multipart/x-mixed-replace; boundary=frame')
 
 @app.get("/favicon.ico")
 async def get_favicon():
