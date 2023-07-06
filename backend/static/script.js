@@ -29,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveButton = document.getElementById("saveButton");
   const resetButton = document.getElementById("resetButton");
   const socket = new WebSocket(`ws://${location.host}/ws`);
+  const videoSourceDropdown = document.getElementById("videoSource");
+  const videoFeedImg = document.getElementById("videoFeed");
   // Set the first tab as active by default
   document.getElementsByClassName("tab-link")[0].click();
 
@@ -75,6 +77,9 @@ document.addEventListener("DOMContentLoaded", () => {
         element.checked = value === "true";
       } else if (element.type === "select-one") {
         element.value = value;
+        if (key == "videoSource"){
+          videoFeedImg.src = value
+        }
       }
     }
   };
@@ -92,5 +97,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const key = "config";
     const value = configDropdown.value;
     sendMessage(key, value);
+  });
+
+  videoSourceDropdown.addEventListener("change", function () {
+    const newSource = this.value;
+    videoFeedImg.src = newSource;
   });
 });
