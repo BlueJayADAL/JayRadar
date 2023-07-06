@@ -7,6 +7,8 @@ import time
 
 nn_queue = deque(maxlen=MAX_FRAMES)
 
+result_queue = deque(maxlen=MAX_FRAMES)
+
 nn_event = threading.Event()
 
 nn_lock = threading.Lock()
@@ -24,13 +26,11 @@ nn_config = {
     ]
 }
 
-nn_updated = False
-
 def average_last_iterations(times, iterations):
     return sum(times[-iterations:]) / iterations
 
 def process_frames():
-    global nn_config, nn_updated
+    global nn_config
     model = YOLO(MODEL_NAME)
 
     conf = nn_config['conf'] / 100
@@ -43,12 +43,13 @@ def process_frames():
     classes = nn_config['class']
 
     times = []
-    max_iterations = 50  # Adjust this value to set the maximum size of the 'times' list
+    max_iterations = 250  # Adjust this value to set the maximum size of the 'times' list
     iterations = 0  
 
     while True:
         start_time = time.time()
         if frame_queue:
+            #Start of the Yolov8 Detection
             frame = frame_queue[-1]
 
             conf = nn_config['conf'] / 100
@@ -73,7 +74,15 @@ def process_frames():
                 imgsz = image_size,
                 verbose=False
             )
-         
+
+            converted_result = []
+            for box in results[0].boxes:
+                cx, cy, w, h = [round(x, 4) for x in box.xywh[0].tolist()]
+                ID = box.id  # Replace 'ID' with the actual attribute name for ID and round accordingly
+                converted_result.append([cx, cy, w, h, ID])
+
+            result_queue.append(converted_result)
+
             annotated_frame = results[0].plot()
 
             nn_queue.append(annotated_frame) 
@@ -92,4 +101,5 @@ def process_frames():
 
             avg_last_x_iterations = average_last_iterations(times, iterations)
             print(f"Time: {iteration_time:.4f}s | "
-                f"Avg Last {iterations} Iterations: {avg_last_x_iterations:.4f}s")
+                f"Avg Last {iterations} Iterations: {avg_last_x_iterations:.4f}s | "
+                f"{(1/avg_last_x_iterations):.4f} FPS")
