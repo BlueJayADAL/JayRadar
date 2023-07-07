@@ -9,6 +9,8 @@ nn_queue = deque(maxlen=MAX_FRAMES)
 
 result_queue = deque(maxlen=MAX_FRAMES)
 
+times_queue = deque(maxlen=MAX_FRAMES)
+
 nn_event = threading.Event()
 
 nn_lock = threading.Lock()
@@ -27,9 +29,6 @@ nn_config = {
     ]
 }
 
-def average_last_iterations(times, iterations):
-    return sum(times[-iterations:]) / iterations
-
 def process_frames():
     global nn_config
     current_model = MODEL_NAME
@@ -45,11 +44,7 @@ def process_frames():
     save_conf = nn_config['ssd']
     max_det = nn_config['max']
     image_size = nn_config['img']
-    classes = nn_config['class']
-
-    times = []
-    max_iterations = 50  # Adjust this value to set the maximum size of the 'times' list
-    iterations = 0  
+    classes = nn_config['class'] 
 
     while True:
         start_time = time.time()
@@ -99,15 +94,5 @@ def process_frames():
 
             end_time = time.time()
             iteration_time = end_time - start_time
-            times.append(iteration_time)
 
-            if iterations< max_iterations:
-                iterations +=1
-
-            if len(times) > max_iterations:
-                times = times[-max_iterations:]
-
-            avg_last_x_iterations = average_last_iterations(times, iterations)
-            print(f"Time: {iteration_time:.4f}s | "
-                f"Avg Last {iterations} Iterations: {avg_last_x_iterations:.4f}s | "
-                f"{(1/avg_last_x_iterations):.4f} FPS")
+            times_queue.append(iteration_time)

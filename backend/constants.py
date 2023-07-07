@@ -16,6 +16,8 @@ MODEL_NAME = "./models/frc7ng480.pt"
 # MAX FRAMES int
 MAX_FRAMES = 5
 
+MAX_TIMES = 50
+
 # WEBPAGE HTML FILE
 HTML_PAGE = "test.html"
 

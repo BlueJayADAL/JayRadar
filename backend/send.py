@@ -2,9 +2,9 @@ import math
 import threading
 import cv2
 from collections import deque
-from detection import result_queue
+from detection import result_queue, times_queue
 from capture import frame_queue, process_event
-from constants import MAX_FRAMES
+from constants import MAX_FRAMES, MAX_TIMES
 
 filtered_queue = deque(maxlen=MAX_FRAMES)
 
@@ -77,14 +77,22 @@ def draw_crosshair(frame, x, y):
     cv2.drawMarker(frame, (x, y), (0, 0, 255), cv2.MARKER_CROSS, 5, 2)
     return frame
 
+def average_last_iterations(times, iterations):
+    return sum(times[-iterations:]) / iterations
+
 def send_filtered_results():
+    
+    iterations = 0
+    times = []
+    max_iterations = MAX_TIMES
+
     while True:
         process_event.wait()
         process_event.clear()
-        if frame_queue and result_queue:
-
+        if frame_queue and result_queue and times_queue:
             frame = frame_queue[-1].copy()
             results = result_queue[-1]
+            iteration_time = times_queue[-1]
             result, success = filter_edge_crosshair(results, 320, 240)
             crosshair_frame = draw_crosshair(frame, 320, 240)
             if success:
@@ -95,3 +103,15 @@ def send_filtered_results():
             filtered_queue.append(final_frame)
 
             filtered_event.set()
+            times.append(iteration_time)
+
+            if iterations < max_iterations:
+                iterations +=1
+
+            if len(times) > max_iterations:
+                times = times[-max_iterations:]
+
+            avg_last_x_iterations = average_last_iterations(times, iterations)
+            print(f"Time: {iteration_time:.4f}s | "
+                f"Avg Last {iterations} Iterations: {avg_last_x_iterations:.4f}s | "
+                f"{(1/avg_last_x_iterations):.4f} FPS")
