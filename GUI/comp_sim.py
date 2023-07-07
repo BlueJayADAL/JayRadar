@@ -10,6 +10,9 @@ table_name = 'JayRadar'
 NetworkTables.initialize()
 table = NetworkTables.getTable(table_name)
 
+cap = None
+jayradar_ip = '10.1.32.29'
+
 def value_changed(table, key, value, isNew):
     print()
     print('Update to the JayRadar table found!')
@@ -44,33 +47,43 @@ config_menu = tk.OptionMenu(left_frame, selected_option, *config_options, comman
 config_menu.pack(padx=10, pady=10)
 
 # Create a dropdown menu with the video URLs
-video_urls = ['http://10.1.32.29:8000/nn_feed', 'http://10.1.32.29:8000/video_feed', 'http://10.1.32.29:8000/filtered_feed']
+video_urls = ['none', 'nn_feed', 'video_feed', 'filtered_feed']
 selected_video_url = tk.StringVar(window)
 selected_video_url.set(video_urls[0])
 
 url_label = tk.Label(left_frame, text="Video URL:")
 url_label.pack(padx=10, pady=10)
 
-url_menu = tk.OptionMenu(left_frame, selected_video_url, *video_urls)
+def url_dropdown_callback(*args):
+    global cap, jayradar_ip
+    selected_endpoint = selected_video_url.get()
+    if selected_endpoint == 'none':
+        del(cap)
+        cap = None
+    else:
+        url = f'http://{jayradar_ip}:8000/{selected_endpoint}'
+        del(cap)
+        cap = cv2.VideoCapture(url)
+
+
+url_menu = tk.OptionMenu(left_frame, selected_video_url, *video_urls, command=url_dropdown_callback)
 url_menu.pack(padx=10, pady=10)
 
 # Create a label to display the current time
 time_label = tk.Label(left_frame, text="")
 time_label.pack(pady=10)
 
-# Create a variable to store the checkbox status
-checkbox_status = tk.IntVar()
-checkbox_status.set(0)  # Set initial status as unchecked (0)
-
-# Create a checkbox
-checkbox = tk.Checkbutton(left_frame, text="Video Feed", variable=checkbox_status)
-checkbox.pack(padx=10, pady=10)
-
 # Function to update the time label
 def update_time():
-    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    time_label.config(text="Current Time: " + current_time)
-    time_label.after(1000, update_time)  # Update every second
+    tx = table.getValue('tx', -1)
+    ty = table.getValue('tx', -1)
+    tw = table.getValue('tx', -1)
+    th = table.getValue('tx', -1)
+    ta = table.getValue('tx', -1)
+    tc = table.getValue('tx', -1)
+    detection_info = f"tx: {tx} | ty: {ty} | tw: {tw} | th: {th} | ta: {ta} | tc: {tc}"
+    time_label.config(text=detection_info)
+    time_label.after(30, update_time)  # Update every second
 
 # Create a frame for the right side (video feed)
 right_frame = tk.Frame(window)
@@ -81,27 +94,10 @@ video_label = tk.Label(right_frame)
 video_label.pack(padx=10, pady=10)
 
 # Function to update the video feed
-running = False
-cap = None
-current_url = ''
 
 def update_video():
-    global cap, current_url, running
-    selected_url = selected_video_url.get()
-    if checkbox_status.get() == 1:
-        active = True
-    else:
-        active = False
-
-    if active and not running:
-        cap = cv2.VideoCapture(selected_url)
-        current_url = selected_url
-        running = True
-    if current_url != selected_url:
-        del(cap)
-        cap = cv2.VideoCapture(selected_url)
-        current_url = selected_url
-    if cap.isOpened() and active:
+    global cap
+    if cap is not None:
         ret, frame = cap.read()
         if ret:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
