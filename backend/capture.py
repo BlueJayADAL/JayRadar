@@ -66,9 +66,10 @@ def capture_frames():
             auto_exposure = cam_config['auto_exp']
             if auto_exposure:
                 cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.75)
+            else:
+                cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
         if not auto_exposure and exposure != cam_config['exp']:
             exposure = cam_config['exp']
-            cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0.25)
             cap.set(cv2.CAP_PROP_EXPOSURE, exposure)
             print(f'Exposure = {cap.get(cv2.CAP_PROP_EXPOSURE)}')
         if brightness != cam_config['bri']:
