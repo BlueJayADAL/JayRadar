@@ -42,7 +42,46 @@
                     </div>
                 </div>
                 <div id="tab2" class="tab-content">
-
+                    <select id="cam">
+                        <option value="0">Cam: 0</option>
+                        <option value="1">Cam: 1</option>
+                    </select>
+                    <div class="sliders">
+                        <div>
+                            <input type="checkbox" id="auto_exp" name="auto_exp">
+                            <label for="auto_exp">Auto Exposure</label>
+                        </div>
+                        <div>
+                            <label for="exp">Exposure:</label>
+                            <input type="range" id="exp" name="exp" min="-10" max="0" step=".1">
+                            <span id="expValue">-5</span>
+                        </div>
+                        <div>
+                            <label for="cont">Contrast:</label>
+                            <input type="range" id="cont" name="cont" min="0" max="10" step=".1">
+                            <span id="contValue">1</span>
+                        </div>
+                        <div>
+                            <label for="bri">Brightness:</label>
+                            <input type="range" id="bri" name="bri" min="-255" max="255" step="5">
+                            <span id="briValue">0</span>
+                        </div>
+                        <div>
+                            <label for="red">Red Balance:</label>
+                            <input type="range" id="red" name="red" min="-255" max="255" step="5">
+                            <span id="redValue">0</span>
+                        </div>
+                        <div>
+                            <label for="gre">Green Balance:</label>
+                            <input type="range" id="gre" name="gre" min="-255" max="255" step="5">
+                            <span id="greValue">0</span>
+                        </div>
+                        <div>
+                            <label for="blu">Blue Balance:</label>
+                            <input type="range" id="blu" name="blu" min="-255" max="255" step="5">
+                            <span id="bluValue">0</span>
+                        </div>
+                    </div>
                 </div>
                 <div id="tab3" class="tab-content">
                     <div>
