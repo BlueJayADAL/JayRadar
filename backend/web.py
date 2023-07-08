@@ -39,6 +39,7 @@ nn_keys = {
     "ss": bool,
     "ssd": bool,
     "max": int,
+    "img": int,
     "class": list
     }
 
