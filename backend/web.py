@@ -5,10 +5,8 @@ from capture import frame_queue, process_event
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
-from constants import NT_SERVER_IP, TABLE_NAME
 from detection import nn_lock, nn_config, nn_queue, nn_event
-from send import filtered_queue, filtered_event
-from networktables import NetworkTables
+from send import filtered_queue, nt
 import os
 
 complete_config = {  
@@ -43,11 +41,6 @@ nn_keys = {
     "max": int,
     "class": list
     }
-
-NetworkTables.initialize(NT_SERVER_IP)
-
-# Retrieve the JayRadar table for us to use
-nt = NetworkTables.getTable(TABLE_NAME)
 
 # Maintain a list of active connections
 connections = []
@@ -112,6 +105,18 @@ def load_config(filename):
         update_config(key, value)
     return 0
 
+def draw_bounding_box(frame, x, y, w, h):
+    x1, y1 = int(x - w/2), int(y - h/2)  # Calculate top-left corner coordinates
+    x2, y2 = int(x + w/2), int(y + h/2)  # Calculate bottom-right corner coordinates
+
+    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)  # Draw the bounding box
+
+    return frame
+
+def draw_crosshair(frame, x, y):
+    cv2.drawMarker(frame, (x, y), (0, 0, 255), cv2.MARKER_CROSS, 5, 2)
+    return frame
+
 def value_changed(table, key, value, isNew):
         print()
         print('UPDATE TO JAYRADAR FOUND')
@@ -157,13 +162,22 @@ def get_nn_frame():
 def get_filtered_frame():
     while True:
         # Get the latest frame from the queue
-        filtered_event.wait()  # Wait for the event to be set, so we know there's a frame
-        filtered_event.clear()  # Clear the event, it will be set again next time
-        if filtered_queue:
-            frame = filtered_queue[-1].copy()
+        process_event.wait()  # Wait for the event to be set, so we know there's a frame
+        process_event.clear()  # Clear the event, it will be set again next time
+        if frame_queue and filtered_queue:
+            frame = frame_queue[-1].copy()
+            result = filtered_queue[-1]
 
             if frame is not None:
-                ret, buffer = cv2.imencode('.jpg', frame)
+
+                crosshair_frame = draw_crosshair(frame, 320, 240)
+
+                if result is not None:
+                    final_frame = draw_bounding_box(crosshair_frame, result[0], result[1], result[2], result[3])
+                else:
+                    final_frame = crosshair_frame
+
+                ret, buffer = cv2.imencode('.jpg', final_frame)
                 frame_data = buffer.tobytes()
                 
                 # Yield the frame data as MJPEG response
