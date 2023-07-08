@@ -58,10 +58,10 @@ def capture_frames():
     while cap.isOpened():
         success, frame = cap.read()
         if cap != cameras[cam_config['cam']]:
-            cap = cameras[cam_config['cam']]
-        if contrast != cam_config['cont']:
-            contrast = cam_config['cont']
-            print(f'Contrast = {contrast}')
+            try:
+                cap = cameras[cam_config['cam']]
+            except IndexError:
+                pass
         if auto_exposure != cam_config['auto_exp']:
             auto_exposure = cam_config['auto_exp']
             if auto_exposure:
@@ -72,24 +72,12 @@ def capture_frames():
             exposure = cam_config['exp']
             cap.set(cv2.CAP_PROP_EXPOSURE, exposure)
             print(f'Exposure = {cap.get(cv2.CAP_PROP_EXPOSURE)}')
-        if brightness != cam_config['bri']:
-            brightness = cam_config['bri']
-            print(f'Brightness = {brightness}')
-        if red_value != cam_config['red']:
-            red_value = cam_config['red']
-            print(f'Red = {red_value}')
-        if green_value != cam_config['gre']:
-            green_value = cam_config['gre']
-            print(f'Green = {green_value}')
-        if blue_value != cam_config['blu']:
-            blue_value = cam_config['blu']
-            print(f'Blue = {blue_value}')
 
         if success:
-            adjusted_frame = cv2.convertScaleAbs(frame, alpha=contrast, beta=brightness)
-            adjusted_frame[:, :, 2] = np.clip(adjusted_frame[:, :, 2] + red_value, 0, 255).astype(np.uint8)  # Adjust red channel
-            adjusted_frame[:, :, 0] = np.clip(adjusted_frame[:, :, 0] + blue_value, 0, 255).astype(np.uint8)  # Adjust blue channel
-            adjusted_frame[:, :, 1] = np.clip(adjusted_frame[:, :, 1] + green_value, 0, 255).astype(np.uint8)  # Adjust green channel
+            adjusted_frame = cv2.convertScaleAbs(frame, alpha=cam_config['cont'], beta=cam_config['bri'])
+            adjusted_frame[:, :, 2] = np.clip(adjusted_frame[:, :, 2] + cam_config['red'], 0, 255).astype(np.uint8)  # Adjust red channel
+            adjusted_frame[:, :, 0] = np.clip(adjusted_frame[:, :, 0] + cam_config['blu'], 0, 255).astype(np.uint8)  # Adjust blue channel
+            adjusted_frame[:, :, 1] = np.clip(adjusted_frame[:, :, 1] + cam_config['gre'], 0, 255).astype(np.uint8)  # Adjust green channel
 
             # Put frame in the deque for processing
             frame_queue.append(adjusted_frame)
