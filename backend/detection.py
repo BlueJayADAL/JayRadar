@@ -11,6 +11,8 @@ result_queue = deque(maxlen=MAX_FRAMES)
 
 times_queue = deque(maxlen=MAX_FRAMES)
 
+results_event = threading.Event()
+
 nn_event = threading.Event()
 
 nn_lock = threading.Lock()
@@ -81,8 +83,9 @@ def process_frames():
             converted_result = []
             for box in results[0].boxes:
                 cx, cy, w, h = [round(x, 4) for x in box.xywh[0].tolist()]
-                ID = box.id  # Replace 'ID' with the actual attribute name for ID and round accordingly
-                converted_result.append([cx, cy, w, h, ID])
+                ID = box.cls
+                prob = box.conf
+                converted_result.append([cx, cy, w, h, ID, prob])
 
             result_queue.append(converted_result)
 
@@ -96,3 +99,5 @@ def process_frames():
             iteration_time = end_time - start_time
 
             times_queue.append(iteration_time)
+
+            results_event.set()
