@@ -29,7 +29,7 @@ def get_available_cameras():
     available_cameras = []
     index = 0
     while True:
-        cap = cv2.VideoCapture(index, cv2.CAP_DSHOW)
+        cap = cv2.VideoCapture(index)
         if not cap.read()[0]:
             break
         else:
