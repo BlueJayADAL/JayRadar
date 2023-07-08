@@ -7,11 +7,11 @@ NT_SERVER_IP = "10.1.32.27"
 TABLE_NAME = "JayRadar"
 
 # Socket IP address
-SOCKET_IP = "10.1.32.27" 
+SOCKET_IP = "10.1.32.29" 
 #Recomputer: "10.4.10.46" 
 
 # MODEL NAME string
-MODEL_NAME = "./models/frc7ng480.pt"
+MODEL_NAME = "./models/frc7ng.pt"
 
 # MAX FRAMES int
 MAX_FRAMES = 5
