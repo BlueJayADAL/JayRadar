@@ -1,7 +1,5 @@
 import tkinter as tk
-import numpy as np
 import cv2
-import datetime
 from PIL import ImageTk, Image
 from networktables import NetworkTables
 
@@ -11,7 +9,7 @@ NetworkTables.initialize()
 table = NetworkTables.getTable(table_name)
 
 cap = None
-jayradar_ip = '10.1.32.29'
+jayradar_ip = '10.1.32.27'
 
 def value_changed(table, key, value, isNew):
     print()
@@ -76,11 +74,11 @@ time_label.pack(pady=10)
 # Function to update the time label
 def update_time():
     tx = table.getValue('tx', -1)
-    ty = table.getValue('tx', -1)
-    tw = table.getValue('tx', -1)
-    th = table.getValue('tx', -1)
-    ta = table.getValue('tx', -1)
-    tc = table.getValue('tx', -1)
+    ty = table.getValue('ty', -1)
+    tw = table.getValue('tw', -1)
+    th = table.getValue('th', -1)
+    ta = table.getValue('ta', -1)
+    tc = table.getValue('tc', -1)
     detection_info = f"tx: {tx} | ty: {ty} | tw: {tw} | th: {th} | ta: {ta} | tc: {tc}"
     time_label.config(text=detection_info)
     time_label.after(30, update_time)  # Update every second
