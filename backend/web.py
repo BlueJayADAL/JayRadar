@@ -1,7 +1,7 @@
 import cv2
 import json
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, UploadFile, File
-from capture import frame_queue, process_event
+from capture import frame_queue, process_event, cam_config, cam_lock
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
@@ -29,6 +29,17 @@ complete_config = {
     "class": [
         -1
     ]
+}
+
+cam_keys = {
+    "cam": int,
+    "auto_exp": bool,
+    "exp": float,
+    "bri": float,
+    "cont": float,
+    "red": float,
+    "gre": float,
+    "blu": float
 }
 
 nn_keys = { 
@@ -63,9 +74,18 @@ def update_config(key, value):
     global complete_config, nn_keys, nn_lock, nn_config
     if key == "config":
         load_config(value)
-    if key == "save_config":
+    elif key == "save_config":
         save_config(value)
-    if key in nn_keys:
+    elif key in cam_keys:
+        with cam_lock:
+            try:
+                typecasted_value = cam_keys[key](value)
+                cam_config[key] = typecasted_value
+                complete_config[key] = typecasted_value
+                print(f'cam_config[{key}] = {cam_config[key]}')
+            except (ValueError, TypeError):
+                    pass
+    elif key in nn_keys:
         with nn_lock:
             if key == "class":
                 try:
@@ -208,6 +228,10 @@ async def websocket_endpoint(websocket: WebSocket):
             for connection in connections:
                 await connection.send_text(data)
             key, value = data.split(": ")
+            if value.lower() == 'true':
+                value = True
+            elif value.lower() == 'false':
+                value = False
             update_config(key, value)
             if key == 'config':
                 for key, value in complete_config.items():
