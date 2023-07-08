@@ -61,7 +61,8 @@ def capture_frames():
             try:
                 cap = cameras[cam_config['cam']]
             except IndexError:
-                pass
+                with cam_lock:
+                    cam_config['cam'] = 0
         if auto_exposure != cam_config['auto_exp']:
             auto_exposure = cam_config['auto_exp']
             if auto_exposure:
