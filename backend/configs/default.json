@@ -1,4 +1,13 @@
 {
+    "cam": 1,
+    "auto_exp": false,
+    "exp": 100.0,
+    "bri": 0.0,
+    "cont": 1.0,
+    "red": 0.0,
+    "gre": 0.0,
+    "blu": 0.0,
+    "model": "./models/frc7ng.pt",
     "conf": 25,
     "iou": 70,
     "half": false,
