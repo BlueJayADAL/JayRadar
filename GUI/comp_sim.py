@@ -9,13 +9,36 @@ NetworkTables.initialize()
 table = NetworkTables.getTable(table_name)
 
 cap = None
-jayradar_ip = '10.1.32.27'
+jayradar_ip = '10.1.32.29'
+tx = -1
+ty = -1
+tw = -1
+th = -1
+ta = -1
+tc = -1
+avgdelay = -1
+delay = -1
 
 def value_changed(table, key, value, isNew):
-    print()
-    print('Update to the JayRadar table found!')
-    print(f'Key: {key}, Value: {value}, IsNew: {isNew}')
-    print()
+    global tx, ty, tw, th, ta, tc, avgdelay, delay
+    if key == 'tx':
+        tx = round(value, 3)
+    elif key == 'ty':
+        ty = round(value, 3)
+    elif key == 'tw':
+        tw = round(value, 3)
+    elif key == 'th':
+        th = round(value, 3)
+    elif key == 'ta':
+        ta = round(value, 3)
+    elif key == 'tc':
+        tc = round(value, 3)
+    elif key == 'delay':
+        delay = round(value*1000, 1)
+    elif key == 'avgdelay':
+        avgdelay = round(value*1000, 1)
+    detection_info = f"tc: {tc} | delay: {delay}ms | avgdelay: {avgdelay}ms | avgFPS: {round(1000/avgdelay, 1)}"
+    time_label.config(text=detection_info)
 
 table.addEntryListener(value_changed)
 
@@ -68,20 +91,8 @@ url_menu = tk.OptionMenu(left_frame, selected_video_url, *video_urls, command=ur
 url_menu.pack(padx=10, pady=10)
 
 # Create a label to display the current time
-time_label = tk.Label(left_frame, text="")
+time_label = tk.Label(left_frame, text="No updates to netorktables")
 time_label.pack(pady=10)
-
-# Function to update the time label
-def update_time():
-    tx = table.getValue('tx', -1)
-    ty = table.getValue('ty', -1)
-    tw = table.getValue('tw', -1)
-    th = table.getValue('th', -1)
-    ta = table.getValue('ta', -1)
-    tc = table.getValue('tc', -1)
-    detection_info = f"tx: {tx} | ty: {ty} | tw: {tw} | th: {th} | ta: {ta} | tc: {tc}"
-    time_label.config(text=detection_info)
-    time_label.after(30, update_time)  # Update every second
 
 # Create a frame for the right side (video feed)
 right_frame = tk.Frame(window)
@@ -106,7 +117,6 @@ def update_video():
     window.after(30, update_video)  # Update every 30 milliseconds
 
 # Start updating the time label and video feed
-update_time()
 update_video()
 
 # Run the Tkinter event loop
