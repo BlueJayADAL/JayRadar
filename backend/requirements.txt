@@ -1,8 +1,5 @@
-opencv-python
-numpy
-Pillow
 ultralytics
 pynetworktables
 fastapi
-flask
-uvicorn
+uvicorn[standard]
+python-multipart
