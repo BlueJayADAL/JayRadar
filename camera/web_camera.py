@@ -2,7 +2,7 @@ import cv2
 
 
 class WebCamera:
-    def __init__(self, device:int, q_out):
+    def __init__(self, q_out, device:int=0,):
         self.device = device
         self.q_out = q_out
 
