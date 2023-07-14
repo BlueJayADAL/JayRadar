@@ -87,11 +87,7 @@
                 </div>
                 <div id="tab3" class="tab-content">
                     <div>
-                        <select id="model">
-                            {% for file in files %}
-                            <option>{{ file }}</option>
-                            {% endfor %}
-                        </select>
+                        
                     </div>
                     <div class="sliders">
                         <div>
@@ -140,16 +136,7 @@
                 <button id="saveButton">Save</button>
             </div>
         </div>
-        <div class="right-column">
-            <img id="videoFeed" src="{{ url_for('video_feed') }}" width="640" height="480">
-            <div>
-                <select id="videoSource">
-                    <option value="{{ url_for('video_feed') }}">Raw Video</option>
-                    <option value="{{ url_for('nn_feed') }}">All Detections</option>
-                    <option value="{{ url_for('filtered_feed') }}">Filtered</option>
-                </select>
-            </div>
-        </div>
+        
     </div>
 </body>
 </html>

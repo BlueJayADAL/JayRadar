@@ -1,7 +1,8 @@
 import multiprocessing as mp
 from camera import WebCamera
 from pipelines import DeepLearning
-import cv2
+from web import create_app
+import uvicorn
 
 
 if __name__ == "__main__":
@@ -24,22 +25,9 @@ if __name__ == "__main__":
     pipeline_process = mp.Process(target=pipeline.start_pipeline)
     pipeline_process.start()
 
-
-
-    while True:
-        frame = yolo_q.get()
-        if frame is not None:
-            cv2.imshow('Frame', frame)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                break
-            elif key == ord('1'):
-                pipeline_config['conf'] = 1
-            elif key == ord('0'):
-                pipeline_config['conf'] = 0
-
-
-    cv2.destroyAllWindows()
+    app = create_app(pipeline_config)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+    
     # Terminate the processes.
     camera_process.terminate()
     pipeline_process.terminate()

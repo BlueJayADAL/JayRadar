@@ -14,6 +14,10 @@ class DeepLearning:
             frame = self.q_in.get()
 
             if frame is not None:
-                results = self.model.predict(frame, imgsz=320, conf=self.config['conf'])
+                results = self.model.predict(
+                    frame, 
+                    imgsz=320, 
+                    conf=self.config['conf'],
+                    )
                 annotated_frame = results[0].plot()
                 self.q_out.put(annotated_frame)
