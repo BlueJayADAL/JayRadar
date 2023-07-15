@@ -16,10 +16,11 @@ class WebCamera:
                 break
 
             # Put the frame into the output queue
-            self.q_out.put(frame)
+            #print('added frame')
+            self.q_out.append(frame)
 
         # Release the camera
         self.cap.release()
 
         # Signal the end of frames by putting None in the output queue
-        self.q_out.put(None)
+        self.q_out.append(None)
