@@ -1,5 +1,6 @@
 from ultralytics import YOLO
 import math
+import cv2
 from networktables import NetworkTables
 
 
@@ -10,9 +11,9 @@ class DeepLearning:
         self.q_out = q_out
         self.config = pipeline_config
 
-        NetworkTables.initialize(server = '10.1.32.27')
+        #NetworkTables.initialize(server = '10.1.32.27')
 
-        self.table = NetworkTables.getTable("JayRadar")
+        #self.table = NetworkTables.getTable("JayRadar")
 
     def filter_send_crosshair(self, result, tx, ty):
         #if not result.boxes:
@@ -49,14 +50,27 @@ class DeepLearning:
     def start_pipeline(self):
         frame = None
         while True:
-            frame = self.q_in.get()
+            if self.q_in:
+                print('Starting detection loop')
+                frame = self.q_in[-1]
 
-            if frame is not None:
+                if frame is None:
+                    print('Breaking detection loop, frame is none')
+                    cv2.destroyAllWindows()
+                    break
+                    
+                cv2.imshow('Detection Loop Pre', frame)
+                key = cv2.waitKey(1) & 0xFF
+                if key == ord('q'):
+                    break
+
                 results = self.model.predict(
                     frame, 
                     imgsz=640, 
                     conf=self.config['conf'],
                     )
-                self.filter_send_crosshair(results[0], 320, 240)
+                #self.filter_send_crosshair(results[0], 320, 240)
                 annotated_frame = results[0].plot()
-                self.q_out.put(annotated_frame)
+                self.q_out.append(annotated_frame)
+            else:
+                print('no frame')
