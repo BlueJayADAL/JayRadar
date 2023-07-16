@@ -21,8 +21,10 @@ class NTDisplay:
 
         cv2.imshow('Output', frame)
         final_time = time.time()
-
+        
         end_to_end_time = round(final_time - data["timestamp"], 5)
+        if end_to_end_time < .0001:
+            end_to_end_time = .0001
 
         self.table.putNumber("IterationTime", end_to_end_time)
         self.table.putNumber("FPS", (1/end_to_end_time))
