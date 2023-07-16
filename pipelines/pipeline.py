@@ -5,6 +5,7 @@ class Pipeline:
         self.source = source
         self.output = output
         self.filters = filters
+        self.num_filters = len(self.filters)
 
     def initialize(self):
         self.source.initialize()
@@ -20,8 +21,8 @@ class Pipeline:
             if frame is None:
                 break
 
-            for pipe in self.filters:
-                frame, data = pipe.process_frame(frame, data)
+            for filter in self.filters:
+                frame, data = filter.process_frame(frame, data)
 
             self.output.send_frame(frame, data)
             
