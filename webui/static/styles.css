@@ -1,13 +1,25 @@
-/* Example CSS styles */
 body {
-  background-color: lightgray;
   font-family: Arial, sans-serif;
+  margin: 20px;
 }
 
 h1 {
-  color: navy;
+  color: #333;
 }
 
-p {
-  color: darkgreen;
+#messages {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  height: 200px;
+  overflow-y: scroll;
+}
+
+#message-form input[type="text"] {
+  padding: 5px;
+  width: 200px;
+}
+
+#message-form button {
+  padding: 5px 10px;
 }

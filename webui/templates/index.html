@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My App</title>
-    <link rel="stylesheet" href="/static/styles.css">
+  <title>WebSocket Example</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/styles.css') }}">
+  <script src="{{ url_for('static', path='/script.js') }}"></script>
 </head>
 <body>
-    <h1>Welcome to My App</h1>
-    <p>This is a sample FastAPI app.</p>
-
-    <script src="/static/script.js"></script>
+  <h1>WebSocket Example</h1>
+  <div id="messages"></div>
+  <form id="message-form">
+    <input type="text" id="user-input" placeholder="Enter username" value="user">
+    <input type="text" id="message-input" placeholder="Enter message">
+    <button type="submit">Send</button>
+  </form>
 </body>
 </html>
