@@ -1,5 +1,5 @@
 import multiprocessing as mp
-from pipelines import Pipeline
+from pipelines import VariablePipeline
 from pipelines.sources import Source, ThreadedSource
 from pipelines.outputs import Output, NTDisplay
 from pipelines.filters import HSVFilter, DeepLearning
@@ -8,6 +8,8 @@ if __name__ == "__main__":
     mp.set_start_method('spawn')
     
     manager = mp.Manager()
+
+    filters_q = mp.Queue()
     
     shared_config = manager.dict()
     
@@ -19,7 +21,7 @@ if __name__ == "__main__":
     filter1 = HSVFilter(shared_config)
     #dl_pipe = DeepLearning()
     output = NTDisplay(verbose=False)
-    pipeline = Pipeline(source, output, filter1,)
+    pipeline = VariablePipeline(source, output, filters_q,)
 
     pipeline_process = mp.Process(target=pipeline.initialize)
     pipeline_process.start()
@@ -41,6 +43,8 @@ if __name__ == "__main__":
             shared_config["saturation"] += .1
         elif keys == "s-":
             shared_config["saturation"] -= .1
+        elif keys == "add":
+            filters_q.put(["add", filter1])
 
     pipeline_process.terminate()
     pipeline_process.join()
