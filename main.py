@@ -1,15 +1,15 @@
-import multiprocessing as mp
+from multiprocessing import Manager, Process, set_start_method, Queue
 from pipelines import VariablePipeline
-from pipelines.sources import Source, ThreadedSource
-from pipelines.outputs import Output, NTDisplay
-from pipelines.filters import HSVFilter, DeepLearning
+from pipelines.sources import ThreadedSource#, Source
+from pipelines.outputs import NTDisplay#, Output
+from pipelines.filters import HSVFilter#, DeepLearning
 
 if __name__ == "__main__":
-    mp.set_start_method('spawn')
+    set_start_method('spawn')
     
-    manager = mp.Manager()
+    manager = Manager()
 
-    filters_q = mp.Queue()
+    filters_q = Queue()
     
     shared_config = manager.dict()
     
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     output = NTDisplay(verbose=False)
     pipeline = VariablePipeline(source, output, filters_q,)
 
-    pipeline_process = mp.Process(target=pipeline.initialize)
+    pipeline_process = Process(target=pipeline.initialize)
     pipeline_process.start()
 
 
