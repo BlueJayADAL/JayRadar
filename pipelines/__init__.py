@@ -1,3 +1,5 @@
 # __init__.py
 
-from .deep_learning import DeepLearning
+from .pipeline import Pipeline
+from .variable_pipeline import VariablePipeline
+from .manager import Manager

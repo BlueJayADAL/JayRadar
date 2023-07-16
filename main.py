@@ -1,43 +1,49 @@
-import threading
-from collections import deque
-from camera import WebCamera
-from pipelines import DeepLearning
-from web import create_app
-import uvicorn
-import cv2
-
+import multiprocessing as mp
+from pipelines import Pipeline
+from pipelines.sources import Source, ThreadedSource
+from pipelines.outputs import Output, NTDisplay
+from pipelines.filters import HSVFilter, DeepLearning
 
 if __name__ == "__main__":
-    # Create the multithreading dequeues
-    frame_q = deque(maxlen=5)
-    yolo_q = deque(maxlen=5)
+    mp.set_start_method('spawn')
+    
+    manager = mp.Manager()
+    
+    shared_config = manager.dict()
+    
+    shared_config["brightness"] = 0
+    shared_config["contrast"] = 1.0
+    shared_config["saturation"] = 1.0
 
-    pipeline_config = {
-        "conf": .25,
-    }
+    source = ThreadedSource(device=0, windows=True)
+    filter1 = HSVFilter(shared_config)
+    #dl_pipe = DeepLearning()
+    output = NTDisplay(verbose=False)
+    pipeline = Pipeline(source, output, filter1,)
 
-    # Create and start the camera process
-    camera = WebCamera(frame_q)
-    
-    pipeline = DeepLearning(
-        q_in = frame_q,
-        q_out = yolo_q,
-        pipeline_config = pipeline_config
-        )
-    
-
-    
-    camera_process = threading.Thread(target=camera.start_capture)
-    pipeline_process = threading.Thread(target=pipeline.start_pipeline)
-    
-    camera_process.start()
+    pipeline_process = mp.Process(target=pipeline.initialize)
     pipeline_process.start()
 
-    #app = create_app(pipeline_config)
-    #uvicorn.run(app, host="0.0.0.0", port=8000)
+
     while True:
-        pass
-    #cv2.destroyAllWindows()
-    # Terminate the processes.
-    #camera_process.join()
-    #pipeline_process.join()
+        keys = input("Enter a command: ")
+        if keys == "q":
+            break
+        elif keys == "b+":
+            shared_config["brightness"] += 5
+        elif keys == "b-":
+            shared_config["brightness"] -= 5
+        elif keys == "c+":
+            shared_config["contrast"] += .1
+        elif keys == "c-":
+            shared_config["contrast"] -= .1
+        elif keys == "s+":
+            shared_config["saturation"] += .1
+        elif keys == "s-":
+            shared_config["saturation"] -= .1
+
+    pipeline_process.terminate()
+    pipeline_process.join()
+    pipeline.cleanup()
+
+    
