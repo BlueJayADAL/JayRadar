@@ -3,6 +3,7 @@ from pipelines import VariablePipeline
 from pipelines.sources import ThreadedSource#, Source
 from pipelines.outputs import NTDisplay#, Output
 from pipelines.filters import HSVFilter#, DeepLearning
+from webui import WebUI
 
 if __name__ == "__main__":
     set_start_method('spawn')
@@ -26,7 +27,7 @@ if __name__ == "__main__":
     pipeline_process = Process(target=pipeline.initialize)
     pipeline_process.start()
 
-
+    """
     while True:
         keys = input("Enter a command: ")
         if keys == "q":
@@ -45,6 +46,9 @@ if __name__ == "__main__":
             shared_config["saturation"] -= .1
         elif keys == "add":
             filters_q.put(["add", filter1])
+    """
+    my_app = WebUI()
+    my_app.run()
 
     pipeline_process.terminate()
     pipeline_process.join()

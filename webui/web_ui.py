@@ -1,10 +1,11 @@
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from networktables import NetworkTables
 import os
 
 class WebUI:
-    def __init__(self, ip="0.0.0.0", port:int=8000):
+    def __init__(self, ip="0.0.0.0", port:int=8000, nt_ip="10.1.32.27", nt_table="JayRadar"):
         self.app = FastAPI()
         static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
         templates_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
@@ -12,9 +13,25 @@ class WebUI:
         self.templates = Jinja2Templates(directory=templates_path)
         self.ip = ip
         self.port = port
+        self.nt_ip = nt_ip
+        self.nt_table = nt_table
         self.connections = []
 
+    def value_changed(self, table, key, value, isNew):
+        print()
+        print('UPDATE TO JAYRADAR FOUND')
+        print(f"Value changed: {key} = {value}")
+        print()
+
     def configure_routes(self):
+
+        #Set up the networktables for the app
+        NetworkTables.initialize(server=self.nt_ip)
+        self.table = NetworkTables.getTable(self.nt_table)
+
+        #Add a listener to be able to load configs dynamically
+        self.table.addEntryListener(self.value_changed)
+
         @self.app.websocket("/ws")
         async def websocket_endpoint(websocket: WebSocket):
             await websocket.accept()
@@ -30,7 +47,7 @@ class WebUI:
                 except WebSocketDisconnect:
                     self.connections.remove(websocket)
                     break
-                
+
         @self.app.get("/")
         async def home(request: Request):
             return self.templates.TemplateResponse("index.html", {"request": request})
