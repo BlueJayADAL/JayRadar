@@ -38,10 +38,6 @@ class ThreadedSource:
         self._capture_thread.start()
 
     def get_frame(self):
-        if not self._active:
-            self.start()
-            self.running = True
-
         if self._dq_out:
             data = self._dq_out[-1]
             return data[0], {"timestamp":data[1]}
