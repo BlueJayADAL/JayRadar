@@ -11,7 +11,7 @@ class Source:
         if self.windows:
             self.cap = cv2.VideoCapture(self.device, cv2.CAP_DSHOW)
         else:
-            self.cap = self.cap = cv2.VideoCapture(self.device)
+            self.cap = cv2.VideoCapture(self.device)
 
     def get_frame(self):
         data={"timestamp": time.time()}
