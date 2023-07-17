@@ -15,9 +15,10 @@ class NTDisplay:
 
     def send_frame(self, frame, data):
 
-        if not self.running:
-            self.initialize()
-            self.running = True
+        for key, value in data.items():
+            self.table.putValue(key, value)
+            if self.verbose:
+                print(f"Placed on table: /Jayradar/{key}/{value}")
 
         cv2.imshow('Output', frame)
         final_time = time.time()
