@@ -3,7 +3,7 @@ from pipelines import VariablePipeline
 from pipelines.sources import ThreadedSource#, Source
 from pipelines.outputs import NTDisplay#, Output
 from pipelines.filters import HSVFilter, RGBFilter, DeepLearning
-from interfaces import WebUI, TerminalUI
+from interfaces import TerminalUI#, WebUI
 
 if __name__ == "__main__":
     set_start_method('spawn')
