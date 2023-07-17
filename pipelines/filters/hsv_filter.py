@@ -3,7 +3,7 @@ import numpy as np
 
 class HSVFilter:
     def __init__(self, config:dict={"brightness": 0, "contrast": 1.0, "saturation": 1.0}):
-        self.config = config
+        self._config = config
 
     def initialize(self):
         pass
@@ -13,13 +13,13 @@ class HSVFilter:
         h, s, v = cv2.split(frame)
 
         # Adjust brightness
-        v = cv2.add(v, self.config["brightness"])
+        v = cv2.add(v, self._config["brightness"])
 
         # Adjust contrast
-        v = cv2.multiply(v, self.config["contrast"])
+        v = cv2.multiply(v, self._config["contrast"])
 
         # Adjust saturation
-        s = cv2.multiply(s, self.config["saturation"])
+        s = cv2.multiply(s, self._config["saturation"])
 
         # Clamp values to valid range
         v = np.clip(v, 0, 255)
