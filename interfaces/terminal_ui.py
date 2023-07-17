@@ -1,8 +1,9 @@
 # Trying to make a more proper user interface
 
 class TerminalUI:
-    def __init__(self, configs:dict):
+    def __init__(self, configs:dict, filter_q):
         self.configs = configs
+        self.filter_q = filter_q
 
     def update_hsv(self, key, value):
         if "hsv" in self.configs:
@@ -22,7 +23,7 @@ class TerminalUI:
 
                 if current_value is None:
                     self.configs[filter][key] = None
-                    
+
                 else:
                     try:
                         self.configs[filter][key] = current_type(value)
@@ -34,7 +35,15 @@ class TerminalUI:
             keys = input("Enter a command: ")
             if keys == "q":
                 break
-            filter = input("Enter a filter: ")
-            key = input("Enter a key: ")
-            value = input("Enter a value: ")
-            self.update_configs(filter, key, value)
+            elif keys =="update":
+                filter = input("Enter a filter: ")
+                key = input("Enter a key: ")
+                value = input("Enter a value: ")
+                self.update_configs(filter, key, value)
+            elif keys == "delete":
+                index = input("Enter a desired Index: ")
+                try:
+                    index = int(index)
+                    self.filter_q.put(["delete", index, None])
+                except ValueError:
+                    print("Cannot make index into an Int")

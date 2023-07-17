@@ -46,7 +46,7 @@ if __name__ == "__main__":
     pipeline_process = Process(target=pipeline.initialize)
     pipeline_process.start()
     
-    ui = TerminalUI(complete_configs)
+    ui = TerminalUI(complete_configs, filters_q)
     ui.run()
 
     pipeline_process.terminate()
