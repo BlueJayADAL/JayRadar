@@ -3,7 +3,7 @@ import math
 
 class DeepLearning:
     def __init__(self, config: dict={
-        "model": "yolov8n.pt",
+        "model": "models/yolov8n.pt",
         "tx": 320,
         "ty": 240,
         "conf": .25,

@@ -13,7 +13,7 @@ if __name__ == "__main__":
     filters_q = Queue()
 
     dl_config = manager.dict({
-        "model": "yolov8n.pt",
+        "model": "models/yolov8n.pt",
         "tx": 320,
         "ty": 240,
         "conf": .25,
