@@ -29,7 +29,7 @@ if __name__ == "__main__":
     rgb_pipe = RGBFilter(rgb_config)
     dl_pipe = DeepLearning()
     output = NTDisplay(verbose=False)
-    pipeline = VariablePipeline(source, output, filters_q,)
+    pipeline = VariablePipeline(source, output, filters_q, dl_pipe)
 
     pipeline_process = Process(target=pipeline.initialize)
     pipeline_process.start()
