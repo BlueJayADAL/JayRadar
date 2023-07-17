@@ -9,11 +9,17 @@ class VariablePipeline(Pipeline):
 
     def check_q(self):
         while not self.filter_q.empty():
-            command, filter = self.filter_q.get()
+            command, index, filter = self.filter_q.get()
+
             if command == "add":
-                self.add_filter(filter, index=self.num_filters)
+                self.add_filter(filter, index=index)
+            elif command == "delete":
+                self.del_filter(index)
     
     def add_filter(self, filter, index=0):
+        if index > self.num_filters:
+                index = self.num_filters
+        filter.initialize()
         self.filters.insert(index, filter)
         self.num_filters += 1
     

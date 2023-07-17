@@ -2,7 +2,7 @@ from multiprocessing import Manager, Process, set_start_method, Queue
 from pipelines import VariablePipeline
 from pipelines.sources import ThreadedSource#, Source
 from pipelines.outputs import NTDisplay#, Output
-from pipelines.filters import HSVFilter#, DeepLearning
+from pipelines.filters import HSVFilter, DeepLearning
 from webui import WebUI
 
 if __name__ == "__main__":
@@ -20,14 +20,14 @@ if __name__ == "__main__":
 
     source = ThreadedSource(device=0, windows=True)
     filter1 = HSVFilter(shared_config)
-    #dl_pipe = DeepLearning()
+    dl_pipe = DeepLearning()
     output = NTDisplay(verbose=False)
     pipeline = VariablePipeline(source, output, filters_q,)
 
     pipeline_process = Process(target=pipeline.initialize)
     pipeline_process.start()
 
-    """
+    
     while True:
         keys = input("Enter a command: ")
         if keys == "q":
@@ -45,10 +45,12 @@ if __name__ == "__main__":
         elif keys == "s-":
             shared_config["saturation"] -= .1
         elif keys == "add":
-            filters_q.put(["add", filter1])
-    """
-    my_app = WebUI()
-    my_app.run()
+            filters_q.put(["add", 0, dl_pipe])
+        elif keys == "delete":
+            filters_q.put(["delete", 0, None])
+    
+    #my_app = WebUI()
+    #my_app.run()
 
     pipeline_process.terminate()
     pipeline_process.join()
