@@ -2,4 +2,4 @@
 
 from .pipeline import Pipeline
 from .variable_pipeline import VariablePipeline
-from .manager import Manager
+from .pipeline_manager import PipelineManager
