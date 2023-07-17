@@ -2,7 +2,7 @@ from multiprocessing import Manager, Process, set_start_method, Queue
 from pipelines import VariablePipeline
 from pipelines.sources import ThreadedSource#, Source
 from pipelines.outputs import NTDisplay#, Output
-from pipelines.filters import HSVFilter, DeepLearning
+from pipelines.filters import HSVFilter, RGBFilter, DeepLearning
 from webui import WebUI
 
 if __name__ == "__main__":
@@ -12,14 +12,21 @@ if __name__ == "__main__":
 
     filters_q = Queue()
     
-    shared_config = manager.dict()
+    hsv_config = manager.dict()
     
-    shared_config["brightness"] = 0
-    shared_config["contrast"] = 1.0
-    shared_config["saturation"] = 1.0
+    hsv_config["brightness"] = 0
+    hsv_config["contrast"] = 1.0
+    hsv_config["saturation"] = 1.0
+
+    rgb_config = manager.dict()
+    
+    rgb_config["red"] = 15
+    rgb_config["green"] = 27
+    rgb_config["blue"] = -23
 
     source = ThreadedSource(device=0, windows=True)
-    filter1 = HSVFilter(shared_config)
+    hsv_pipe = HSVFilter(hsv_config)
+    rgb_pipe = RGBFilter(rgb_config)
     dl_pipe = DeepLearning()
     output = NTDisplay(verbose=False)
     pipeline = VariablePipeline(source, output, filters_q,)
@@ -33,19 +40,33 @@ if __name__ == "__main__":
         if keys == "q":
             break
         elif keys == "b+":
-            shared_config["brightness"] += 5
+            hsv_config["brightness"] += 5
         elif keys == "b-":
-            shared_config["brightness"] -= 5
+            hsv_config["brightness"] -= 5
         elif keys == "c+":
-            shared_config["contrast"] += .1
+            hsv_config["contrast"] += .1
         elif keys == "c-":
-            shared_config["contrast"] -= .1
+            hsv_config["contrast"] -= .1
         elif keys == "s+":
-            shared_config["saturation"] += .1
+            hsv_config["saturation"] += .1
         elif keys == "s-":
-            shared_config["saturation"] -= .1
-        elif keys == "add":
-            filters_q.put(["add", 0, dl_pipe])
+            hsv_config["saturation"] -= .1
+        elif keys == "r+":
+            rgb_config["red"] += 5
+        elif keys == "r-":
+            rgb_config["red"] -= 5
+        elif keys == "g+":
+            rgb_config["green"] += 5
+        elif keys == "g-":
+            rgb_config["green"] -= 5
+        elif keys == "l+":
+            rgb_config["blue"] += 5
+        elif keys == "l-":
+            rgb_config["blue"] -= 5
+        elif keys == "rgb":
+            filters_q.put(["add", 0, rgb_pipe])
+        elif keys == "hsv":
+            filters_q.put(["add", 0, hsv_pipe])
         elif keys == "delete":
             filters_q.put(["delete", 0, None])
     
