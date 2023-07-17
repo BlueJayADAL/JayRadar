@@ -3,7 +3,7 @@ from pipelines import VariablePipeline
 from pipelines.sources import ThreadedSource#, Source
 from pipelines.outputs import NTDisplay#, Output
 from pipelines.filters import HSVFilter, RGBFilter, DeepLearning
-from interfaces import WebUI
+from interfaces import WebUI, TerminalUI
 
 if __name__ == "__main__":
     set_start_method('spawn')
@@ -45,53 +45,9 @@ if __name__ == "__main__":
 
     pipeline_process = Process(target=pipeline.initialize)
     pipeline_process.start()
-
     
-    while True:
-        keys = input("Enter a command: ")
-        if keys == "q":
-            break
-        elif keys == "b+":
-            complete_configs["hsv"]["brightness"] += 5
-            print(f'Brightness = {hsv_config["brightness"]}')
-        elif keys == "b-":
-            hsv_config["brightness"] -= 5
-            print(f'Brightness = {hsv_config["brightness"]}')
-        elif keys == "c+":
-            dl_config["conf"] += .05
-            print(f'Confidence = {dl_config["conf"]}')
-        elif keys == "c-":
-            dl_config["conf"] -= .05
-            print(f'Confidence = {dl_config["conf"]}')
-        elif keys == "s+":
-            hsv_config["saturation"] += .1
-            print(f'Saturation = {hsv_config["saturation"]}')
-        elif keys == "s-":
-            hsv_config["saturation"] -= .1
-            print(f'Saturation = {hsv_config["saturation"]}')
-        elif keys == "r+":
-            rgb_config["red"] += 5
-        elif keys == "r-":
-            rgb_config["red"] -= 5
-        elif keys == "g+":
-            rgb_config["green"] += 5
-        elif keys == "g-":
-            rgb_config["green"] -= 5
-        elif keys == "l+":
-            rgb_config["blue"] += 5
-        elif keys == "l-":
-            rgb_config["blue"] -= 5
-        elif keys == "dl":
-            filters_q.put(["add", 0, dl_pipe])
-        elif keys == "rgb":
-            filters_q.put(["add", 0, rgb_pipe])
-        elif keys == "hsv":
-            filters_q.put(["add", 0, hsv_pipe])
-        elif keys == "delete":
-            filters_q.put(["delete", 0, None])
-    
-    #my_app = WebUI()
-    #my_app.run()
+    ui = TerminalUI(complete_configs)
+    ui.run()
 
     pipeline_process.terminate()
     pipeline_process.join()
