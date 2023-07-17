@@ -5,7 +5,7 @@ from networktables import NetworkTables
 import os
 
 class WebUI:
-    def __init__(self, ip="0.0.0.0", port:int=8000, nt_ip="10.1.32.27", nt_table="JayRadar"):
+    def __init__(self, configs:dict, ip="0.0.0.0", port:int=8000, nt_ip="10.1.32.27", nt_table="JayRadar"):
         self.app = FastAPI()
         static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
         templates_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
@@ -16,6 +16,12 @@ class WebUI:
         self.nt_ip = nt_ip
         self.nt_table = nt_table
         self.connections = []
+        self.configs = configs
+
+    def update_hsv(self, key, value):
+        if "hsv" in self.configs:
+            if key in self.configs["hsv"]:
+                self.configs["hsv"][key] = value
 
     def value_changed(self, table, key, value, isNew):
         print()

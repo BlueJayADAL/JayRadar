@@ -3,7 +3,7 @@ from pipelines import VariablePipeline
 from pipelines.sources import ThreadedSource#, Source
 from pipelines.outputs import NTDisplay#, Output
 from pipelines.filters import HSVFilter, RGBFilter, DeepLearning
-from webui import WebUI
+from interfaces import WebUI
 
 if __name__ == "__main__":
     set_start_method('spawn')
@@ -30,12 +30,18 @@ if __name__ == "__main__":
 
     rgb_config = manager.dict({"red": 0, "green": 0, "blue": 0})
 
+    complete_configs = {
+        "rgb": rgb_config,
+        "hsv": hsv_config,
+        "dl": dl_config
+    }
+
     source = ThreadedSource(device=0, windows=True)
     hsv_pipe = HSVFilter(hsv_config)
     rgb_pipe = RGBFilter(rgb_config)
     dl_pipe = DeepLearning(dl_config)
     output = NTDisplay(verbose=False)
-    pipeline = VariablePipeline(source, output, filters_q, dl_pipe)
+    pipeline = VariablePipeline(source, output, filters_q, rgb_pipe, hsv_pipe, dl_pipe)
 
     pipeline_process = Process(target=pipeline.initialize)
     pipeline_process.start()
@@ -46,7 +52,7 @@ if __name__ == "__main__":
         if keys == "q":
             break
         elif keys == "b+":
-            hsv_config["brightness"] += 5
+            complete_configs["hsv"]["brightness"] += 5
             print(f'Brightness = {hsv_config["brightness"]}')
         elif keys == "b-":
             hsv_config["brightness"] -= 5
