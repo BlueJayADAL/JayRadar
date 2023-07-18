@@ -80,3 +80,7 @@ class WebUI:
         self.configure_routes()
         import uvicorn
         uvicorn.run(self.app, host=self.ip, port=self.port)
+        self.release()
+
+    def release(self):
+        self.manager.release()
