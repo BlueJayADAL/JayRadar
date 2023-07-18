@@ -57,7 +57,7 @@ class Pipeline:
                 frame, data = filter.process_frame(frame, data)  # Process the frame through each filter
 
             self.output.send_frame(frame, data)  # Send the processed frame and data to the output
-            cv2.waitKey(1)  # Wait for a short period to handle GUI events
+            cv2.waitKey(1)  # Wait for a short period to display any CV2 Windows
 
         self.cleanup()  # Perform cleanup after processing all frames
 
