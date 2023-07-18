@@ -1,6 +1,7 @@
 from multiprocessing import Manager, Process, set_start_method, Queue
 from pipelines import VariablePipeline
 from pipelines.filters import HSVFilter, RGBFilter, DeepLearning
+import json
 
 class PipelineManager():
     def __init__(self, source, output):
@@ -87,7 +88,43 @@ class PipelineManager():
                         self.configs[filter][key] = current_type(value)
                     except ValueError:
                         print(f"Typecasting failed: '{value}' cannot be converted to {current_type}.")
-    
+                    
+    def save_to_json(self, file_path):
+
+        rgb_copy = self.configs["rgb"].copy()
+        hsv_copy = self.configs["hsv"].copy()
+        dl_copy = self.configs["dl"].copy()
+
+        copy = {
+            "rgb": rgb_copy,
+            "hsv": hsv_copy,
+            "dl": dl_copy
+        }
+
+
+        with open(file_path, 'w') as file:
+            json.dump(copy, file, indent=4)
+
+    def load_from_json(self, file_path):
+        try:
+            with open(file_path, 'r') as file:
+                loaded_data = json.load(file)
+                self.update_configs_recursive(self.configs, loaded_data, "")
+        except FileNotFoundError:
+            print(f"File {file_path} not found!")
+
+        
+
+    def update_configs_recursive(self, current_dict, new_data, filter):
+        for key, value in new_data.items():
+            if isinstance(value, dict):
+                if key in current_dict:
+                    self.update_configs_recursive(current_dict[key], value, key)
+                else:
+                    current_dict[key] = value
+            else:
+                self.update_configs(filter, key, value)
+
     def release(self):
         self.pipeline_process.terminate()
         self.pipeline_process.join()

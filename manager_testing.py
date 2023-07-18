@@ -3,7 +3,7 @@ from pipelines.sources import ThreadedSource
 from pipelines.outputs import NTDisplay
 if __name__ == "__main__":
     source = ThreadedSource(device=0, windows=True)
-    output = NTDisplay(verbose=False)
+    output = NTDisplay()
 
     manager = PipelineManager(source, output)
 
@@ -31,5 +31,11 @@ if __name__ == "__main__":
             key = input("Enter a key: ")
             value = input("Enter a value: ")
             manager.update_configs(filter, key, value)
+        elif command == "save":
+            file_name = input("Enter a filename: ")
+            manager.save_to_json(file_name)
+        elif command == "load":
+            filename = input("Enter a filename: ")
+            manager.load_from_json(filename)
 
     manager.release()
