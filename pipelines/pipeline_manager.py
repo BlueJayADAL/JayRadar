@@ -31,9 +31,9 @@ class PipelineManager():
             "dl": dl_config
         }
 
-        self.hsv_fitler = HSVFilter(hsv_config)
-        self.rgb_filter = RGBFilter(rgb_config)
-        self.dl_filter = DeepLearning(dl_config)
+        self.hsv_fitler = HSVFilter(self.configs["hsv"])
+        self.rgb_filter = RGBFilter(self.configs["rgb"])
+        self.dl_filter = DeepLearning(self.configs["dl"])
 
         self.filter_q = Queue()
         self.pipeline = VariablePipeline(source, output, self.filter_q)
