@@ -1,5 +1,5 @@
 import cv2
-from pipelines import Pipeline
+from .pipeline import Pipeline
 
 class VariablePipeline(Pipeline):
     """
