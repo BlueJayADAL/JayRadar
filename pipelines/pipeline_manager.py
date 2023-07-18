@@ -41,6 +41,53 @@ class PipelineManager():
         self.pipeline_process = Process(target=self.pipeline.initialize)
         self.pipeline_process.start()
 
+        self.active_filters = []
+
+    def delete_filter(self, index):
+        if index > len(self.active_filters) - 1:
+            pass
+        else:
+            self.filter_q.put(["delete", index, None])
+            del self.active_filters[index]
+
+    def add_hsv(self, index):
+        if index > len(self.active_filters):
+            index = len(self.active_filters)
+        self.filter_q.put(["add", index, self.hsv_fitler])
+        self.active_filters.insert(index, "hsv")
+    
+    def add_dl(self, index):
+        if index > len(self.active_filters):
+            index = len(self.active_filters)
+        self.filter_q.put(["add", index, self.dl_filter])
+        self.active_filters.insert(index, "dl")
+    
+    def add_rgb(self, index):
+        if index > len(self.active_filters):
+            index = len(self.active_filters)
+        self.filter_q.put(["add", index, self.rgb_filter])
+        self.active_filters.insert(index, "rgb")
+    
+    def update_configs(self, filter, key, value):
+        if filter in self.configs:
+            
+            if key in self.configs[filter]:
+
+                if value is None:
+                    self.configs[filter][key] = None
+                
+                current_value = self.configs[filter][key]
+                current_type= type(current_value)
+
+                if current_value is None:
+                    self.configs[filter][key] = None
+
+                else:
+                    try:
+                        self.configs[filter][key] = current_type(value)
+                    except ValueError:
+                        print(f"Typecasting failed: '{value}' cannot be converted to {current_type}.")
+    
     def release(self):
         self.pipeline_process.terminate()
         self.pipeline_process.join()

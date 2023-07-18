@@ -67,18 +67,14 @@ class VariablePipeline(Pipeline):
         Args:
             index (int): The index of the filter to be removed. Defaults to 0.
 
-        Returns:
-            bool: True if the filter is successfully removed, False if the index is out of bounds.
-
-        If the specified index is greater than or equal to the number of filters, the method returns False.
+        If the specified index is greater than or equal to the number of filters, the method does nothing.
         Otherwise, the filter at the specified index is removed from the pipeline, and the number of filters is updated.
         """
         if index > (self.num_filters-1):  # Check if the index is out of bounds
-            return False
+            pass
         else:
             del self.filters[index]  # Remove the filter at the specified index
             self.num_filters -= 1  # Decrement the number of filters
-            return True
 
     def run(self):
         """
