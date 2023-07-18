@@ -1,11 +1,15 @@
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import StreamingResponse
 from networktables import NetworkTables
+from pipelines import PipelineManager
+from multiprocessing import Queue
 import os
+import cv2
 
 class WebUI:
-    def __init__(self, configs:dict, ip="0.0.0.0", port:int=8000, nt_ip="10.1.32.27", nt_table="JayRadar"):
+    def __init__(self, manager:PipelineManager, q_in: Queue, ip="0.0.0.0", port:int=8000, nt_ip="10.1.32.27", nt_table="JayRadar"):
         self.app = FastAPI()
         static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
         templates_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
@@ -15,13 +19,9 @@ class WebUI:
         self.port = port
         self.nt_ip = nt_ip
         self.nt_table = nt_table
-        self.connections = []
-        self.configs = configs
-
-    def update_hsv(self, key, value):
-        if "hsv" in self.configs:
-            if key in self.configs["hsv"]:
-                self.configs["hsv"][key] = value
+        self.manager = manager
+        self.q_in = q_in
+        self.connections =[]
 
     def value_changed(self, table, key, value, isNew):
         print()
@@ -29,13 +29,25 @@ class WebUI:
         print(f"Value changed: {key} = {value}")
         print()
 
+    def get_frame(self):
+        while True:
+            frame = self.q_in.get()
+
+            if frame is not None:
+                ret, buffer = cv2.imencode('.jpg', frame)
+                frame_data = buffer.tobytes()
+                
+                # Yield the frame data as MJPEG response
+                yield (b'--frame\r\n'
+                    b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
+    
     def configure_routes(self):
 
         #Set up the networktables for the app
         NetworkTables.initialize(server=self.nt_ip)
         self.table = NetworkTables.getTable(self.nt_table)
 
-        #Add a listener to be able to load configs dynamically
+        #Add a listener to be able to load manager dynamically
         self.table.addEntryListener(self.value_changed)
 
         @self.app.websocket("/ws")
@@ -57,6 +69,12 @@ class WebUI:
         @self.app.get("/")
         async def home(request: Request):
             return self.templates.TemplateResponse("index.html", {"request": request})
+        
+        @self.app.get('/video_feed')
+        def video_feed():
+            # Route for streaming video feed
+            return StreamingResponse(self.get_frame(), media_type='multipart/x-mixed-replace; boundary=frame')
+
 
     def run(self):
         self.configure_routes()

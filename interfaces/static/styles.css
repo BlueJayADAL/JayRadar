@@ -1,25 +1,41 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+.container {
+  display: flex;
 }
 
-h1 {
-  color: #333;
+.left-column {
+  flex: 1;
+  padding-right: 10px;
 }
 
-#messages {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
-  height: 200px;
-  overflow-y: scroll;
+.right-column {
+  flex: 1;
+  padding-left: 10px;
 }
 
-#message-form input[type="text"] {
-  padding: 5px;
-  width: 200px;
+.tabs {
+  display: flex;
 }
 
-#message-form button {
+.tab-link {
+  margin-right: 10px;
   padding: 5px 10px;
+  background-color: #eee;
+  border: none;
+  cursor: pointer;
+}
+
+.tab-link.active {
+  background-color: #c8c8c8;
+}
+
+.tab-contents {
+  margin-top: 10px;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
 }

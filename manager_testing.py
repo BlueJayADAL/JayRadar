@@ -1,7 +1,7 @@
 from pipelines import PipelineManager
 from pipelines.sources import ThreadedSource
 from pipelines.outputs import NTDisplay, NTSend
-from interfaces import TerminalUI, CV2UI
+from interfaces import TerminalUI, CV2UI, WebUI
 from multiprocessing import Queue, set_start_method
 
 if __name__ == "__main__":
@@ -12,5 +12,5 @@ if __name__ == "__main__":
 
     manager = PipelineManager(source, output)
 
-    ui = CV2UI(manager, shared_q)
+    ui = WebUI(manager, shared_q)
     ui.run()

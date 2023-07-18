@@ -1,17 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>WebSocket Example</title>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/styles.css') }}">
-  <script src="{{ url_for('static', path='/script.js') }}"></script>
+    <title>JayRadar</title>
+    <script src="{{ url_for('static', path='/script.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/styles.css') }}">
 </head>
 <body>
-  <h1>WebSocket Example</h1>
-  <div id="messages"></div>
-  <form id="message-form">
-    <input type="text" id="user-input" placeholder="Enter username" value="user">
-    <input type="text" id="message-input" placeholder="Enter message">
-    <button type="submit">Send</button>
-  </form>
+    <h1>JayRadar</h1>
+    <div class="container">
+        <div class="left-column">
+            <div class="tabs">
+                <button class="tab-link" onclick="openTab(event, 'tab1')">Config</button>
+                <button class="tab-link" onclick="openTab(event, 'tab2')">Camera</button>
+                <button class="tab-link" onclick="openTab(event, 'tab3')">Neural</button>
+            </div>
+            <div class="tab-contents">
+                <div id="tab1" class="tab-content">
+                    <select id="config">
+                        <option value="default">Config: Default</option>
+                        <option value="test">Config: 0</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                </div>
+                <div id="tab2" class="tab-content">
+                    <div class="sliders">
+                        <div>
+                            <label for="red">Red Balance:</label>
+                            <input type="range" id="red" name="red" min="-255" max="255" step="5">
+                            <span id="redValue">0</span>
+                        </div>
+                        <div>
+                            <label for="green">Green Balance:</label>
+                            <input type="range" id="green" name="green" min="-255" max="255" step="5">
+                            <span id="greenValue">0</span>
+                        </div>
+                        <div>
+                            <label for="blue">Blue Balance:</label>
+                            <input type="range" id="blue" name="blue" min="-255" max="255" step="5">
+                            <span id="blueValue">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div id = "tab3" class="tab-content">
+                  <div class="sliders">
+                    <div>
+                      <label for="saturation">Saturation:</label>
+                      <input type="range" id="saturation" name="saturation" min="0" max="10" step=".1">
+                      <span id="saturation">1.0</span>
+                    </div>
+                    <div>
+                      <label for="contrast">Contrast:</label>
+                      <input type="range" id="contrast" name="contrast" min="0" max="10" step=".1">
+                      <span id="contrastValue">1</span>
+                    </div>
+                    <div>
+                      <label for="brightness">Brightness:</label>
+                      <input type="range" id="brightness" name="brightness" min="-255" max="255" step="5">
+                      <span id="brightnessValue">0</span>
+                    </div>
+                </div>
+              </div>
+                <div id="tab4" class="tab-content">
+                    <div class="sliders">
+                        <div>
+                            <label for="conf">Conf:</label>
+                            <input type="range" id="conf" name="conf" min="0" max="100" step="1">
+                            <span id="confValue">0</span>
+                        </div>
+                        <div>
+                            <label for="iou">IOU:</label>
+                            <input type="range" id="iou" name="iou" min="0" max="100" step="1">
+                            <span id="iouValue">0</span>
+                        </div>
+                        <div>
+                            <label for="max">Max:</label>
+                            <input type="range" id="max" name="max" min="0" max="100" step="1">
+                            <span id="maxValue">0</span>
+                        </div>
+                        <div>
+                            <label for="img">Img:</label>
+                            <input type="range" id="img" name="img" min="160" max="640" step="32">
+                            <span id="imgValue">160</span>
+                        </div>
+                    </div>
+                    <div class="neural_checkboxes">
+                        <div>
+                            <input type="checkbox" id="ss" name="ss">
+                            <label for="ss">SS</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="ssd" name="ssd">
+                            <label for="ssd">SSD</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="half" name="half">
+                            <label for="half">Half Precision</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-buttons">
+                <button id="resetButton">Reset</button>
+                <button id="saveButton">Save</button>
+            </div>
+        </div>
+        <div class="right-column">
+            <img id="videoFeed" src="{{ url_for('video_feed') }}" width="640" height="480">
+        </div>
+    </div>
 </body>
 </html>
