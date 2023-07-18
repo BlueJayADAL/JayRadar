@@ -25,7 +25,6 @@ class PipelineManager:
         for filters. It creates HSVFilter, RGBFilter, and DeepLearning objects with shared configurations.
         It also initializes a VariablePipeline object to process frames through the filters dynamically.
         """
-        set_start_method('spawn')  # Set the start method for multiprocessing
         self.manager = Manager()  # Initialize a multiprocessing Manager
         self.configs = {  # Shared configurations for filters
             "hsv": self.manager.dict({"brightness": 0, "contrast": 1.0, "saturation": 1.0}),
