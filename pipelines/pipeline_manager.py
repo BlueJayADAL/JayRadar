@@ -57,7 +57,7 @@ class PipelineManager:
 
         self.active_filters = []  # List to keep track of active filters
 
-    def delete_filter(self, index):
+    def delete_index(self, index):
         """
         Delete a filter from the pipeline at the specified index.
 
@@ -71,6 +71,11 @@ class PipelineManager:
         else:
             self.filter_q.put(["delete", index, None])
             del self.active_filters[index]
+
+    def delete_filter(self, filter):
+        if filter in self.active_filters:
+            index = self.active_filters.index(filter)
+            self.delete_index(index)
 
     def add_hsv(self, index):
         """

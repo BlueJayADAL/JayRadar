@@ -33,8 +33,8 @@ class TerminalUI:
             if command == "quit":
                 break
             elif command == "delete":
-                index = input("Enter an index: ")
-                self.manager.delete_filter(int(index))
+                filter = input("Enter a filter: ")
+                self.manager.delete_filter(filter)
             elif command == "add":
                 filter_type = input("Enter a filter type: ")
                 if filter_type == "hsv":

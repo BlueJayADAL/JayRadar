@@ -54,9 +54,11 @@ class CV2UI:
             if key == ord("q"):
                 break
             elif key == ord("d"):
-                self.manager.delete_filter(0)
+                self.manager.delete_index(0)
             elif key == ord("y"):
                 self.manager.add_dl(0)
+            elif key == ord("w"):
+                self.manager.delete_filter("dl")
 
         self.release()
 
