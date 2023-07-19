@@ -19,7 +19,7 @@ class WebUI:
     Args:
         manager (PipelineManager): The PipelineManager object used to manage the video processing pipeline.
         q_in (Queue): The multiprocessing Queue to receive frames from the video processing pipeline.
-        ip (str, optional): The IP address for the FastAPI server. Defaults to "0.0.0.0".
+        ip (str, optional): The IP address for the FastAPI server. Defaults to localhost: "0.0.0.0".
         port (int, optional): The port number for the FastAPI server. Defaults to 8000.
         nt_ip (str, optional): The IP address of the NetworkTables server. Defaults to "10.1.32.27".
         nt_table (str, optional): The NetworkTables table name. Defaults to "JayRadar".
