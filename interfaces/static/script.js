@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const sendMessage = (key, value) => {
-    const formattedMessage = `${key}: ${value}`;
+    const formattedMessage = `${key}/${value}`;
     socket.send(formattedMessage);
   };
 

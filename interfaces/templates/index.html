@@ -11,97 +11,89 @@
         <div class="left-column">
             <div class="tabs">
                 <button class="tab-link" onclick="openTab(event, 'tab1')">Config</button>
-                <button class="tab-link" onclick="openTab(event, 'tab2')">Camera</button>
-                <button class="tab-link" onclick="openTab(event, 'tab3')">Neural</button>
+                <button class="tab-link" onclick="openTab(event, 'tab2')">RGB</button>
+                <button class="tab-link" onclick="openTab(event, 'tab3')">HSV</button>
+                <button class="tab-link" onclick="openTab(event, 'tab4')">Neural</button>
             </div>
             <div class="tab-contents">
                 <div id="tab1" class="tab-content">
-                    <select id="config">
-                        <option value="default">Config: Default</option>
-                        <option value="test">Config: 0</option>
-                        <!-- Add more options as needed -->
-                    </select>
                 </div>
                 <div id="tab2" class="tab-content">
                     <div class="sliders">
                         <div>
-                            <label for="red">Red Balance:</label>
-                            <input type="range" id="red" name="red" min="-255" max="255" step="5">
-                            <span id="redValue">0</span>
+                            <label for="rgb/red">Red Balance:</label>
+                            <input type="range" id="rgb/red" name="rgb/red" min="-255" max="255" step="5">
+                            <span id="rgb/redValue">0</span>
                         </div>
                         <div>
-                            <label for="green">Green Balance:</label>
-                            <input type="range" id="green" name="green" min="-255" max="255" step="5">
-                            <span id="greenValue">0</span>
+                            <label for="rgb/green">Green Balance:</label>
+                            <input type="range" id="rgb/green" name="rgb/green" min="-255" max="255" step="5">
+                            <span id="rgb/greenValue">0</span>
                         </div>
                         <div>
-                            <label for="blue">Blue Balance:</label>
-                            <input type="range" id="blue" name="blue" min="-255" max="255" step="5">
-                            <span id="blueValue">0</span>
+                            <label for="rgb/blue">Blue Balance:</label>
+                            <input type="range" id="rgb/blue" name="rgb/blue" min="-255" max="255" step="5">
+                            <span id="rgb/blueValue">0</span>
                         </div>
                     </div>
                 </div>
                 <div id = "tab3" class="tab-content">
                   <div class="sliders">
                     <div>
-                      <label for="saturation">Saturation:</label>
-                      <input type="range" id="saturation" name="saturation" min="0" max="10" step=".1">
-                      <span id="saturationValue">1.0</span>
+                      <label for="hsv/saturation">Saturation:</label>
+                      <input type="range" id="hsv/saturation" name="hsv/saturation" min="0" max="10" step=".1">
+                      <span id="hsv/saturationValue">1.0</span>
                     </div>
                     <div>
-                      <label for="contrast">Contrast:</label>
-                      <input type="range" id="contrast" name="contrast" min="0" max="10" step=".1">
-                      <span id="contrastValue">1</span>
+                      <label for="hsv/contrast">Contrast:</label>
+                      <input type="range" id="hsv/contrast" name="hsv/contrast" min="0" max="10" step=".1">
+                      <span id="hsv/contrastValue">1</span>
                     </div>
                     <div>
-                      <label for="brightness">Brightness:</label>
-                      <input type="range" id="brightness" name="brightness" min="-255" max="255" step="5">
-                      <span id="brightnessValue">0</span>
+                      <label for="hsv/brightness">Brightness:</label>
+                      <input type="range" id="hsv/brightness" name="hsv/brightness" min="-255" max="255" step="5">
+                      <span id="hsv/brightnessValue">0</span>
                     </div>
                 </div>
               </div>
                 <div id="tab4" class="tab-content">
                     <div class="sliders">
                         <div>
-                            <label for="conf">Conf:</label>
-                            <input type="range" id="conf" name="conf" min="0" max="100" step="1">
-                            <span id="confValue">0</span>
+                            <label for="dl/conf">Conf:</label>
+                            <input type="range" id="dl/conf" name="dl/conf" min="0" max="1" step=".01">
+                            <span id="dl/confValue">0</span>
                         </div>
                         <div>
-                            <label for="iou">IOU:</label>
-                            <input type="range" id="iou" name="iou" min="0" max="100" step="1">
-                            <span id="iouValue">0</span>
+                            <label for="dl/iou">IOU:</label>
+                            <input type="range" id="dl/iou" name="dl/iou" min="0" max="1" step=".01">
+                            <span id="dl/iouValue">0</span>
                         </div>
                         <div>
-                            <label for="max">Max:</label>
-                            <input type="range" id="max" name="max" min="0" max="100" step="1">
-                            <span id="maxValue">0</span>
+                            <label for="dl/max">Max:</label>
+                            <input type="range" id="dl/max" name="dl/max" min="0" max="100" step="1">
+                            <span id="dl/maxValue">0</span>
                         </div>
                         <div>
-                            <label for="img">Img:</label>
-                            <input type="range" id="img" name="img" min="160" max="640" step="32">
-                            <span id="imgValue">160</span>
+                            <label for="dl/img">Img:</label>
+                            <input type="range" id="dl/img" name="dl/img" min="160" max="640" step="32">
+                            <span id="dl/imgValue">160</span>
                         </div>
                     </div>
                     <div class="neural_checkboxes">
                         <div>
-                            <input type="checkbox" id="ss" name="ss">
-                            <label for="ss">SS</label>
+                            <input type="checkbox" id="dl/ss" name="dl/ss">
+                            <label for="dl/ss">SS</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="ssd" name="ssd">
-                            <label for="ssd">SSD</label>
+                            <input type="checkbox" id="dl/ssd" name="dl/ssd">
+                            <label for="dl/ssd">SSD</label>
                         </div>
                         <div>
-                            <input type="checkbox" id="half" name="half">
-                            <label for="half">Half Precision</label>
+                            <input type="checkbox" id="dl/half" name="dl/half">
+                            <label for="dl/half">Half Precision</label>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="bottom-buttons">
-                <button id="resetButton">Reset</button>
-                <button id="saveButton">Save</button>
             </div>
         </div>
         <div class="right-column">

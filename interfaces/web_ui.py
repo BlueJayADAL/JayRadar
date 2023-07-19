@@ -58,10 +58,15 @@ class WebUI:
             while True:
                 try:
                     data = await websocket.receive_text()
-                    print(f"Server received: {data}")
+                    filter, key, value = data.split("/")
                     # Broadcast the received message to all connected clients
                     for connection in self.connections:
-                        await connection.send_text(data)
+                        await connection.send_text(f"{filter}/{key}: {value}")
+
+                    
+
+                    self.manager.update_configs(filter, key, value)
+
                 except WebSocketDisconnect:
                     self.connections.remove(websocket)
                     break
