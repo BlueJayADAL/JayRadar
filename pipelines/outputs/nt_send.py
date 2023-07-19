@@ -5,14 +5,14 @@ from multiprocessing import Queue
 
 class NTSend:
     """
-    NTDisplay class for displaying frames using OpenCV and sending data to NetworkTables.
+    NTSend class for q'ing frames and sending data to NetworkTables.
 
-    This class is used to display frames in an OpenCV window and send additional data to NetworkTables.
+    This class is used push frames to a shared q and send additional data to NetworkTables.
     """
 
     def __init__(self, q_out: Queue,server:str='10.1.32.27', table:str='JayRadar', verbose=False):
         """
-        Initialize the NTDisplay object.
+        Initialize the NTSend.
 
         Args:
             server (str): IP address of the NetworkTables server. Defaults to '10.1.32.27'.
@@ -37,7 +37,7 @@ class NTSend:
 
     def send_frame(self, frame, data):
         """
-        Send a frame and additional data to NetworkTables.
+        Send additional data to NetworkTables, make frame available in q.
 
         Args:
             frame (numpy.ndarray): The frame to be displayed in the OpenCV window.
@@ -45,7 +45,7 @@ class NTSend:
                          It must contain a 'timestamp' key with the timestamp of the frame.
 
         This method puts the additional data in the NetworkTable, such as the timestamp,
-        end-to-end time, and frames per second. It also displays the frame in an OpenCV window.
+        end-to-end time, and frames per second. It also pushes the frame to the q.
         """
         for key, value in data.items():
             self.table.putValue(key, value)  # Put each key-value pair in the NetworkTable
