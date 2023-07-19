@@ -57,7 +57,7 @@ class PipelineManager:
 
         self.active_filters = []  # List to keep track of active filters
 
-    def delete_index(self, index):
+    def delete_index(self, index=0):
         """
         Delete a filter from the pipeline at the specified index.
 
@@ -77,7 +77,7 @@ class PipelineManager:
             index = self.active_filters.index(filter)
             self.delete_index(index)
 
-    def add_hsv(self, index):
+    def add_hsv(self, index=0):
         """
         Add an HSVFilter to the pipeline at the specified index.
 
@@ -91,7 +91,7 @@ class PipelineManager:
         self.filter_q.put(["add", index, self.hsv_filter])
         self.active_filters.insert(index, "hsv")
 
-    def add_dl(self, index):
+    def add_dl(self, index=0):
         """
         Add a DeepLearning filter to the pipeline at the specified index.
 
@@ -105,7 +105,7 @@ class PipelineManager:
         self.filter_q.put(["add", index, self.dl_filter])
         self.active_filters.insert(index, "dl")
 
-    def add_rgb(self, index):
+    def add_rgb(self, index=0):
         """
         Add an RGBFilter to the pipeline at the specified index.
 
