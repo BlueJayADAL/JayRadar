@@ -18,14 +18,14 @@
   }
   
   .tab-link.active {
-    border-radius: 10px 10px 0 0;
-    border: 1px solid #000;
     background-color: #3DB5E6;
-    border-bottom: none;
   }
   
   .tab-contents {
-    margin-top: 10px;
+    margin-top: 0px;
+    background-color: #3DB5E6;
+    width: 100%;
+    height: 100%;
   }
   
   .tab-content {
@@ -34,5 +34,6 @@
   
   .tab-content.active {
     display: block;
+    background-color: #3DB5E6;
   }
   

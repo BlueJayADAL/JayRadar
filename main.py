@@ -6,13 +6,13 @@ from multiprocessing import Queue, set_start_method
 
 if __name__ == "__main__":
     set_start_method('spawn')  # Set the start method for multiprocessing
-    source = ThreadedSource(device=0, windows=True)
+    source = ThreadedSource(device=0, windows=False)
     shared_q = Queue(maxsize=1)
     output = NTSend(shared_q)
 
     manager = PipelineManager(source, output)
 
-    manager.add_dl(0)
+    #manager.add_dl(0)
     manager.add_hsv(0)
     manager.add_rgb(0)
 
