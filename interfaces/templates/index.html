@@ -2,14 +2,27 @@
 <html>
 <head>
     <title>JayRadar</title>
-    <script src="{{ url_for('static', path='/script.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/grid.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/tabs.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/settings.css') }}">
     <link rel="icon" href="{{ url_for('static', path='/favicon.ico') }}">
 </head>
 <body>
-    <h1>JayRadar</h1>
-    <div class="container">
-        <div class="left-column">
+    <header>
+        <h1>JayRadar</h1>
+    </header>
+
+    <main class="grid-container">
+        <div class="video-container grid-item">
+            <img id="videoFeed" src="{{ url_for('video_feed') }}" width="480" height="320">
+        </div>
+
+        <div class="info-container grid-item">
+            <p>Hello</p>
+        </div>
+
+        <div class="tabs-container grid-item">
             <div class="tabs">
                 <button class="tab-link" onclick="openTab(event, 'tab1')">Config</button>
                 <button class="tab-link" onclick="openTab(event, 'tab2')">RGB</button>
@@ -97,9 +110,11 @@
                 </div>
             </div>
         </div>
-        <div class="right-column">
-            <img id="videoFeed" src="{{ url_for('video_feed') }}" width="640" height="480">
+        <div class="settings-container grid-item">
+            <p>Hello</p>
         </div>
-    </div>
+    </main>
+
+    <script src="{{ url_for('static', path='/script.js') }}"></script>
 </body>
 </html>

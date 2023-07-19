@@ -1,0 +1,17 @@
+/* Grid layout styles */
+  
+  .grid-item {
+    border: 1px solid #000;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    background-color: #c8c8c8;
+    border-radius: 10px
+  }
+  
+  /* Image container styles */
+  .video-container img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  

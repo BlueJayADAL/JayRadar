@@ -1,41 +1,24 @@
-.container {
-  display: flex;
+/* General styles */
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
 }
 
-.left-column {
-  flex: 1;
-  padding-right: 10px;
-}
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #004B98; /* Use a CSS variable for the background color */
+  }
 
-.right-column {
-  flex: 1;
-  padding-left: 10px;
-}
 
-.tabs {
-  display: flex;
-}
-
-.tab-link {
-  margin-right: 10px;
-  padding: 5px 10px;
-  background-color: #eee;
-  border: none;
-  cursor: pointer;
-}
-
-.tab-link.active {
-  background-color: #c8c8c8;
-}
-
-.tab-contents {
-  margin-top: 10px;
-}
-
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-}
+header {
+    background-color: #004B98;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+  }
+  

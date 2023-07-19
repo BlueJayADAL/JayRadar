@@ -1,0 +1,38 @@
+/* Tabs container styles */
+.tabs-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align the tabs to the start (top) of the container */
+    align-items: center; /* Center the tabs horizontally */
+  }
+  
+  .tab-link {
+    border-radius: 10px 10px 0 0;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #C8C8C8;
+    border: none;
+    cursor: pointer;
+    border: 1px solid #000;
+    border-bottom: none;
+  }
+  
+  .tab-link.active {
+    border-radius: 10px 10px 0 0;
+    border: 1px solid #000;
+    background-color: #3DB5E6;
+    border-bottom: none;
+  }
+  
+  .tab-contents {
+    margin-top: 10px;
+  }
+  
+  .tab-content {
+    display: none;
+  }
+  
+  .tab-content.active {
+    display: block;
+  }
+  
