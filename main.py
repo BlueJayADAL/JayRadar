@@ -16,5 +16,5 @@ if __name__ == "__main__":
     manager.add_hsv(0)
     manager.add_rgb(0)
 
-    ui = CV2UI(manager, shared_q)
+    ui = WebUI(manager, shared_q)
     ui.run()

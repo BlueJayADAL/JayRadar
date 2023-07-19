@@ -155,15 +155,8 @@ class PipelineManager:
 
         The method creates a copy of the shared configurations and saves them to a JSON file with the specified file path.
         """
-        rgb_copy = self.configs["rgb"].copy()
-        hsv_copy = self.configs["hsv"].copy()
-        dl_copy = self.configs["dl"].copy()
 
-        copy = {
-            "rgb": rgb_copy,
-            "hsv": hsv_copy,
-            "dl": dl_copy
-        }
+        copy = self.get_configs_copy
 
         with open(file_path, 'w') as file:
             json.dump(copy, file, indent=4)
@@ -204,6 +197,22 @@ class PipelineManager:
             else:
                 self.update_configs(filter, key, value)
 
+    def get_active_filters(self):
+        filters =  self.active_filters
+        return filters
+    
+    def get_configs_copy(self):
+        rgb_copy = self.configs["rgb"].copy()
+        hsv_copy = self.configs["hsv"].copy()
+        dl_copy = self.configs["dl"].copy()
+
+        copy = {
+            "rgb": rgb_copy,
+            "hsv": hsv_copy,
+            "dl": dl_copy
+        }
+        return copy
+    
     def release(self):
         """
         Release resources and terminate the pipeline.

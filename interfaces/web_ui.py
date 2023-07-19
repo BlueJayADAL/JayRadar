@@ -57,6 +57,13 @@ class WebUI:
                 yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
 
+    async def send_config(self, websocket):
+        active_filters = self.manager.get_active_filters()
+        config = self.manager.get_configs_copy()
+        for filter in active_filters:
+            for key, value in config[filter].items():
+                await websocket.send_text(f"{filter}/{key}: {value}")
+    
     def configure_routes(self):
         # Set up the networktables for the app
         NetworkTables.initialize(server=self.nt_ip)
@@ -68,6 +75,9 @@ class WebUI:
         @self.app.websocket("/ws")
         async def websocket_endpoint(websocket: WebSocket):
             await websocket.accept()
+
+            await self.send_config(websocket)
+
             # Add the new connection to the list
             self.connections.append(websocket)
             while True:
