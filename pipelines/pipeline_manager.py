@@ -213,7 +213,6 @@ class PipelineManager:
 
     def rearrange_filters(self, filters):
         self.delete_unused_fitlers(filters)
-        print(filters)
         for i, filter in enumerate(filters):
             if filter in self.active_filters:
                 if self.active_filters.index(filter) == i:

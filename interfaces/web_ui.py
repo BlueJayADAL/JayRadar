@@ -8,6 +8,7 @@ from multiprocessing import Queue
 import os
 import cv2
 
+
 class WebUI:
     """
     WebUI class for providing a web-based user interface to interact with a video processing pipeline.
@@ -27,9 +28,12 @@ class WebUI:
 
     def __init__(self, manager: PipelineManager, q_in: Queue, ip="0.0.0.0", port: int = 8000, nt_ip="10.1.32.27", nt_table="JayRadar"):
         self.app = FastAPI()
-        static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
-        templates_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
-        self.app.mount("/static", StaticFiles(directory=static_path), name="static")
+        static_path = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "static")
+        templates_path = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "templates")
+        self.app.mount(
+            "/static", StaticFiles(directory=static_path), name="static")
         self.templates = Jinja2Templates(directory=templates_path)
         self.ip = ip
         self.port = port
@@ -40,10 +44,8 @@ class WebUI:
         self.connections = []
 
     def value_changed(self, table, key, value, isNew):
-        print()
-        print('UPDATE TO JAYRADAR FOUND')
-        print(f"Value changed: {key} = {value}")
-        print()
+        if key == "pipeline":
+            self.manager.load_from_json(value)
 
     def get_frame(self):
         while True:
@@ -52,10 +54,10 @@ class WebUI:
             if frame is not None:
                 ret, buffer = cv2.imencode('.jpg', frame)
                 frame_data = buffer.tobytes()
-                
+
                 # Yield the frame data as MJPEG response
                 yield (b'--frame\r\n'
-                    b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
 
     async def send_config(self, websocket):
         active_filters = self.manager.get_active_filters()
@@ -63,7 +65,7 @@ class WebUI:
         for filter in active_filters:
             for key, value in config[filter].items():
                 await websocket.send_text(f"{filter}/{key}: {value}")
-    
+
     def configure_routes(self):
         # Set up the networktables for the app
         NetworkTables.initialize(server=self.nt_ip)
@@ -97,7 +99,7 @@ class WebUI:
         @self.app.get("/")
         async def home(request: Request):
             return self.templates.TemplateResponse("index.html", {"request": request})
-        
+
         @self.app.get('/video_feed')
         def video_feed():
             # Route for streaming video feed

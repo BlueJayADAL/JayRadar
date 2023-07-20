@@ -8,7 +8,7 @@ if __name__ == "__main__":
     set_start_method('spawn')  # Set the start method for multiprocessing
     source = ThreadedSource(device=0, windows=True)
     shared_q = Queue(maxsize=1)
-    output = NTDisplay()
+    output = NTSend(shared_q)
 
     manager = PipelineManager(source, output)
 
@@ -16,5 +16,5 @@ if __name__ == "__main__":
     manager.add_hsv(0)
     manager.add_rgb(0)
 
-    ui = TerminalUI(manager)
+    ui = WebUI(manager, shared_q)
     ui.run()
