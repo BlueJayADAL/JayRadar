@@ -181,7 +181,7 @@ class PipelineManager:
         The method creates a copy of the shared configurations and saves them to a JSON file with the specified file path.
         """
 
-        copy = self.get_configs_copy
+        copy = self.get_configs_copy()
 
         with open(file_path, 'w') as file:
             json.dump(copy, file, indent=4)
@@ -198,9 +198,38 @@ class PipelineManager:
         try:
             with open(file_path, 'r') as file:
                 loaded_data = json.load(file)
+                self.rearrange_filters(loaded_data.keys())
                 self.update_configs_recursive(self.configs, loaded_data, "")
         except FileNotFoundError:
             print(f"File {file_path} not found!")
+
+    def delete_unused_fitlers(self, filters):
+        print(self.active_filters)
+        for filter in self.active_filters:
+            print(f"Checking for {filter} in json data")
+            if filter not in filters:
+                print(f"Deleting {filter}")
+                self.delete_filter(filter)
+                self.delete_unused_fitlers(filters)
+                break
+
+    def rearrange_filters(self, filters):
+        self.delete_unused_fitlers(filters)
+        print(filters)
+        for i, filter in enumerate(filters):
+            print(f"Checking for {filter} in active filter data")
+            if filter in self.active_filters:
+                if self.active_filters.index(filter) == i:
+                    pass
+                else:
+                    print(f"Moving {filter} to {i}")
+                    self.move_filter(filter, i)
+            else:
+                print(f"Adding {filter} to {i}")
+                self.add_filter(filter, i)
+        print(
+            f"Desired filters: {filters} | "
+            f"New Filters: {self.active_filters}")
 
     def update_configs_recursive(self, current_dict, new_data, filter):
         """
