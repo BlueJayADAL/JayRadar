@@ -1,5 +1,6 @@
 from pipelines import PipelineManager
 
+
 class TerminalUI:
     """
     TerminalUI class for providing a terminal-based user interface to interact with a video processing pipeline.
@@ -57,6 +58,10 @@ class TerminalUI:
             elif command == "load":
                 file_name = input("Enter a filename: ")
                 self.manager.load_from_json(file_name)
+            elif command == "move":
+                filter = input("Enter a filter: ")
+                index = input("Enter an index to move to: ")
+                self.manager.move_filter(filter, int(index))
 
         self.release()
 

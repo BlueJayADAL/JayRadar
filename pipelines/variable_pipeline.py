@@ -1,6 +1,7 @@
 import cv2
 from .pipeline import Pipeline
 
+
 class VariablePipeline(Pipeline):
     """
     VariablePipeline class for processing frames through a series of filters with the ability to modify filters at runtime.
@@ -23,7 +24,8 @@ class VariablePipeline(Pipeline):
         The filters will be applied to the frames in the order they are provided.
         """
         super().__init__(source, output, *filters)
-        self.filters = list(self.filters)  # Convert the filters to a mutable list
+        # Convert the filters to a mutable list
+        self.filters = list(self.filters)
         self.filter_q = filter_q  # Queue for receiving commands to add or remove filters
         self.check_q()  # Process any initial commands in the queue
 
@@ -39,9 +41,15 @@ class VariablePipeline(Pipeline):
             command, index, filter = self.filter_q.get()
 
             if command == "add":
-                self.add_filter(filter, index=index)
+                self.add_filter(filter, index)
             elif command == "delete":
                 self.del_filter(index)
+            elif command == "move":
+                self.move_filter(index, filter)
+
+    def move_filter(self, current_index, new_index):
+        filter = self.filters.pop(current_index)
+        self.filters.insert(new_index, filter)
 
     def add_filter(self, filter, index=0):
         """
@@ -57,10 +65,11 @@ class VariablePipeline(Pipeline):
         if index > self.num_filters:
             index = self.num_filters
         filter.initialize()  # Initialize the new filter
-        self.filters.insert(index, filter)  # Insert the new filter at the specified index
+        # Insert the new filter at the specified index
+        self.filters.insert(index, filter)
         self.num_filters += 1  # Increment the number of filters
 
-    def del_filter(self, index:int=0):
+    def del_filter(self, index: int = 0):
         """
         Remove a filter from the pipeline at the specified index.
 
@@ -93,9 +102,11 @@ class VariablePipeline(Pipeline):
                 break
 
             for filter in self.filters:
-                frame, data = filter.process_frame(frame, data)  # Process the frame through each filter
+                # Process the frame through each filter
+                frame, data = filter.process_frame(frame, data)
 
-            self.output.send_frame(frame, data)  # Send the processed frame and data to the output
+            # Send the processed frame and data to the output
+            self.output.send_frame(frame, data)
             cv2.waitKey(1)  # Wait for a short period to handle GUI events
 
         self.cleanup()  # Perform cleanup after processing all frames

@@ -3,6 +3,7 @@ from pipelines import VariablePipeline
 from pipelines.filters import HSVFilter, RGBFilter, DeepLearning
 import json
 
+
 class PipelineManager:
     """
     PipelineManager class for managing dynamic filters and configurations in a video processing pipeline.
@@ -50,9 +51,11 @@ class PipelineManager:
         self.dl_filter = DeepLearning(self.configs["dl"])
 
         self.filter_q = Queue()  # Queue for receiving commands to modify filters at runtime
-        self.pipeline = VariablePipeline(source, output, self.filter_q)  # Initialize the VariablePipeline
+        # Initialize the VariablePipeline
+        self.pipeline = VariablePipeline(source, output, self.filter_q)
 
-        self.pipeline_process = Process(target=self.pipeline.initialize)  # Process for the pipeline
+        self.pipeline_process = Process(
+            target=self.pipeline.initialize)  # Process for the pipeline
         self.pipeline_process.start()  # Start the pipeline as a separate process
 
         self.active_filters = []  # List to keep track of active filters
@@ -77,6 +80,13 @@ class PipelineManager:
             index = self.active_filters.index(filter)
             self.delete_index(index)
 
+    def move_filter(self, filter, new_index):
+        if filter in self.active_filters:
+            current_index = self.active_filters.index(filter)
+            current_filter = self.active_filters.pop(current_index)
+            self.active_filters.insert(new_index, current_filter)
+            self.filter_q.put(["move", current_index, new_index])
+
     def add_hsv(self, index=0):
         """
         Add an HSVFilter to the pipeline at the specified index.
@@ -90,6 +100,20 @@ class PipelineManager:
             index = len(self.active_filters)
         self.filter_q.put(["add", index, self.hsv_filter])
         self.active_filters.insert(index, "hsv")
+
+    def add_filter(self, filter, index=0):
+        if index > len(self.active_filters):
+            index = len(self.active_filters)
+
+        if filter == "hsv":
+            self.filter_q.put(["add", index, self.hsv_filter])
+            self.active_filters.insert(index, "hsv")
+        elif filter == "dl":
+            self.filter_q.put(["add", index, self.dl_filter])
+            self.active_filters.insert(index, "dl")
+        elif filter == "rgb":
+            self.filter_q.put(["add", index, self.rgb_filter])
+            self.active_filters.insert(index, "rgb")
 
     def add_dl(self, index=0):
         """
@@ -144,7 +168,8 @@ class PipelineManager:
                         try:
                             self.configs[filter][key] = current_type(value)
                         except ValueError:
-                            print(f"Typecasting failed: '{value}' cannot be converted to {current_type}.")
+                            print(
+                                f"Typecasting failed: '{value}' cannot be converted to {current_type}.")
 
     def save_to_json(self, file_path):
         """
@@ -191,16 +216,17 @@ class PipelineManager:
         for key, value in new_data.items():
             if isinstance(value, dict):
                 if key in current_dict:
-                    self.update_configs_recursive(current_dict[key], value, key)
+                    self.update_configs_recursive(
+                        current_dict[key], value, key)
                 else:
                     current_dict[key] = value
             else:
                 self.update_configs(filter, key, value)
 
     def get_active_filters(self):
-        filters =  self.active_filters
+        filters = self.active_filters
         return filters
-    
+
     def get_configs_copy(self):
         rgb_copy = self.configs["rgb"].copy()
         hsv_copy = self.configs["hsv"].copy()
@@ -212,7 +238,7 @@ class PipelineManager:
             "dl": dl_copy
         }
         return copy
-    
+
     def release(self):
         """
         Release resources and terminate the pipeline.
