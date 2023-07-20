@@ -222,9 +222,6 @@ class PipelineManager:
                     self.move_filter(filter, i)
             else:
                 self.add_filter(filter, i)
-        print(
-            f"Desired filters: {filters} | "
-            f"New Filters: {self.active_filters}")
 
     def update_configs_recursive(self, current_dict, new_data, filter):
         """
