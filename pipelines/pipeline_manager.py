@@ -180,8 +180,9 @@ class PipelineManager:
 
         The method creates a copy of the shared configurations and saves them to a JSON file with the specified file path.
         """
-
-        copy = self.get_configs_copy()
+        copy = {}
+        for filter in self.active_filters:
+            copy[filter] = self.configs[filter].copy()
 
         with open(file_path, 'w') as file:
             json.dump(copy, file, indent=4)
@@ -204,11 +205,8 @@ class PipelineManager:
             print(f"File {file_path} not found!")
 
     def delete_unused_fitlers(self, filters):
-        print(self.active_filters)
         for filter in self.active_filters:
-            print(f"Checking for {filter} in json data")
             if filter not in filters:
-                print(f"Deleting {filter}")
                 self.delete_filter(filter)
                 self.delete_unused_fitlers(filters)
                 break
@@ -217,15 +215,12 @@ class PipelineManager:
         self.delete_unused_fitlers(filters)
         print(filters)
         for i, filter in enumerate(filters):
-            print(f"Checking for {filter} in active filter data")
             if filter in self.active_filters:
                 if self.active_filters.index(filter) == i:
                     pass
                 else:
-                    print(f"Moving {filter} to {i}")
                     self.move_filter(filter, i)
             else:
-                print(f"Adding {filter} to {i}")
                 self.add_filter(filter, i)
         print(
             f"Desired filters: {filters} | "
