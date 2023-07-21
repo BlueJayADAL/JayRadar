@@ -1,8 +1,9 @@
+from multiprocessing import Queue, set_start_method
 from pipelines import PipelineManager
 from pipelines.sources import ThreadedSource
-from pipelines.outputs import NTDisplay, NTSend
-from interfaces import TerminalUI, CV2UI, WebUI
-from multiprocessing import Queue, set_start_method
+from pipelines.outputs import NTSend  # , NTDisplay
+from interfaces import WebUI  # , TerminalUI, CV2UI
+
 
 if __name__ == "__main__":
     set_start_method('spawn')  # Set the start method for multiprocessing
