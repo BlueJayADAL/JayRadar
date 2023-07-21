@@ -199,20 +199,20 @@ class PipelineManager:
         try:
             with open(file_path, 'r') as file:
                 loaded_data = json.load(file)
-                self.rearrange_filters(loaded_data.keys())
-                self.update_configs_recursive(self.configs, loaded_data, "")
+                self._rearrange_filters(loaded_data.keys())
+                self._update_configs_recursive(self.configs, loaded_data, "")
         except FileNotFoundError:
             print(f"File {file_path} not found!")
 
-    def delete_unused_fitlers(self, filters):
+    def _delete_unused_fitlers(self, filters):
         for filter in self.active_filters:
             if filter not in filters:
                 self.delete_filter(filter)
-                self.delete_unused_fitlers(filters)
+                self._delete_unused_fitlers(filters)
                 break
 
-    def rearrange_filters(self, filters):
-        self.delete_unused_fitlers(filters)
+    def _rearrange_filters(self, filters):
+        self._delete_unused_fitlers(filters)
         for i, filter in enumerate(filters):
             if filter in self.active_filters:
                 if self.active_filters.index(filter) == i:
@@ -222,7 +222,7 @@ class PipelineManager:
             else:
                 self.add_filter(filter, i)
 
-    def update_configs_recursive(self, current_dict, new_data, filter):
+    def _update_configs_recursive(self, current_dict, new_data, filter):
         """
         Recursively update configurations with new data.
 
@@ -236,7 +236,7 @@ class PipelineManager:
         for key, value in new_data.items():
             if isinstance(value, dict):
                 if key in current_dict:
-                    self.update_configs_recursive(
+                    self._update_configs_recursive(
                         current_dict[key], value, key)
                 else:
                     current_dict[key] = value
