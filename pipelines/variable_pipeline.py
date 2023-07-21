@@ -12,9 +12,15 @@ class VariablePipeline(Pipeline):
 
     This class extends the base Pipeline class to allow adding and removing pipes at runtime through a command queue.
     It provides additional methods for managing pipes dynamically during the pipeline's execution.
-    """
+    """  # noqa: E501
 
-    def __init__(self, source: Source, output: Output, pipe_q: Queue, *pipes: Pipe):
+    def __init__(
+        self,
+        source: Source,
+        output: Output,
+        pipe_q: Queue,
+        *pipes: Pipe
+    ):
         """
         Initialize the VariablePipeline object.
 
@@ -26,11 +32,11 @@ class VariablePipeline(Pipeline):
 
         The VariablePipeline object extends the base Pipeline object by adding the ability to modify pipes at runtime.
         The pipes will be applied to the frames in the order they are provided.
-        """
+        """  # noqa: E501
         super().__init__(source, output, *pipes)
         # Convert the pipes to a mutable list
         self.pipes = list(self.pipes)
-        self.pipe_q = pipe_q  # Queue for receiving commands to add or remove pipes
+        self.pipe_q = pipe_q
         self.check_q()  # Process any initial commands in the queue
 
     def check_q(self):
@@ -40,7 +46,7 @@ class VariablePipeline(Pipeline):
         This method continuously checks the pipe queue for incoming commands and processes them accordingly.
         Valid commands include "add" to add a new pipe at a specified index and "delete" to remove a pipe
         at a specified index. If the index is out of bounds, it will be adjusted to fit within the valid range.
-        """
+        """  # noqa: E501
         while not self.pipe_q.empty():
             command, index, pipe = self.pipe_q.get()
 
@@ -65,7 +71,7 @@ class VariablePipeline(Pipeline):
 
         If the specified index is greater than the number of pipes, the pipe will be inserted at the end of the pipeline.
         The pipe is initialized before being added to the pipeline, and the number of pipes is updated accordingly.
-        """
+        """  # noqa: E501
         if index > self.num_pipes:
             index = self.num_pipes
         pipe.initialize()  # Initialize the new pipe
@@ -82,7 +88,7 @@ class VariablePipeline(Pipeline):
 
         If the specified index is greater than or equal to the number of pipes, the method does nothing.
         Otherwise, the pipe at the specified index is removed from the pipeline, and the number of pipes is updated.
-        """
+        """  # noqa: E501
         if index > (self.num_pipes-1):  # Check if the index is out of bounds
             pass
         else:
@@ -97,11 +103,11 @@ class VariablePipeline(Pipeline):
         The processed frames and associated data are sent to the output object using the send_frame() method.
         The loop terminates when the source returns None for the frame, indicating the end of frames.
         The method also checks the pipe queue for commands to modify pipes at runtime.
-        """
+        """  # noqa: E501
         while True:
             self.check_q()  # Check the pipe queue for any commands
 
-            frame, data = self.source.get_frame()  # Get a frame from the source
+            frame, data = self.source.get_frame()
             if frame is None:
                 break
 

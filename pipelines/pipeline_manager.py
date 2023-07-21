@@ -14,7 +14,7 @@ class PipelineManager:
     at runtime. It uses the multiprocessing module to handle the pipeline as a separate process to avoid blocking
     the main thread. The PipelineManager allows adding HSVFilter, RGBFilter, and DeepLearning pipes, updating
     their configurations, and saving/loading the configurations to/from a JSON file.
-    """
+    """  # noqa: E501
 
     def __init__(self, source: Source, output: Output):
         """
@@ -27,11 +27,19 @@ class PipelineManager:
         The PipelineManager object initializes a multiprocessing Manager to handle shared configurations
         for pipes. It creates HSVFilter, RGBFilter, and DeepLearning objects with shared configurations.
         It also initializes a VariablePipeline object to process frames through the pipes dynamically.
-        """
+        """  # noqa: E501
         self.manager = Manager()  # Initialize a multiprocessing Manager
         self.configs = {  # Shared configurations for pipes
-            "hsv": self.manager.dict({"brightness": 0, "contrast": 1.0, "saturation": 1.0}),
-            "rgb": self.manager.dict({"red": 0, "green": 0, "blue": 0}),
+            "hsv": self.manager.dict({
+                "brightness": 0,
+                "contrast": 1.0,
+                "saturation": 1.0
+            }),
+            "rgb": self.manager.dict({
+                "red": 0,
+                "green": 0,
+                "blue": 0
+            }),
             "dl": self.manager.dict({
                 "model": "models/yolov8n.pt",
                 "tx": 320,
@@ -52,13 +60,15 @@ class PipelineManager:
         self.rgb_pipe = RGBPipe(self.configs["rgb"])
         self.dl_pipe = YOLOv8Pipe(self.configs["dl"])
 
-        self.pipe_q = Queue()  # Queue for receiving commands to modify pipes at runtime
+        self.pipe_q = Queue()
         # Initialize the VariablePipeline
         self.pipeline = VariablePipeline(source, output, self.pipe_q)
 
         self.pipeline_process = Process(
-            target=self.pipeline.initialize)  # Process for the pipeline
-        self.pipeline_process.start()  # Start the pipeline as a separate process
+            target=self.pipeline.initialize
+        )  # Process for the pipeline
+
+        self.pipeline_process.start()
 
         self.active_pipes = []  # List to keep track of active pipes
 
@@ -70,7 +80,7 @@ class PipelineManager:
             index (int): The index of the pipe to be deleted.
 
         The method adds a "delete" command to the pipe queue, and the pipe will be removed during the pipeline's execution.
-        """
+        """  # noqa: E501
         if index > len(self.active_pipes) - 1:
             pass
         else:
@@ -97,7 +107,7 @@ class PipelineManager:
             index (int): The index where the HSVFilter should be inserted.
 
         The method adds an "add" command with the HSVFilter to the pipe queue, and the pipe will be added during the pipeline's execution.
-        """
+        """  # noqa: E501
         if index > len(self.active_pipes):
             index = len(self.active_pipes)
         self.pipe_q.put(["add", index, self.hsv_pipe])
@@ -125,7 +135,7 @@ class PipelineManager:
             index (int): The index where the DeepLearning pipe should be inserted.
 
         The method adds an "add" command with the DeepLearning pipe to the pipe queue, and the pipe will be added during the pipeline's execution.
-        """
+        """  # noqa: E501
         if index > len(self.active_pipes):
             index = len(self.active_pipes)
         self.pipe_q.put(["add", index, self.dl_pipe])
@@ -139,7 +149,7 @@ class PipelineManager:
             index (int): The index where the RGBFilter should be inserted.
 
         The method adds an "add" command with the RGBFilter to the pipe queue, and the pipe will be added during the pipeline's execution.
-        """
+        """  # noqa: E501
         if index > len(self.active_pipes):
             index = len(self.active_pipes)
         self.pipe_q.put(["add", index, self.rgb_pipe])
@@ -155,7 +165,7 @@ class PipelineManager:
             value: The new value for the configuration.
 
         The method updates the shared configuration of the specified pipe with the new value for the specified key.
-        """
+        """  # noqa: E501
         if pipe in self.configs:
             if key in self.configs[pipe]:
                 if value is None:
@@ -171,7 +181,8 @@ class PipelineManager:
                             self.configs[pipe][key] = current_type(value)
                         except ValueError:
                             print(
-                                f"Typecasting failed: '{value}' cannot be converted to {current_type}.")
+                                f"Typecasting failed: '{value}' "
+                                f"cannot be converted to {current_type}.")
 
     def save_to_json(self, file_path):
         """
@@ -181,7 +192,7 @@ class PipelineManager:
             file_path (str): The file path where the configurations will be saved.
 
         The method creates a copy of the shared configurations and saves them to a JSON file with the specified file path.
-        """
+        """  # noqa: E501
         copy = {}
         for pipe in self.active_pipes:
             copy[pipe] = self.configs[pipe].copy()
@@ -197,7 +208,7 @@ class PipelineManager:
             file_path (str): The file path of the JSON file to load configurations from.
 
         The method loads configurations from the specified JSON file and updates the shared configurations accordingly.
-        """
+        """  # noqa: E501
         try:
             with open(file_path, 'r') as file:
                 loaded_data = json.load(file)
@@ -234,7 +245,7 @@ class PipelineManager:
             pipe (str): The pipe name.
 
         The method recursively updates the shared configurations with the new data from the JSON file.
-        """
+        """  # noqa: E501
         for key, value in new_data.items():
             if isinstance(value, dict):
                 if key in current_dict:
@@ -266,7 +277,7 @@ class PipelineManager:
         Release resources and terminate the pipeline.
 
         The method terminates the pipeline process, waits for it to finish, and performs cleanup.
-        """
+        """  # noqa: E501
         self.pipeline_process.terminate()
         self.pipeline_process.join()
         self.pipeline.cleanup()

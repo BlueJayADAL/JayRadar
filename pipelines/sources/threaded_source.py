@@ -11,9 +11,14 @@ class ThreadedSource(Source):
 
     This class allows capturing frames from a camera device or a video file, using a threaded approach
     for improved performance and responsiveness.
-    """
+    """  # noqa: E501
 
-    def __init__(self, device: int = 0, windows: bool = False, buffer: int = 5):
+    def __init__(
+        self,
+        device: int = 0,
+        windows: bool = False,
+        buffer: int = 5
+    ):
         """
         Initialize the ThreadedSource object.
 
@@ -23,11 +28,11 @@ class ThreadedSource(Source):
             windows (bool): Set to True if running on Windows and capturing from the default camera.
                             Defaults to False.
             buffer (int): Maximum number of frames to store in the output queue. Defaults to 5.
-        """
+        """  # noqa: E501
         self._device = device  # Camera device index or video file path
         # Output queue to store frames and timestamps
         self._dq_out = deque(maxlen=buffer)
-        self._active = False  # Flag indicating if the threaded source is active
+        self._active = False  # Flag indicating if the thread is active
         self.windows = windows  # Flag indicating if running on Windows
 
     def initialize(self):
@@ -37,7 +42,7 @@ class ThreadedSource(Source):
         This method creates a VideoCapture object using the specified device index or video file path.
         If running on Windows and capturing from the default camera, it uses CAP_DSHOW to avoid issues.
         It also starts the thread for capturing frames in the background.
-        """
+        """  # noqa: E501
         if self.windows:
             self._camera = cv2.VideoCapture(self._device, cv2.CAP_DSHOW)
         else:
@@ -49,16 +54,16 @@ class ThreadedSource(Source):
         """
         Internal method to capture frames from the video source and put them in the output queue.
         This method runs in a separate thread.
-        """
+        """  # noqa: E501
         self._active = True
 
         while self._active:
-            ret, frame = self._camera.read()  # Read a frame from the video source
+            ret, frame = self._camera.read()
 
             if not ret:
                 break
 
-            time_stamp = time.time()  # Record the timestamp of when the frame was captured
+            time_stamp = time.time()
 
             # Append the frame and timestamp to the output queue
             self._dq_out.append([frame, time_stamp])
@@ -84,7 +89,7 @@ class ThreadedSource(Source):
                 - frame (numpy.ndarray): The captured frame.
                 - data (dict): A dictionary containing the timestamp of when the frame was captured.
             If there's an error or no frame is available, the tuple is (None, None).
-        """
+        """  # noqa: E501
         if self._dq_out:
             # Get the latest captured frame and timestamp from the output queue
             data = self._dq_out[-1]
@@ -92,15 +97,14 @@ class ThreadedSource(Source):
             return data[0], {"timestamp": data[1]}
         elif self._active:
             time.sleep(1)  # Sleep briefly to avoid busy waiting
-            # Recursively call get_frame until a frame is available or the source stops
             return self.get_frame()
         else:
-            return None, None  # Return None if there's an error or the threaded source has stopped
+            return None, None
 
     def release(self):
         """
         Stop capturing frames and release the video source.
 
         This method stops the threaded source by setting the active flag to False.
-        """
-        self._active = False  # Set the active flag to False, stopping the threaded source
+        """  # noqa: E501
+        self._active = False

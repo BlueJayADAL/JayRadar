@@ -24,9 +24,16 @@ class WebUI:
         port (int, optional): The port number for the FastAPI server. Defaults to 8000.
         nt_ip (str, optional): The IP address of the NetworkTables server. Defaults to "10.1.32.27".
         nt_table (str, optional): The NetworkTables table name. Defaults to "JayRadar".
-    """
+    """  # noqa: E501
 
-    def __init__(self, manager: PipelineManager, q_in: Queue, ip="0.0.0.0", port: int = 8000, nt_ip="10.1.32.27", nt_table="JayRadar"):
+    def __init__(
+        self,
+        manager: PipelineManager,
+        q_in: Queue, ip="0.0.0.0",
+        port: int = 8000,
+        nt_ip="10.1.32.27",
+        nt_table="JayRadar"
+    ):
         self.app = FastAPI()
         static_path = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "static")
@@ -57,7 +64,8 @@ class WebUI:
 
                 # Yield the frame data as MJPEG response
                 yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
+                       b'Content-Type: image/jpeg\r\n\r\n'
+                       + frame_data + b'\r\n')
 
     async def send_config(self, websocket):
         active_pipes = self.manager.get_active_pipes()
@@ -98,12 +106,17 @@ class WebUI:
 
         @self.app.get("/")
         async def home(request: Request):
-            return self.templates.TemplateResponse("index.html", {"request": request})
+            return self.templates.TemplateResponse(
+                "index.html",
+                {"request": request}
+            )
 
         @self.app.get('/video_feed')
         def video_feed():
             # Route for streaming video feed
-            return StreamingResponse(self.get_frame(), media_type='multipart/x-mixed-replace; boundary=frame')
+            return StreamingResponse(
+                self.get_frame(),
+                media_type='multipart/x-mixed-replace; boundary=frame')
 
     def run(self):
         """
@@ -112,7 +125,7 @@ class WebUI:
         The method starts the FastAPI server and configures the necessary routes for the web interface. The user can
         interact with the video processing pipeline through the web interface by accessing the root page to view the
         live video feed and using the WebSocket connection to update pipe configurations and monitor real-time results.
-        """
+        """  # noqa: E501
         self.configure_routes()
         import uvicorn
         uvicorn.run(self.app, host=self.ip, port=self.port)
@@ -123,5 +136,5 @@ class WebUI:
         Release resources and terminate the pipeline manager.
 
         The method releases the resources used by the pipeline manager and terminates the associated pipeline process.
-        """
+        """  # noqa: E501
         self.manager.release()

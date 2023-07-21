@@ -9,7 +9,7 @@ class YOLOv8Pipe(Pipe):
 
     This class uses YOLO to perform object detection on frames and filters the results to find the
     closest object to a given target location.
-    """
+    """  # noqa: E501
 
     def __init__(self, config: dict = {
         "model": "models/yolov8n.pt",
@@ -40,17 +40,17 @@ class YOLOv8Pipe(Pipe):
                            - 'max': Maximum number of detections to keep. Defaults to 7.
                            - 'img': Size of the input image for inference. Defaults to 640.
                            - 'class': List of classes to filter detections. Defaults to None.
-        """
-        self.config = config  # Dictionary containing the configuration parameters
+        """  # noqa: E501
+        self.config = config
 
     def initialize(self):
         """
         Initialize the DeepLearning object.
 
         This method creates a YOLO object using the specified model file path and stores it in self.model.
-        """
+        """  # noqa: E501
         self.model = YOLO(
-            self.config["model"])  # Create a YOLO object using the specified model file
+            self.config["model"])
 
     def _filter_results(self, result):
         """
@@ -68,7 +68,7 @@ class YOLOv8Pipe(Pipe):
                    - w and h: width and height of the box.
                    - id: class ID of the box.
                    - prob: confidence score of the box.
-        """
+        """  # noqa: E501
         if not result.boxes:
             return None, False
 
@@ -105,7 +105,7 @@ class YOLOv8Pipe(Pipe):
         'id', and 'tc'. If no boxes are found in the detection results, the 'te' key in the data dictionary
         is set to False. Otherwise, the 'te' key is set to True to indicate a successful detection.
         The annotated frame obtained from YOLO's plot() method is returned along with the modified data dictionary.
-        """
+        """  # noqa: E501
         results = self.model.predict(
             frame,
             conf=self.config["conf"],
@@ -124,7 +124,7 @@ class YOLOv8Pipe(Pipe):
         annotated_frame = results[0].plot()
 
         if success:
-            data['tx'], data['ty'], data['tw'], data['th'], data['id'], data['tc'] = result
+            data['tx'], data['ty'], data['tw'], data['th'], data['id'], data['tc'] = result  # noqa: E501
             data['te'] = True
         else:
             data['te'] = False

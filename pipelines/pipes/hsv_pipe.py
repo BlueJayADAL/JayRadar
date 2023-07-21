@@ -8,9 +8,12 @@ class HSVPipe(Pipe):
     HSVPipe class for adjusting brightness, contrast, and saturation of an HSV frame.
 
     This class allows adjusting the brightness, contrast, and saturation of an HSV frame.
-    """
+    """  # noqa: E501
 
-    def __init__(self, config: dict = {"brightness": 0, "contrast": 1.0, "saturation": 1.0}):
+    def __init__(
+        self,
+        config: dict = {"brightness": 0, "contrast": 1.0, "saturation": 1.0}
+    ):
         """
         Initialize the HSVPipe object.
 
@@ -22,8 +25,8 @@ class HSVPipe(Pipe):
                            The values for 'contrast' and 'saturation' should be floats representing the amount of
                            contrast and saturation adjustment to be applied to the V and S channels of the HSV frame,
                            respectively. Defaults to {"brightness": 0, "contrast": 1.0, "saturation": 1.0}.
-        """
-        self._config = config  # Dictionary containing the adjustment values for brightness, contrast, and saturation
+        """  # noqa: E501
+        self._config = config
 
     def run_pipe(self, frame, data):
         """
@@ -42,7 +45,7 @@ class HSVPipe(Pipe):
         channels, respectively. The values for V and S channels are clamped to the valid range [0, 255],
         and the channels are merged back to form the processed frame. The frame is then converted
         back to the BGR color space before returning.
-        """
+        """  # noqa: E501
         frame = cv2.cvtColor(
             frame, cv2.COLOR_BGR2HSV)  # Convert the frame to HSV color space
         h, s, v = cv2.split(frame)  # Split the frame into individual channels
@@ -64,4 +67,4 @@ class HSVPipe(Pipe):
         frame = cv2.merge((h, s, v))
         # Convert the frame back to BGR color space
         frame = cv2.cvtColor(frame, cv2.COLOR_HSV2BGR)
-        return frame, data  # Return the processed frame and the data dictionary unchanged
+        return frame, data

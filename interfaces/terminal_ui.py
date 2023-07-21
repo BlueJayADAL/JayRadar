@@ -8,7 +8,7 @@ class TerminalUI:
     This class allows the user to input commands to add and delete pipes, update pipe configurations,
     and save/load configurations from JSON files. The user can interact with the pipeline managed by a
     PipelineManager object using this terminal user interface.
-    """
+    """  # noqa: E501
 
     def __init__(self, manager: PipelineManager):
         """
@@ -16,7 +16,7 @@ class TerminalUI:
 
         Args:
             manager (PipelineManager): The PipelineManager object used to manage the video processing pipeline.
-        """
+        """  # noqa: E501
         self.manager = manager
 
     def run(self):
@@ -28,7 +28,7 @@ class TerminalUI:
         application with the "quit" command, delete a pipe by index with the "delete" command, add a pipe with
         the "add" command, update pipe configurations with the "update" command, and save/load configurations
         from JSON files with the "save" and "load" commands, respectively.
-        """
+        """  # noqa: E501
         while True:
             command = input("Enter a command: ")
             if command == "quit":
@@ -70,5 +70,5 @@ class TerminalUI:
         Release resources and terminate the pipeline manager.
 
         The method releases the resources used by the pipeline manager and terminates the associated pipeline process.
-        """
+        """  # noqa: E501
         self.manager.release()

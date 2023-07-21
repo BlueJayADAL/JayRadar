@@ -14,7 +14,7 @@ class CV2UI:
     - Press "y" to add a DeepLearning pipe at the beginning of the pipeline.
 
     The user can interact with the pipeline managed by a PipelineManager object using this terminal user interface.
-    """
+    """  # noqa: E501
 
     def __init__(self, manager: PipelineManager, q_in: Queue):
         """
@@ -23,7 +23,7 @@ class CV2UI:
         Args:
             manager (PipelineManager): The PipelineManager object used to manage the video processing pipeline.
             q_in (Queue): The multiprocessing Queue to receive frames from the video processing pipeline.
-        """
+        """  # noqa: E501
         self.manager = manager
         self.q_in = q_in
 
@@ -43,7 +43,7 @@ class CV2UI:
 
         After exiting the loop, the method releases the resources used by the pipeline manager and terminates the
         associated pipeline process.
-        """
+        """  # noqa: E501
         while True:
             frame = self.q_in.get()
 
@@ -68,5 +68,6 @@ class CV2UI:
         Release resources and terminate the pipeline manager.
 
         The method releases the resources used by the pipeline manager and terminates the associated pipeline process.
-        """
+
+        """  # noqa: E501
         self.manager.release()

@@ -10,7 +10,7 @@ class Pipeline:
 
     This class facilitates the processing of frames through a pipeline of pipes and sends the output to an
     output handler for display or further processing.
-    """
+    """  # noqa: E501
 
     def __init__(self, source: Source, output: Output, *pipes: Pipe):
         """
@@ -23,7 +23,7 @@ class Pipeline:
 
         The Pipeline object requires a source object, an output object, and a list of pipe objects.
         The pipes will be applied to the frames in the order they are provided.
-        """
+        """  # noqa: E501
         self.source = source  # Object providing frames for the pipeline
         self.output = output  # Object handling the output of the pipeline
         self.pipes = pipes  # List of pipe objects to process frames
@@ -35,7 +35,7 @@ class Pipeline:
 
         This method initializes the source, output, and each pipe in the pipeline by calling their
         respective initialize() methods. It then starts the pipeline by calling the run() method.
-        """
+        """  # noqa: E501
         self.source.initialize()  # Initialize the source object
         self.output.initialize()  # Initialize the output object
 
@@ -51,9 +51,9 @@ class Pipeline:
         This method continuously processes frames received from the source through the pipes in the pipeline.
         The processed frames and associated data are sent to the output object using the send_frame() method.
         The loop terminates when the source returns None for the frame, indicating the end of frames.
-        """
+        """  # noqa: E501
         while True:
-            frame, data = self.source.get_frame()  # Get a frame from the source
+            frame, data = self.source.get_frame()
             if frame is None:
                 break
 
@@ -74,9 +74,9 @@ class Pipeline:
 
         This method releases resources used by the source, output, and each pipe in the pipeline by calling
         their respective release() methods.
-        """
+        """  # noqa: E501
         self.source.release()  # Release resources used by the source object
         self.output.release()  # Release resources used by the output object
 
         for pipe in self.pipes:
-            pipe.release()  # Release resources used by each pipe in the pipeline
+            pipe.release()

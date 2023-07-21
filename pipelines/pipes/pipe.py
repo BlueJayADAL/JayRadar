@@ -13,7 +13,7 @@ class Pipe:
         Initialize the RGBPipe object.
 
         This method is currently empty as the RGBPipe class does not require any initialization.
-        """
+        """  # noqa: E501
         pass
 
     def run_pipe(self, frame, data):
@@ -27,5 +27,5 @@ class Pipe:
         Release resources used by the Pipe object.
 
         This method is currently empty as the RGBPipe class does not require any resource release.
-        """
+        """  # noqa: E501
         pass

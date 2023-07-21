@@ -9,7 +9,7 @@ class RGBPipe(Pipe):
 
     This class allows adjusting the color balance of an RGB frame by adding user-defined values to the
     red, green, and blue channels separately.
-    """
+    """  # noqa: E501
 
     def __init__(self, config: dict = {"red": 0, "green": 0, "blue": 0}):
         """
@@ -20,8 +20,8 @@ class RGBPipe(Pipe):
                            It should contain three keys: 'red', 'green', and 'blue'.
                            The values for each channel should be integers representing the amount of
                            adjustment to be added to the respective channel. Defaults to {"red": 0, "green": 0, "blue": 0}.
-        """
-        self._config = config  # Dictionary containing the adjustment values for each channel
+        """  # noqa: E501
+        self._config = config
 
     def run_pipe(self, frame, data):
         """
@@ -37,7 +37,7 @@ class RGBPipe(Pipe):
         This method adjusts the color balance of the input RGB frame by adding the specified adjustment
         values to the red, green, and blue channels separately. The values for each channel are clamped
         to the valid range [0, 255], and the channels are merged back to form the processed frame.
-        """
+        """  # noqa: E501
         # Split the frame into individual channels
         b, g, r = cv2.split(frame)
 
