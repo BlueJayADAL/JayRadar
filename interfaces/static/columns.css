@@ -1,0 +1,21 @@
+/* Grid layout styles */
+
+.left-column {
+  background-color: #004B98;
+  justify-content: center;
+  flex: 1;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 10px;
+}
+
+.right-column {
+  background-color: #004B98;
+  justify-content: center;
+  flex: 1;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 10px;
+}

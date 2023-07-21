@@ -8,17 +8,17 @@ main {
 }
 
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #004B98; /* Use a CSS variable for the background color */
-  }
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  /* Use a CSS variable for the background color */
+}
 
 
 header {
-    background-color: #004B98;
-    color: #fff;
-    text-align: center;
-    padding: 10px 0;
-  }
-  
+  background-color: #000;
+  color: #004B98;
+  text-align: center;
+  padding: 10px 0;
+}
