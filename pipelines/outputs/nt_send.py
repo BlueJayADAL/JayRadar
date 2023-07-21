@@ -2,15 +2,17 @@ import cv2
 import time
 from networktables import NetworkTables
 from multiprocessing import Queue
+from .output import Output
 
-class NTSend:
+
+class NTSend(Output):
     """
     NTSend class for q'ing frames and sending data to NetworkTables.
 
     This class is used push frames to a shared q and send additional data to NetworkTables.
     """
 
-    def __init__(self, q_out: Queue,server:str='10.1.32.27', table:str='JayRadar', verbose=False):
+    def __init__(self, q_out: Queue, server: str = '10.1.32.27', table: str = 'JayRadar', verbose=False):
         """
         Initialize the NTSend.
 
@@ -32,8 +34,10 @@ class NTSend:
         This method initializes the NetworkTables library and connects to the specified server.
         It also retrieves the NetworkTable to be used for data communication.
         """
-        NetworkTables.initialize(server=self.server)  # Initialize NetworkTables
-        self.table = NetworkTables.getTable(self.table_name)  # Get the specified NetworkTable
+        NetworkTables.initialize(
+            server=self.server)  # Initialize NetworkTables
+        self.table = NetworkTables.getTable(
+            self.table_name)  # Get the specified NetworkTable
 
     def send_frame(self, frame, data):
         """
@@ -48,22 +52,27 @@ class NTSend:
         end-to-end time, and frames per second. It also pushes the frame to the q.
         """
         for key, value in data.items():
-            self.table.putValue(key, value)  # Put each key-value pair in the NetworkTable
+            # Put each key-value pair in the NetworkTable
+            self.table.putValue(key, value)
             if self.verbose:
                 print(f"Placed on table: /{self.table_name}/{key}/{value}")
 
         self.q_out.put(frame)
         final_time = time.time()
 
-        end_to_end_time = round(final_time - data["timestamp"], 5)  # Calculate end-to-end time
+        # Calculate end-to-end time
+        end_to_end_time = round(final_time - data["timestamp"], 5)
         if end_to_end_time < .0001:
             end_to_end_time = .0001
 
-        self.table.putNumber("IterationTime", end_to_end_time)  # Put end-to-end time in the NetworkTable
-        self.table.putNumber("FPS", (1/end_to_end_time))  # Put frames per second in the NetworkTable
+        # Put end-to-end time in the NetworkTable
+        self.table.putNumber("IterationTime", end_to_end_time)
+        # Put frames per second in the NetworkTable
+        self.table.putNumber("FPS", (1/end_to_end_time))
 
         if self.verbose:
-            print(f"End to end time: {end_to_end_time} | FPS: {1/end_to_end_time}")
+            print(
+                f"End to end time: {end_to_end_time} | FPS: {1/end_to_end_time}")
 
     def release(self):
         """

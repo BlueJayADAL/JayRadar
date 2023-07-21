@@ -1,109 +1,113 @@
 import cv2
+from multiprocessing import Queue
 from .pipeline import Pipeline
+from .sources import Source
+from .outputs import Output
+from .pipes import Pipe
 
 
 class VariablePipeline(Pipeline):
     """
-    VariablePipeline class for processing frames through a series of filters with the ability to modify filters at runtime.
+    VariablePipeline class for processing frames through a series of pipes with the ability to modify pipes at runtime.
 
-    This class extends the base Pipeline class to allow adding and removing filters at runtime through a command queue.
-    It provides additional methods for managing filters dynamically during the pipeline's execution.
+    This class extends the base Pipeline class to allow adding and removing pipes at runtime through a command queue.
+    It provides additional methods for managing pipes dynamically during the pipeline's execution.
     """
 
-    def __init__(self, source, output, filter_q, *filters):
+    def __init__(self, source: Source, output: Output, pipe_q: Queue, *pipes: Pipe):
         """
         Initialize the VariablePipeline object.
 
         Args:
             source: An object providing frames for the pipeline.
             output: An object handling the output of the pipeline.
-            filter_q: A queue for receiving commands to add or remove filters at runtime.
-            *filters: Variable-length argument list of filter objects to process frames.
+            pipe_q: A queue for receiving commands to add or remove pipes at runtime.
+            *pipes: Variable-length argument list of pipe objects to process frames.
 
-        The VariablePipeline object extends the base Pipeline object by adding the ability to modify filters at runtime.
-        The filters will be applied to the frames in the order they are provided.
+        The VariablePipeline object extends the base Pipeline object by adding the ability to modify pipes at runtime.
+        The pipes will be applied to the frames in the order they are provided.
         """
-        super().__init__(source, output, *filters)
-        # Convert the filters to a mutable list
-        self.filters = list(self.filters)
-        self.filter_q = filter_q  # Queue for receiving commands to add or remove filters
+        super().__init__(source, output, *pipes)
+        # Convert the pipes to a mutable list
+        self.pipes = list(self.pipes)
+        self.pipe_q = pipe_q  # Queue for receiving commands to add or remove pipes
         self.check_q()  # Process any initial commands in the queue
 
     def check_q(self):
         """
-        Check the filter queue for commands to add or remove filters at runtime.
+        Check the pipe queue for commands to add or remove pipes at runtime.
 
-        This method continuously checks the filter queue for incoming commands and processes them accordingly.
-        Valid commands include "add" to add a new filter at a specified index and "delete" to remove a filter
+        This method continuously checks the pipe queue for incoming commands and processes them accordingly.
+        Valid commands include "add" to add a new pipe at a specified index and "delete" to remove a pipe
         at a specified index. If the index is out of bounds, it will be adjusted to fit within the valid range.
         """
-        while not self.filter_q.empty():
-            command, index, filter = self.filter_q.get()
+        while not self.pipe_q.empty():
+            command, index, pipe = self.pipe_q.get()
 
             if command == "add":
-                self.add_filter(filter, index)
+                self.add_pipe(pipe, index)
             elif command == "delete":
-                self.del_filter(index)
+                self.del_pipe(index)
             elif command == "move":
-                self.move_filter(index, filter)
+                self.move_pipe(index, pipe)
 
-    def move_filter(self, current_index, new_index):
-        filter = self.filters.pop(current_index)
-        self.filters.insert(new_index, filter)
+    def move_pipe(self, current_index, new_index):
+        pipe = self.pipes.pop(current_index)
+        self.pipes.insert(new_index, pipe)
 
-    def add_filter(self, filter, index=0):
+    def add_pipe(self, pipe, index=0):
         """
-        Add a new filter to the pipeline at the specified index.
+        Add a new pipe to the pipeline at the specified index.
 
         Args:
-            filter: The filter object to be added.
-            index (int): The index where the filter should be inserted. Defaults to 0.
+            pipe: The pipe object to be added.
+            index (int): The index where the pipe should be inserted. Defaults to 0.
 
-        If the specified index is greater than the number of filters, the filter will be inserted at the end of the pipeline.
-        The filter is initialized before being added to the pipeline, and the number of filters is updated accordingly.
+        If the specified index is greater than the number of pipes, the pipe will be inserted at the end of the pipeline.
+        The pipe is initialized before being added to the pipeline, and the number of pipes is updated accordingly.
         """
-        if index > self.num_filters:
-            index = self.num_filters
-        filter.initialize()  # Initialize the new filter
-        # Insert the new filter at the specified index
-        self.filters.insert(index, filter)
-        self.num_filters += 1  # Increment the number of filters
+        if index > self.num_pipes:
+            index = self.num_pipes
+        pipe.initialize()  # Initialize the new pipe
+        # Insert the new pipe at the specified index
+        self.pipes.insert(index, pipe)
+        self.num_pipes += 1  # Increment the number of pipes
 
-    def del_filter(self, index: int = 0):
+    def del_pipe(self, index: int = 0):
         """
-        Remove a filter from the pipeline at the specified index.
+        Remove a pipe from the pipeline at the specified index.
 
         Args:
-            index (int): The index of the filter to be removed. Defaults to 0.
+            index (int): The index of the pipe to be removed. Defaults to 0.
 
-        If the specified index is greater than or equal to the number of filters, the method does nothing.
-        Otherwise, the filter at the specified index is removed from the pipeline, and the number of filters is updated.
+        If the specified index is greater than or equal to the number of pipes, the method does nothing.
+        Otherwise, the pipe at the specified index is removed from the pipeline, and the number of pipes is updated.
         """
-        if index > (self.num_filters-1):  # Check if the index is out of bounds
+        if index > (self.num_pipes-1):  # Check if the index is out of bounds
             pass
         else:
-            del self.filters[index]  # Remove the filter at the specified index
-            self.num_filters -= 1  # Decrement the number of filters
+            del self.pipes[index]  # Remove the pipe at the specified index
+            self.num_pipes -= 1  # Decrement the number of pipes
 
     def run(self):
         """
         Start processing frames through the pipeline.
 
-        This method continuously processes frames received from the source through the filters in the pipeline.
+        This method continuously processes frames received from the source through the pipes in the pipeline.
         The processed frames and associated data are sent to the output object using the send_frame() method.
         The loop terminates when the source returns None for the frame, indicating the end of frames.
-        The method also checks the filter queue for commands to modify filters at runtime.
+        The method also checks the pipe queue for commands to modify pipes at runtime.
         """
         while True:
-            self.check_q()  # Check the filter queue for any commands
+            self.check_q()  # Check the pipe queue for any commands
 
             frame, data = self.source.get_frame()  # Get a frame from the source
             if frame is None:
                 break
 
-            for filter in self.filters:
-                # Process the frame through each filter
-                frame, data = filter.process_frame(frame, data)
+            for pipe in self.pipes:
+                # Process the frame through each pipe
+                frame, data = pipe.run_pipe(frame, data)
 
             # Send the processed frame and data to the output
             self.output.send_frame(frame, data)

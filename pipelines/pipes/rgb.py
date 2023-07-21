@@ -1,17 +1,19 @@
 import cv2
 import numpy as np
+from .pipe import Pipe
 
-class RGBFilter:
+
+class RGBPipe(Pipe):
     """
-    RGBFilter class for adjusting the red, green, and blue balance of an RGB frame.
+    RGBPipe class for adjusting the red, green, and blue balance of an RGB frame.
 
     This class allows adjusting the color balance of an RGB frame by adding user-defined values to the
     red, green, and blue channels separately.
     """
 
-    def __init__(self, config:dict={"red": 0, "green": 0, "blue": 0}):
+    def __init__(self, config: dict = {"red": 0, "green": 0, "blue": 0}):
         """
-        Initialize the RGBFilter object.
+        Initialize the RGBPipe object.
 
         Args:
             config (dict): A dictionary specifying the amount of adjustment for each color channel.
@@ -21,15 +23,7 @@ class RGBFilter:
         """
         self._config = config  # Dictionary containing the adjustment values for each channel
 
-    def initialize(self):
-        """
-        Initialize the RGBFilter object.
-
-        This method is currently empty as the RGBFilter class does not require any initialization.
-        """
-        pass
-
-    def process_frame(self, frame, data):
+    def run_pipe(self, frame, data):
         """
         Process a frame by adjusting the RGB balance.
 
@@ -64,11 +58,3 @@ class RGBFilter:
         # Merge the channels back into a frame
         frame = cv2.merge((b, g, r))
         return frame, data
-
-    def release(self):
-        """
-        Release resources used by the RGBFilter object.
-
-        This method is currently empty as the RGBFilter class does not require any resource release.
-        """
-        pass

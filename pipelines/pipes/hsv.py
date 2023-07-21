@@ -1,16 +1,18 @@
 import cv2
 import numpy as np
+from .pipe import Pipe
 
-class HSVFilter:
+
+class HSVPipe(Pipe):
     """
-    HSVFilter class for adjusting brightness, contrast, and saturation of an HSV frame.
+    HSVPipe class for adjusting brightness, contrast, and saturation of an HSV frame.
 
     This class allows adjusting the brightness, contrast, and saturation of an HSV frame.
     """
 
-    def __init__(self, config:dict={"brightness": 0, "contrast": 1.0, "saturation": 1.0}):
+    def __init__(self, config: dict = {"brightness": 0, "contrast": 1.0, "saturation": 1.0}):
         """
-        Initialize the HSVFilter object.
+        Initialize the HSVPipe object.
 
         Args:
             config (dict): A dictionary specifying the amount of adjustment for brightness, contrast, and saturation.
@@ -23,15 +25,7 @@ class HSVFilter:
         """
         self._config = config  # Dictionary containing the adjustment values for brightness, contrast, and saturation
 
-    def initialize(self):
-        """
-        Initialize the HSVFilter object.
-
-        This method is currently empty as the HSVFilter class does not require any initialization.
-        """
-        pass
-
-    def process_frame(self, frame, data):
+    def run_pipe(self, frame, data):
         """
         Process an HSV frame by adjusting brightness, contrast, and saturation.
 
@@ -49,7 +43,8 @@ class HSVFilter:
         and the channels are merged back to form the processed frame. The frame is then converted
         back to the BGR color space before returning.
         """
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)  # Convert the frame to HSV color space
+        frame = cv2.cvtColor(
+            frame, cv2.COLOR_BGR2HSV)  # Convert the frame to HSV color space
         h, s, v = cv2.split(frame)  # Split the frame into individual channels
 
         # Adjust brightness
@@ -65,14 +60,8 @@ class HSVFilter:
         v = np.clip(v, 0, 255)
         s = np.clip(s, 0, 255)
 
-        frame = cv2.merge((h, s, v))  # Merge the channels back into an HSV frame
-        frame = cv2.cvtColor(frame, cv2.COLOR_HSV2BGR)  # Convert the frame back to BGR color space
+        # Merge the channels back into an HSV frame
+        frame = cv2.merge((h, s, v))
+        # Convert the frame back to BGR color space
+        frame = cv2.cvtColor(frame, cv2.COLOR_HSV2BGR)
         return frame, data  # Return the processed frame and the data dictionary unchanged
-
-    def release(self):
-        """
-        Release resources used by the HSVFilter object.
-
-        This method is currently empty as the HSVFilter class does not require any resource release.
-        """
-        pass

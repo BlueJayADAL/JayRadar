@@ -2,6 +2,7 @@ from pipelines import PipelineManager
 from multiprocessing import Queue
 import cv2
 
+
 class CV2UI:
     """
     CV2UI class for providing a terminal-based user interface to interact with a video processing pipeline.
@@ -9,8 +10,8 @@ class CV2UI:
     This class allows the user to view frames from the video processing pipeline in a window using OpenCV and
     interact with the pipeline by pressing keys on the keyboard. The available commands are:
     - Press "q" to quit the application.
-    - Press "d" to delete the first filter in the pipeline.
-    - Press "y" to add a DeepLearning filter at the beginning of the pipeline.
+    - Press "d" to delete the first pipe in the pipeline.
+    - Press "y" to add a DeepLearning pipe at the beginning of the pipeline.
 
     The user can interact with the pipeline managed by a PipelineManager object using this terminal user interface.
     """
@@ -33,8 +34,8 @@ class CV2UI:
         The method provides a loop where the user can view frames from the video processing pipeline in a window using
         OpenCV and interact with the pipeline by pressing keys on the keyboard. The available commands are:
         - Press "q" to quit the application.
-        - Press "d" to delete the first filter in the pipeline.
-        - Press "y" to add a DeepLearning filter at the beginning of the pipeline.
+        - Press "d" to delete the first pipe in the pipeline.
+        - Press "y" to add a DeepLearning pipe at the beginning of the pipeline.
 
         The method continuously retrieves frames from the multiprocessing Queue and displays them in the "CV2 UI" window.
         It waits for keyboard input and executes the corresponding actions based on the pressed keys. The application
@@ -48,7 +49,7 @@ class CV2UI:
 
             if frame is not None:
                 cv2.imshow("CV2 UI", frame)
-            
+
             key = cv2.waitKey(1)
 
             if key == ord("q"):
@@ -58,7 +59,7 @@ class CV2UI:
             elif key == ord("y"):
                 self.manager.add_dl(0)
             elif key == ord("w"):
-                self.manager.delete_filter("dl")
+                self.manager.delete_pipe("dl")
 
         self.release()
 

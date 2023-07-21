@@ -1,15 +1,17 @@
 import cv2
 import time
 from networktables import NetworkTables
+from .output import Output
 
-class NTDisplay:
+
+class NTDisplay(Output):
     """
     NTDisplay class for displaying frames using OpenCV and sending data to NetworkTables.
 
     This class is used to display frames in an OpenCV window and send additional data to NetworkTables.
     """
 
-    def __init__(self, server:str='10.1.32.27', table:str='JayRadar', verbose=False):
+    def __init__(self, server: str = '10.1.32.27', table: str = 'JayRadar', verbose=False):
         """
         Initialize the NTDisplay object.
 
@@ -30,8 +32,10 @@ class NTDisplay:
         This method initializes the NetworkTables library and connects to the specified server.
         It also retrieves the NetworkTable to be used for data communication.
         """
-        NetworkTables.initialize(server=self.server)  # Initialize NetworkTables
-        self.table = NetworkTables.getTable(self.table_name)  # Get the specified NetworkTable
+        NetworkTables.initialize(
+            server=self.server)  # Initialize NetworkTables
+        self.table = NetworkTables.getTable(
+            self.table_name)  # Get the specified NetworkTable
 
     def send_frame(self, frame, data):
         """
@@ -46,22 +50,27 @@ class NTDisplay:
         end-to-end time, and frames per second. It also displays the frame in an OpenCV window.
         """
         for key, value in data.items():
-            self.table.putValue(key, value)  # Put each key-value pair in the NetworkTable
+            # Put each key-value pair in the NetworkTable
+            self.table.putValue(key, value)
             if self.verbose:
                 print(f"Placed on table: /{self.table_name}/{key}/{value}")
 
         cv2.imshow('Output', frame)  # Display the frame in an OpenCV window
         final_time = time.time()
 
-        end_to_end_time = round(final_time - data["timestamp"], 5)  # Calculate end-to-end time
+        # Calculate end-to-end time
+        end_to_end_time = round(final_time - data["timestamp"], 5)
         if end_to_end_time < .0001:
             end_to_end_time = .0001
 
-        self.table.putNumber("IterationTime", end_to_end_time)  # Put end-to-end time in the NetworkTable
-        self.table.putNumber("FPS", (1/end_to_end_time))  # Put frames per second in the NetworkTable
+        # Put end-to-end time in the NetworkTable
+        self.table.putNumber("IterationTime", end_to_end_time)
+        # Put frames per second in the NetworkTable
+        self.table.putNumber("FPS", (1/end_to_end_time))
 
         if self.verbose:
-            print(f"End to end time: {end_to_end_time} | FPS: {1/end_to_end_time}")
+            print(
+                f"End to end time: {end_to_end_time} | FPS: {1/end_to_end_time}")
 
     def release(self):
         """

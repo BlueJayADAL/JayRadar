@@ -14,7 +14,7 @@ class WebUI:
     WebUI class for providing a web-based user interface to interact with a video processing pipeline.
 
     This class utilizes FastAPI to create a web server that serves a live video feed from the video processing pipeline.
-    The user can interact with the pipeline by accessing the web interface, updating filter configurations, and
+    The user can interact with the pipeline by accessing the web interface, updating pipe configurations, and
     monitoring real-time results.
 
     Args:
@@ -60,11 +60,11 @@ class WebUI:
                        b'Content-Type: image/jpeg\r\n\r\n' + frame_data + b'\r\n')
 
     async def send_config(self, websocket):
-        active_filters = self.manager.get_active_filters()
+        active_pipes = self.manager.get_active_pipes()
         config = self.manager.get_configs_copy()
-        for filter in active_filters:
-            for key, value in config[filter].items():
-                await websocket.send_text(f"{filter}/{key}: {value}")
+        for pipe in active_pipes:
+            for key, value in config[pipe].items():
+                await websocket.send_text(f"{pipe}/{key}: {value}")
 
     def configure_routes(self):
         # Set up the networktables for the app
@@ -85,12 +85,12 @@ class WebUI:
             while True:
                 try:
                     data = await websocket.receive_text()
-                    filter, key, value = data.split("/")
+                    pipe, key, value = data.split("/")
                     # Broadcast the received message to all connected clients
                     for connection in self.connections:
-                        await connection.send_text(f"{filter}/{key}: {value}")
+                        await connection.send_text(f"{pipe}/{key}: {value}")
 
-                    self.manager.update_configs(filter, key, value)
+                    self.manager.update_configs(pipe, key, value)
 
                 except WebSocketDisconnect:
                     self.connections.remove(websocket)
@@ -111,7 +111,7 @@ class WebUI:
 
         The method starts the FastAPI server and configures the necessary routes for the web interface. The user can
         interact with the video processing pipeline through the web interface by accessing the root page to view the
-        live video feed and using the WebSocket connection to update filter configurations and monitor real-time results.
+        live video feed and using the WebSocket connection to update pipe configurations and monitor real-time results.
         """
         self.configure_routes()
         import uvicorn

@@ -2,8 +2,10 @@ import cv2
 from collections import deque
 import threading
 import time
+from .source import Source
 
-class ThreadedSource:
+
+class ThreadedSource(Source):
     """
     ThreadedSource class for capturing frames from a video source using OpenCV in a separate thread.
 
@@ -11,7 +13,7 @@ class ThreadedSource:
     for improved performance and responsiveness.
     """
 
-    def __init__(self, device:int=0, windows:bool = False, buffer:int = 5):
+    def __init__(self, device: int = 0, windows: bool = False, buffer: int = 5):
         """
         Initialize the ThreadedSource object.
 
@@ -23,7 +25,8 @@ class ThreadedSource:
             buffer (int): Maximum number of frames to store in the output queue. Defaults to 5.
         """
         self._device = device  # Camera device index or video file path
-        self._dq_out = deque(maxlen=buffer)  # Output queue to store frames and timestamps
+        # Output queue to store frames and timestamps
+        self._dq_out = deque(maxlen=buffer)
         self._active = False  # Flag indicating if the threaded source is active
         self.windows = windows  # Flag indicating if running on Windows
 
@@ -57,10 +60,12 @@ class ThreadedSource:
 
             time_stamp = time.time()  # Record the timestamp of when the frame was captured
 
-            self._dq_out.append([frame, time_stamp])  # Append the frame and timestamp to the output queue
+            # Append the frame and timestamp to the output queue
+            self._dq_out.append([frame, time_stamp])
 
         self._camera.release()  # Release the video source
-        self._dq_out.append([None, None])  # Signal the end of frames by putting None in the output queue
+        # Signal the end of frames by putting None in the output queue
+        self._dq_out.append([None, None])
 
     def start(self):
         """
@@ -81,11 +86,14 @@ class ThreadedSource:
             If there's an error or no frame is available, the tuple is (None, None).
         """
         if self._dq_out:
-            data = self._dq_out[-1]  # Get the latest captured frame and timestamp from the output queue
-            return data[0], {"timestamp": data[1]}  # Return the frame and the timestamp as additional data
+            # Get the latest captured frame and timestamp from the output queue
+            data = self._dq_out[-1]
+            # Return the frame and the timestamp as additional data
+            return data[0], {"timestamp": data[1]}
         elif self._active:
             time.sleep(1)  # Sleep briefly to avoid busy waiting
-            return self.get_frame()  # Recursively call get_frame until a frame is available or the source stops
+            # Recursively call get_frame until a frame is available or the source stops
+            return self.get_frame()
         else:
             return None, None  # Return None if there's an error or the threaded source has stopped
 

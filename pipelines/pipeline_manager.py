@@ -1,20 +1,22 @@
-from multiprocessing import Manager, Process, set_start_method, Queue
-from pipelines import VariablePipeline
-from pipelines.filters import HSVFilter, RGBFilter, DeepLearning
+from multiprocessing import Manager, Process, Queue
 import json
+from .variable_pipeline import VariablePipeline
+from .pipes import HSVPipe, RGBPipe, YOLOv8Pipe
+from .sources import Source
+from .outputs import Output
 
 
 class PipelineManager:
     """
-    PipelineManager class for managing dynamic filters and configurations in a video processing pipeline.
+    PipelineManager class for managing dynamic pipes and configurations in a video processing pipeline.
 
-    This class provides functionality to manage a VariablePipeline object and dynamically add or remove filters
+    This class provides functionality to manage a VariablePipeline object and dynamically add or remove pipes
     at runtime. It uses the multiprocessing module to handle the pipeline as a separate process to avoid blocking
-    the main thread. The PipelineManager allows adding HSVFilter, RGBFilter, and DeepLearning filters, updating
+    the main thread. The PipelineManager allows adding HSVFilter, RGBFilter, and DeepLearning pipes, updating
     their configurations, and saving/loading the configurations to/from a JSON file.
     """
 
-    def __init__(self, source, output):
+    def __init__(self, source: Source, output: Output):
         """
         Initialize the PipelineManager object.
 
@@ -23,11 +25,11 @@ class PipelineManager:
             output: An object handling the output of the pipeline.
 
         The PipelineManager object initializes a multiprocessing Manager to handle shared configurations
-        for filters. It creates HSVFilter, RGBFilter, and DeepLearning objects with shared configurations.
-        It also initializes a VariablePipeline object to process frames through the filters dynamically.
+        for pipes. It creates HSVFilter, RGBFilter, and DeepLearning objects with shared configurations.
+        It also initializes a VariablePipeline object to process frames through the pipes dynamically.
         """
         self.manager = Manager()  # Initialize a multiprocessing Manager
-        self.configs = {  # Shared configurations for filters
+        self.configs = {  # Shared configurations for pipes
             "hsv": self.manager.dict({"brightness": 0, "contrast": 1.0, "saturation": 1.0}),
             "rgb": self.manager.dict({"red": 0, "green": 0, "blue": 0}),
             "dl": self.manager.dict({
@@ -45,47 +47,47 @@ class PipelineManager:
             })
         }
 
-        # Create filter objects with shared configurations
-        self.hsv_filter = HSVFilter(self.configs["hsv"])
-        self.rgb_filter = RGBFilter(self.configs["rgb"])
-        self.dl_filter = DeepLearning(self.configs["dl"])
+        # Create pipe objects with shared configurations
+        self.hsv_pipe = HSVPipe(self.configs["hsv"])
+        self.rgb_pipe = RGBPipe(self.configs["rgb"])
+        self.dl_pipe = YOLOv8Pipe(self.configs["dl"])
 
-        self.filter_q = Queue()  # Queue for receiving commands to modify filters at runtime
+        self.pipe_q = Queue()  # Queue for receiving commands to modify pipes at runtime
         # Initialize the VariablePipeline
-        self.pipeline = VariablePipeline(source, output, self.filter_q)
+        self.pipeline = VariablePipeline(source, output, self.pipe_q)
 
         self.pipeline_process = Process(
             target=self.pipeline.initialize)  # Process for the pipeline
         self.pipeline_process.start()  # Start the pipeline as a separate process
 
-        self.active_filters = []  # List to keep track of active filters
+        self.active_pipes = []  # List to keep track of active pipes
 
     def delete_index(self, index=0):
         """
-        Delete a filter from the pipeline at the specified index.
+        Delete a pipe from the pipeline at the specified index.
 
         Args:
-            index (int): The index of the filter to be deleted.
+            index (int): The index of the pipe to be deleted.
 
-        The method adds a "delete" command to the filter queue, and the filter will be removed during the pipeline's execution.
+        The method adds a "delete" command to the pipe queue, and the pipe will be removed during the pipeline's execution.
         """
-        if index > len(self.active_filters) - 1:
+        if index > len(self.active_pipes) - 1:
             pass
         else:
-            self.filter_q.put(["delete", index, None])
-            del self.active_filters[index]
+            self.pipe_q.put(["delete", index, None])
+            del self.active_pipes[index]
 
-    def delete_filter(self, filter):
-        if filter in self.active_filters:
-            index = self.active_filters.index(filter)
+    def delete_pipe(self, pipe):
+        if pipe in self.active_pipes:
+            index = self.active_pipes.index(pipe)
             self.delete_index(index)
 
-    def move_filter(self, filter, new_index):
-        if filter in self.active_filters:
-            current_index = self.active_filters.index(filter)
-            current_filter = self.active_filters.pop(current_index)
-            self.active_filters.insert(new_index, current_filter)
-            self.filter_q.put(["move", current_index, new_index])
+    def move_pipe(self, pipe, new_index):
+        if pipe in self.active_pipes:
+            current_index = self.active_pipes.index(pipe)
+            current_pipe = self.active_pipes.pop(current_index)
+            self.active_pipes.insert(new_index, current_pipe)
+            self.pipe_q.put(["move", current_index, new_index])
 
     def add_hsv(self, index=0):
         """
@@ -94,40 +96,40 @@ class PipelineManager:
         Args:
             index (int): The index where the HSVFilter should be inserted.
 
-        The method adds an "add" command with the HSVFilter to the filter queue, and the filter will be added during the pipeline's execution.
+        The method adds an "add" command with the HSVFilter to the pipe queue, and the pipe will be added during the pipeline's execution.
         """
-        if index > len(self.active_filters):
-            index = len(self.active_filters)
-        self.filter_q.put(["add", index, self.hsv_filter])
-        self.active_filters.insert(index, "hsv")
+        if index > len(self.active_pipes):
+            index = len(self.active_pipes)
+        self.pipe_q.put(["add", index, self.hsv_pipe])
+        self.active_pipes.insert(index, "hsv")
 
-    def add_filter(self, filter, index=0):
-        if index > len(self.active_filters):
-            index = len(self.active_filters)
+    def add_pipe(self, pipe, index=0):
+        if index > len(self.active_pipes):
+            index = len(self.active_pipes)
 
-        if filter == "hsv":
-            self.filter_q.put(["add", index, self.hsv_filter])
-            self.active_filters.insert(index, "hsv")
-        elif filter == "dl":
-            self.filter_q.put(["add", index, self.dl_filter])
-            self.active_filters.insert(index, "dl")
-        elif filter == "rgb":
-            self.filter_q.put(["add", index, self.rgb_filter])
-            self.active_filters.insert(index, "rgb")
+        if pipe == "hsv":
+            self.pipe_q.put(["add", index, self.hsv_pipe])
+            self.active_pipes.insert(index, "hsv")
+        elif pipe == "dl":
+            self.pipe_q.put(["add", index, self.dl_pipe])
+            self.active_pipes.insert(index, "dl")
+        elif pipe == "rgb":
+            self.pipe_q.put(["add", index, self.rgb_pipe])
+            self.active_pipes.insert(index, "rgb")
 
     def add_dl(self, index=0):
         """
-        Add a DeepLearning filter to the pipeline at the specified index.
+        Add a DeepLearning pipe to the pipeline at the specified index.
 
         Args:
-            index (int): The index where the DeepLearning filter should be inserted.
+            index (int): The index where the DeepLearning pipe should be inserted.
 
-        The method adds an "add" command with the DeepLearning filter to the filter queue, and the filter will be added during the pipeline's execution.
+        The method adds an "add" command with the DeepLearning pipe to the pipe queue, and the pipe will be added during the pipeline's execution.
         """
-        if index > len(self.active_filters):
-            index = len(self.active_filters)
-        self.filter_q.put(["add", index, self.dl_filter])
-        self.active_filters.insert(index, "dl")
+        if index > len(self.active_pipes):
+            index = len(self.active_pipes)
+        self.pipe_q.put(["add", index, self.dl_pipe])
+        self.active_pipes.insert(index, "dl")
 
     def add_rgb(self, index=0):
         """
@@ -136,37 +138,37 @@ class PipelineManager:
         Args:
             index (int): The index where the RGBFilter should be inserted.
 
-        The method adds an "add" command with the RGBFilter to the filter queue, and the filter will be added during the pipeline's execution.
+        The method adds an "add" command with the RGBFilter to the pipe queue, and the pipe will be added during the pipeline's execution.
         """
-        if index > len(self.active_filters):
-            index = len(self.active_filters)
-        self.filter_q.put(["add", index, self.rgb_filter])
-        self.active_filters.insert(index, "rgb")
+        if index > len(self.active_pipes):
+            index = len(self.active_pipes)
+        self.pipe_q.put(["add", index, self.rgb_pipe])
+        self.active_pipes.insert(index, "rgb")
 
-    def update_configs(self, filter, key, value):
+    def update_configs(self, pipe, key, value):
         """
-        Update the configuration of a filter.
+        Update the configuration of a pipe.
 
         Args:
-            filter (str): The filter name (e.g., "hsv", "rgb", "dl").
+            pipe (str): The pipe name (e.g., "hsv", "rgb", "dl").
             key (str): The configuration key to be updated.
             value: The new value for the configuration.
 
-        The method updates the shared configuration of the specified filter with the new value for the specified key.
+        The method updates the shared configuration of the specified pipe with the new value for the specified key.
         """
-        if filter in self.configs:
-            if key in self.configs[filter]:
+        if pipe in self.configs:
+            if key in self.configs[pipe]:
                 if value is None:
-                    self.configs[filter][key] = None
+                    self.configs[pipe][key] = None
                 else:
-                    current_value = self.configs[filter][key]
+                    current_value = self.configs[pipe][key]
                     current_type = type(current_value)
 
                     if current_value is None:
-                        self.configs[filter][key] = None
+                        self.configs[pipe][key] = None
                     else:
                         try:
-                            self.configs[filter][key] = current_type(value)
+                            self.configs[pipe][key] = current_type(value)
                         except ValueError:
                             print(
                                 f"Typecasting failed: '{value}' cannot be converted to {current_type}.")
@@ -181,8 +183,8 @@ class PipelineManager:
         The method creates a copy of the shared configurations and saves them to a JSON file with the specified file path.
         """
         copy = {}
-        for filter in self.active_filters:
-            copy[filter] = self.configs[filter].copy()
+        for pipe in self.active_pipes:
+            copy[pipe] = self.configs[pipe].copy()
 
         with open(file_path, 'w') as file:
             json.dump(copy, file, indent=4)
@@ -199,37 +201,37 @@ class PipelineManager:
         try:
             with open(file_path, 'r') as file:
                 loaded_data = json.load(file)
-                self._rearrange_filters(loaded_data.keys())
+                self._rearrange_pipes(loaded_data.keys())
                 self._update_configs_recursive(self.configs, loaded_data, "")
         except FileNotFoundError:
             print(f"File {file_path} not found!")
 
-    def _delete_unused_fitlers(self, filters):
-        for filter in self.active_filters:
-            if filter not in filters:
-                self.delete_filter(filter)
-                self._delete_unused_fitlers(filters)
+    def _delete_unused_fitlers(self, pipes):
+        for pipe in self.active_pipes:
+            if pipe not in pipes:
+                self.delete_pipe(pipe)
+                self._delete_unused_fitlers(pipes)
                 break
 
-    def _rearrange_filters(self, filters):
-        self._delete_unused_fitlers(filters)
-        for i, filter in enumerate(filters):
-            if filter in self.active_filters:
-                if self.active_filters.index(filter) == i:
+    def _rearrange_pipes(self, pipes):
+        self._delete_unused_fitlers(pipes)
+        for i, pipe in enumerate(pipes):
+            if pipe in self.active_pipes:
+                if self.active_pipes.index(pipe) == i:
                     pass
                 else:
-                    self.move_filter(filter, i)
+                    self.move_pipe(pipe, i)
             else:
-                self.add_filter(filter, i)
+                self.add_pipe(pipe, i)
 
-    def _update_configs_recursive(self, current_dict, new_data, filter):
+    def _update_configs_recursive(self, current_dict, new_data, pipe):
         """
         Recursively update configurations with new data.
 
         Args:
             current_dict (dict): The current dictionary to update.
             new_data (dict): The new data to update from.
-            filter (str): The filter name.
+            pipe (str): The pipe name.
 
         The method recursively updates the shared configurations with the new data from the JSON file.
         """
@@ -241,11 +243,11 @@ class PipelineManager:
                 else:
                     current_dict[key] = value
             else:
-                self.update_configs(filter, key, value)
+                self.update_configs(pipe, key, value)
 
-    def get_active_filters(self):
-        filters = self.active_filters
-        return filters
+    def get_active_pipes(self):
+        pipes = self.active_pipes
+        return pipes
 
     def get_configs_copy(self):
         rgb_copy = self.configs["rgb"].copy()
