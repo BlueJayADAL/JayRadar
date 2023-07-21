@@ -1,6 +1,6 @@
 # __init__.py
 
 from .pipe import Pipe
-from .hsv import HSVPipe
-from .rgb import RGBPipe
-from .yolov8 import YOLOv8Pipe
+from .hsv_pipe import HSVPipe
+from .rgb_pipe import RGBPipe
+from .yolov8_pipe import YOLOv8Pipe
