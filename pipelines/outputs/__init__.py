@@ -1,7 +1,7 @@
 """
 Output Package
 
-This package contains classes that manage the final stage of the vision pipeline, controlling
+This sub-package contains classes that manage the final stage of the vision pipeline, controlling
 how the processed data and frames are handled.
 
 Modules:

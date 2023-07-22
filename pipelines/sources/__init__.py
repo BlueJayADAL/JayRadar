@@ -1,7 +1,7 @@
 """
 Source Package
 
-This package contains classes that provide access to various sources for vision pipelines.
+This sub-package contains classes that provide access to various sources for vision pipelines.
 A source is a component that captures images or video frames and makes them available
 for processing by vision pipelines.
 

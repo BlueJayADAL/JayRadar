@@ -1,7 +1,7 @@
 """
 Pipes Package
 
-This package contains classes representing different stages in the vision pipeline. Each pipe
+This sub-package contains classes representing different stages in the vision pipeline. Each pipe
 performs specific transformations on input images to prepare them for further processing.
 
 Modules:
