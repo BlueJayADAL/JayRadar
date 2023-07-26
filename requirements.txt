@@ -2,3 +2,4 @@ ultralytics
 pynetworktables
 fastapi
 uvicorn[standard]
+jinja2
