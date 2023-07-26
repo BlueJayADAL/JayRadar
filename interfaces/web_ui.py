@@ -71,6 +71,7 @@ class WebUI:
         active_pipes = self.manager.get_active_pipes()
         config = self.manager.get_configs_copy()
         for pipe in active_pipes:
+            await websocket.send_text(f"{pipe}/active: {True}")
             for key, value in config[pipe].items():
                 await websocket.send_text(f"{pipe}/{key}: {value}")
 
