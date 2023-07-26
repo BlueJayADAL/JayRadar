@@ -1,3 +1,4 @@
+import statistics
 import cv2
 from ultralytics import YOLO
 from time import perf_counter
@@ -13,36 +14,37 @@ warmup_iterations = 10
 counted_iterations = 1000
 
 while True:
-    
+
     start = perf_counter()
-    
+
     ret, frame = cap.read()
-    
+
     if ret:
         results = model(frame)
-        
+
         annotated_frame = results[0].plot()
-        
+
         cv2.imshow("Yolov8", annotated_frame)
-        
+
         end = perf_counter()
-        
+
         it_time = end-start
-        
+
         if warmup_iterations > 0:
-            warmup_iterations -=1
+            warmup_iterations -= 1
         elif counted_iterations > 0:
             times.append(it_time)
             counted_iterations -= 1
         else:
             break
-        
+
         key = cv2.waitKey(1)
-        
+
         if key == ord('q'):
             break
-        
-import statistics
+
+cap.release()
+cv2.destroyAllWindows()
 
 mean = round(statistics.mean(times)*1000, 5)
 
