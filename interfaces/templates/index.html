@@ -23,6 +23,10 @@
             </div>
             <div class="tab-contents">
                 <div id="tab1" class="tab-content">
+                    <div>
+                        <input type="checkbox" id="rgb/active" name="rgb/active">
+                        <label for="rgb/active">Active</label>
+                    </div>
                     <div class="sliders">
                         <div>
                             <label for="rgb/red">Red Balance:</label>
@@ -42,6 +46,10 @@
                     </div>
                 </div>
                 <div id = "tab2" class="tab-content">
+                    <div>
+                        <input type="checkbox" id="hsv/active" name="hsv/active">
+                        <label for="hsv/active">Active</label>
+                    </div>
                   <div class="sliders">
                     <div>
                       <label for="hsv/saturation">Saturation:</label>
@@ -61,6 +69,24 @@
                 </div>
               </div>
                 <div id="tab3" class="tab-content">
+                    <div class="neural_checkboxes">
+                        <div>
+                            <input type="checkbox" id="dl/active" name="dl/active">
+                            <label for="dl/active">Active</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="dl/ss" name="dl/ss">
+                            <label for="dl/ss">SS</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="dl/ssd" name="dl/ssd">
+                            <label for="dl/ssd">SSD</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="dl/half" name="dl/half">
+                            <label for="dl/half">Half Precision</label>
+                        </div>
+                    </div>
                     <div class="sliders">
                         <div>
                             <label for="dl/conf">Conf:</label>
@@ -81,20 +107,6 @@
                             <label for="dl/img">Img:</label>
                             <input type="range" id="dl/img" name="dl/img" min="160" max="640" step="32">
                             <span id="dl/imgValue">160</span>
-                        </div>
-                    </div>
-                    <div class="neural_checkboxes">
-                        <div>
-                            <input type="checkbox" id="dl/ss" name="dl/ss">
-                            <label for="dl/ss">SS</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="dl/ssd" name="dl/ssd">
-                            <label for="dl/ssd">SSD</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="dl/half" name="dl/half">
-                            <label for="dl/half">Half Precision</label>
                         </div>
                     </div>
                 </div>

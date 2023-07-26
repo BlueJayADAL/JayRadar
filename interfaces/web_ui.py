@@ -74,6 +74,16 @@ class WebUI:
             for key, value in config[pipe].items():
                 await websocket.send_text(f"{pipe}/{key}: {value}")
 
+    def manage_websocket_info(self, pipe, key, value):
+        if key == "active":
+            if value.lower() == "false":
+                self.manager.delete_pipe(pipe)
+            elif value.lower() == "true":
+                if pipe not in self.manager.get_active_pipes():
+                    self.manager.add_pipe(pipe)
+        else:
+            self.manager.update_configs(pipe, key, value)
+
     def configure_routes(self):
         # Set up the networktables for the app
         NetworkTables.initialize(server=self.nt_ip)
@@ -98,7 +108,7 @@ class WebUI:
                     for connection in self.connections:
                         await connection.send_text(f"{pipe}/{key}: {value}")
 
-                    self.manager.update_configs(pipe, key, value)
+                    self.manage_websocket_info(pipe, key, value)
 
                 except WebSocketDisconnect:
                     self.connections.remove(websocket)
