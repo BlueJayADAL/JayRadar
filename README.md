@@ -1,26 +1,18 @@
 # SCARP-2023-JayRadar
 The Project Repository for SCARP 2023
 
+# Installation
 
-## Development Dependencies
+For device specific installation, visit the github wiki pages.
 
-To install ALL libraries for development:
+Otherwise, dependencies can be installed with:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Backend
+Assuming no dependency issues, you should be able to run the program with
 
-This folder contains scripts intended to be run on the FRC co-processor.
-Please see the README.md located in this folder for more information.
-
-## Demo
-
-This folder contains scripts that can be downloaded and run to host JayRadar in a local webpage.
-Please see the README.md located in this folder for more information.
-
-## GUI
-
-This folder contains scripts that can be downloaded and run on a driverstation to connect and tune the co-processor.
-Please see the README.md located in this folder for more information.
+```bash
+python ./main.py
+```
