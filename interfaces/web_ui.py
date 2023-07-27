@@ -52,7 +52,7 @@ class WebUI:
 
     def value_changed(self, table, key, value, isNew):
         if key == "pipeline":
-            self.manager.load_from_json(value)
+            self.manager.load_from_json(f"./configs/{value}.json")
 
     def get_frame(self):
         while True:
