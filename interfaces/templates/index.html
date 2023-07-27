@@ -16,6 +16,26 @@
     <main class="column-container">
 
         <div class="column-container left-column">
+            <div class="config-controls">
+                <div>
+                    <select id="none/config">
+                        <option value="default">Config: Default</option>
+                        <option value="0">Config: 0</option>
+                        <option value="1">Config: 1</option>
+                        <option value="2">Config: 2</option>
+                        <option value="3">Config: 3</option>
+                        <option value="4">Config: 4</option>
+                        <option value="5">Config: 5</option>
+                        <option value="6">Config: 6</option>
+                        <option value="7">Config: 7</option>
+                        <option value="8">Config: 8</option>
+                        <option value="9">Config: 9</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                </div>
+                <button id="resetButton">Reset</button>
+                <button id="saveButton">Save</button>
+            </div>
             <div class="tabs">
                 <button class="tab-link" onclick="openTab(event, 'tab1')">RGB</button>
                 <button class="tab-link" onclick="openTab(event, 'tab2')">HSV</button>

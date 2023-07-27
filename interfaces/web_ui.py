@@ -75,13 +75,19 @@ class WebUI:
             for key, value in config[pipe].items():
                 await websocket.send_text(f"{pipe}/{key}: {value}")
 
-    def manage_websocket_info(self, pipe, key, value):
+    async def manage_websocket_info(self, pipe, key, value):
         if key == "active":
             if value.lower() == "false":
                 self.manager.delete_pipe(pipe)
             elif value.lower() == "true":
                 if pipe not in self.manager.get_active_pipes():
                     self.manager.add_pipe(pipe)
+        elif key == "save":
+            self.manager.save_to_json(f"./configs/{value}.json")
+        elif key == "config":
+            self.manager.load_from_json(f"./configs/{value}.json")
+            for connection in self.connections:
+                await self.send_config(connection)
         else:
             self.manager.update_configs(pipe, key, value)
 
@@ -109,7 +115,7 @@ class WebUI:
                     for connection in self.connections:
                         await connection.send_text(f"{pipe}/{key}: {value}")
 
-                    self.manage_websocket_info(pipe, key, value)
+                    await self.manage_websocket_info(pipe, key, value)
 
                 except WebSocketDisconnect:
                     self.connections.remove(websocket)
