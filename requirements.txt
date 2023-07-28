@@ -1,10 +1,5 @@
-opencv-python
-numpy
-Pillow
 ultralytics
 pynetworktables
 fastapi
-flask
-uvicorn
-tk
-customtkinter
+uvicorn[standard]
+jinja2

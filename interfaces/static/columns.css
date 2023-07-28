@@ -1,0 +1,28 @@
+/* Grid layout styles */
+
+.left-column {
+  background-color: #004B98;
+  flex: 1;
+  margin: 5%;
+  padding: 10%;
+  justify-content: center;
+  align-content: center;
+  border: 1px solid #000;
+  border-radius: 10px;
+}
+
+.right-column {
+  background-color: #004B98;
+  justify-content: center;
+  align-content: center;
+  flex: 1;
+  margin: 5%;
+  padding: 10%;
+  border: 1px solid #000;
+  border-radius: 10px;
+}
+
+.video-container img {
+  width: 100%;
+  height: auto;
+}

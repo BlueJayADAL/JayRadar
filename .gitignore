@@ -1,8 +1,4 @@
-**/__pycache__/**
-.gitignore
-venv/
-GUI/__pycache__/spinbox.cpython-311.pyc
-/backend/threading/*.pt
-/backend/threading/yolo*
-yolov8*
-!models/yolov8*
+**/__pycache__
+**/yolov*
+!models/*
+!**/*.py
