@@ -22,7 +22,7 @@ function openTab(evt, tabName) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const configDropdown = document.getElementById("config");
+  const configDropdown = document.getElementById("none/config");
   const saveButton = document.getElementById("saveButton");
   const resetButton = document.getElementById("resetButton");
   const socket = new WebSocket(`ws://${location.host}/ws`);
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
         element.checked = value === "true";
       } else if (element.type === "select-one") {
         element.value = value;
-        if (key == "videoSource"){
+        if (key == "videoSource") {
           videoFeedImg.src = value
         }
       }
@@ -83,14 +83,16 @@ document.addEventListener("DOMContentLoaded", () => {
   socket.addEventListener("message", handleSocketMessage);
 
   saveButton.addEventListener("click", () => {
-    const key = "save_config";
+    const key = "none/save";
     const value = configDropdown.value;
     sendMessage(key, value);
+    console.log("WebSocket connection established.");
   });
 
   resetButton.addEventListener("click", () => {
-    const key = "config";
+    const key = "none/config";
     const value = configDropdown.value;
+    console.log("WebSocket connection established.");
     sendMessage(key, value);
   });
 });

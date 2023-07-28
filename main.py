@@ -13,9 +13,9 @@ if __name__ == "__main__":
 
     manager = PipelineManager(source, output)
 
-    manager.add_dl(0)
-    manager.add_hsv(0)
-    manager.add_rgb(0)
+    # manager.add_dl(0)
+    # manager.add_hsv(0)
+    # manager.add_rgb(0)
 
     ui = WebUI(manager, shared_q)
     ui.run()

@@ -52,7 +52,7 @@ class WebUI:
 
     def value_changed(self, table, key, value, isNew):
         if key == "pipeline":
-            self.manager.load_from_json(value)
+            self.manager.load_from_json(f"./configs/{value}.json")
 
     def get_frame(self):
         while True:
@@ -71,8 +71,25 @@ class WebUI:
         active_pipes = self.manager.get_active_pipes()
         config = self.manager.get_configs_copy()
         for pipe in active_pipes:
+            await websocket.send_text(f"{pipe}/active: {True}")
             for key, value in config[pipe].items():
                 await websocket.send_text(f"{pipe}/{key}: {value}")
+
+    async def manage_websocket_info(self, pipe, key, value):
+        if key == "active":
+            if value.lower() == "false":
+                self.manager.delete_pipe(pipe)
+            elif value.lower() == "true":
+                if pipe not in self.manager.get_active_pipes():
+                    self.manager.add_pipe(pipe)
+        elif key == "save":
+            self.manager.save_to_json(f"./configs/{value}.json")
+        elif key == "config":
+            self.manager.load_from_json(f"./configs/{value}.json")
+            for connection in self.connections:
+                await self.send_config(connection)
+        else:
+            self.manager.update_configs(pipe, key, value)
 
     def configure_routes(self):
         # Set up the networktables for the app
@@ -98,7 +115,7 @@ class WebUI:
                     for connection in self.connections:
                         await connection.send_text(f"{pipe}/{key}: {value}")
 
-                    self.manager.update_configs(pipe, key, value)
+                    await self.manage_websocket_info(pipe, key, value)
 
                 except WebSocketDisconnect:
                     self.connections.remove(websocket)
