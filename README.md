@@ -21,11 +21,21 @@ For device specific installation, visit the github wiki pages.
 Otherwise, dependencies can be installed with:
 
 ```bash
+cd ./api
 pip install -r requirements.txt
+```
+
+And the frontend needs to be built with
+
+```bash
+cd ./client
+npm install
+npm run build
 ```
 
 Assuming no dependency issues, you should be able to run the program with
 
 ```bash
+cd ./api
 python ./main.py
 ```
