@@ -4,7 +4,6 @@ from fastapi.responses import FileResponse
 from pathlib import Path
 from pipelines import PipelineManager
 from multiprocessing import Queue
-import os
 
 
 class ReactUI:
@@ -26,7 +25,8 @@ class ReactUI:
 
     def configure_static(self):
         client_build_path = self.root / "client/dist"
-        self.app.mount("/static", StaticFiles(directory=client_build_path), name="static")
+        self.app.mount(
+            "/static", StaticFiles(directory=client_build_path), name="static")
 
     def configure_routes(self):
         @self.app.get("/test")
