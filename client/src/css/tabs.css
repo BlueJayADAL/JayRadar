@@ -32,10 +32,6 @@
   align-items: center;
 }
 
-.tab-content {
-  display: none;
-}
-
 .tab-content.active {
   display: block;
   background-color: #3DB5E6;
