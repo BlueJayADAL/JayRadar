@@ -22,7 +22,8 @@ Note:
 """  # noqa: E501
 
 from .web_ui import WebUI
+from .react_ui import ReactUI
 from .terminal_ui import TerminalUI
 from .cv2_ui import CV2UI
 
-__all__ = ['WebUI', 'TerminalUI', 'CV2UI']
+__all__ = ['WebUI', 'TerminalUI', 'CV2UI', 'ReactUI']

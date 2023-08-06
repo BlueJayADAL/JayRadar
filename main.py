@@ -2,7 +2,7 @@ from multiprocessing import Queue, set_start_method
 from pipelines import PipelineManager
 from pipelines.sources import ThreadedSource
 from pipelines.outputs import NTSend
-from interfaces import WebUI
+from interfaces import ReactUI
 
 
 if __name__ == "__main__":
@@ -14,5 +14,5 @@ if __name__ == "__main__":
     manager = PipelineManager(source, output)
     manager.load_from_json("./configs/default.json")
 
-    ui = WebUI(manager, shared_q)
+    ui = ReactUI(manager, shared_q)
     ui.run()
