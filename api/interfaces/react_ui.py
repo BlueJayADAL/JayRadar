@@ -8,30 +8,25 @@ import os
 
 
 class ReactUI:
-
     def __init__(
         self,
         manager: PipelineManager,
         q_in: Queue, ip="0.0.0.0",
         port: int = 8000,
     ):
-        self.app = FastAPI()
-        static_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "../../client/build/static"
-        )
-        print(static_path)
+        self.root = Path(__file__).resolve().parents[2]
 
-        self.app.mount(
-            "/static",
-            StaticFiles(directory=static_path),
-            name="static"
-        )
+        self.app = FastAPI()
+        self.configure_static()
 
         self.ip = ip
         self.port = port
         self.manager = manager
         self.q_in = q_in
+
+    def configure_static(self):
+        client_build_path = self.root / "client/dist"
+        self.app.mount("/static", StaticFiles(directory=client_build_path), name="static")
 
     def configure_routes(self):
         @self.app.get("/test")
@@ -40,8 +35,7 @@ class ReactUI:
 
         @self.app.get("/{full_path:path}")
         async def serve_react_app():
-            current_file_path = Path(__file__).resolve()
-            client_build_path = current_file_path.parents[2] / "client/build/index.html"
+            client_build_path = self.root / "client/dist/index.html"
             return FileResponse(client_build_path)
 
     def run(self):
