@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pathlib import Path
