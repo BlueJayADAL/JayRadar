@@ -27,7 +27,7 @@ class ReactUI:
             port (int, optional): The port to run the server on. Defaults to 8000.
             nt_ip (str, optional): The IP address of the NetworkTables server. Defaults to "10.1.32.27".
             nt_table (str, optional): The name of the NetworkTable. Defaults to "JayRadar".
-        """
+        """  # noqa: E501
         self.root = Path(__file__).resolve().parents[2]
 
         self.app = FastAPI()
@@ -49,7 +49,7 @@ class ReactUI:
             key: The key of the entry that changed.
             value: The new value of the entry.
             isNew: True if the entry is new, False if it already existed.
-        """
+        """  # noqa: E501
         if key == "pipeline":
             self.manager.load_from_json(f"./configs/{value}.json")
 
@@ -58,7 +58,7 @@ class ReactUI:
 
         Yields:
             bytes: The frame data as MJPEG response.
-        """
+        """  # noqa: E501
         while True:
             frame = self.q_in.get()
 
@@ -76,7 +76,7 @@ class ReactUI:
 
         Args:
             websocket: The WebSocket connection.
-        """
+        """  # noqa: E501
         active_pipes = self.manager.get_active_pipes()
         config = self.manager.get_configs_copy()
         for pipe in active_pipes:
@@ -91,7 +91,7 @@ class ReactUI:
             pipe: The name of the pipeline.
             key: The configuration key.
             value: The new configuration value.
-        """
+        """  # noqa: E501
         if key == "active":
             if value.lower() == "false":
                 self.manager.delete_pipe(pipe)
@@ -153,7 +153,7 @@ class ReactUI:
 
         @self.app.get("/{full_path:path}")
         async def serve_react_app():
-            # Route for serving the React app. Any routes not covered by the API will be served the React app.
+            # Route for serving the React app. Any routes not covered by the API will be served the React app.  # noqa: E501
             client_build_path = self.root / "client/dist/index.html"
             return FileResponse(client_build_path)
 
