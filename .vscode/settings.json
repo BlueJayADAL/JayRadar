@@ -1,0 +1,18 @@
+{
+	"eslint.workingDirectories": [
+		"./client",
+	],
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"[javascript]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	}
+}
