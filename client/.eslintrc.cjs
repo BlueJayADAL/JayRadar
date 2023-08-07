@@ -23,6 +23,9 @@ module.exports = {
     'import/no-named-as-default': 'error',
     'import/no-named-as-default-member': 'error',
     'import/no-extraneous-dependencies': 'error',
+    'no-use-before-define': 'off',
+    'jsx-a11y/label-has-associated-control': 'off',
+    'no-console': 'off',
   },
   env: {
     browser: true,
