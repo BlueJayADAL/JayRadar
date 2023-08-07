@@ -11,7 +11,6 @@ import "../css/tabs.css";
 let socket = null;
 
 const JayRadar = () => {
-	const [currentTab, setCurrentTab] = useState("tab1");
 	const configSelect = useRef(null);
 
 	useEffect(() => {
@@ -74,10 +73,6 @@ const JayRadar = () => {
 		socket.send(formattedMessage);
 	};
 
-	const getTabClasses = (tabName) => {
-		return ["tab-link", currentTab === tabName ? "active" : ""].join(" ");
-	};
-
 	const save = () => {
 		const key = "none/save";
 		const value = configSelect.current.value;
@@ -88,6 +83,23 @@ const JayRadar = () => {
 		const key = "none/config";
 		const value = configSelect.current.value;
 		sendMessage(key, value);
+	};
+
+	const changeTab = (tabName) => {
+		const tabs = ["tab1", "tab2", "tab3"];
+
+		tabs.forEach((tab) => {
+			const tabElement = document.getElementById(tab);
+			const tabLinkElement = document.getElementById(`${tab}-link`);
+
+			if (tab === tabName) {
+				tabElement.classList.remove("hidden");
+				tabLinkElement.classList.add("active");
+			} else {
+				tabElement.classList.add("hidden");
+				tabLinkElement.classList.remove("active");
+			}
+		});
 	};
 
 	return (
@@ -122,181 +134,179 @@ const JayRadar = () => {
 						</button>
 					</div>
 					<div class="tabs">
-						<button class={getTabClasses("tab1")} onClick={() => setCurrentTab("tab1")}>
+						<button
+							id="tab1-link"
+							class="tab-link active"
+							onClick={() => changeTab("tab1")}
+						>
 							RGB
 						</button>
-						<button class={getTabClasses("tab2")} onClick={() => setCurrentTab("tab2")}>
+						<button id="tab2-link" class="tab-link" onClick={() => changeTab("tab2")}>
 							HSV
 						</button>
-						<button class={getTabClasses("tab3")} onClick={() => setCurrentTab("tab3")}>
+						<button id="tab3-link" class="tab-link" onClick={() => changeTab("tab3")}>
 							Yolov8
 						</button>
 					</div>
 					<div class="tab-contents">
-						{currentTab === "tab1" && (
-							<div id="tab1" class="tab-content">
+						<div id="tab1" class="tab-content">
+							<div>
+								<input type="checkbox" id="rgb/active" name="rgb/active" />
+								<label for="rgb/active">Active</label>
+							</div>
+							<div class="sliders">
 								<div>
-									<input type="checkbox" id="rgb/active" name="rgb/active" />
-									<label for="rgb/active">Active</label>
+									<label for="rgb/red">Red Balance:</label>
+									<input
+										type="range"
+										id="rgb/red"
+										name="rgb/red"
+										min="-255"
+										max="255"
+										step="5"
+									/>
+									<span id="rgb/redValue">0</span>
 								</div>
-								<div class="sliders">
-									<div>
-										<label for="rgb/red">Red Balance:</label>
-										<input
-											type="range"
-											id="rgb/red"
-											name="rgb/red"
-											min="-255"
-											max="255"
-											step="5"
-										/>
-										<span id="rgb/redValue">0</span>
-									</div>
-									<div>
-										<label for="rgb/green">Green Balance:</label>
-										<input
-											type="range"
-											id="rgb/green"
-											name="rgb/green"
-											min="-255"
-											max="255"
-											step="5"
-										/>
-										<span id="rgb/greenValue">0</span>
-									</div>
-									<div>
-										<label for="rgb/blue">Blue Balance:</label>
-										<input
-											type="range"
-											id="rgb/blue"
-											name="rgb/blue"
-											min="-255"
-											max="255"
-											step="5"
-										/>
-										<span id="rgb/blueValue">0</span>
-									</div>
-								</div>
-							</div>
-						)}
-						{currentTab === "tab2" && (
-							<div id="tab2" class="tab-content">
 								<div>
-									<input type="checkbox" id="hsv/active" name="hsv/active" />
-									<label for="hsv/active">Active</label>
+									<label for="rgb/green">Green Balance:</label>
+									<input
+										type="range"
+										id="rgb/green"
+										name="rgb/green"
+										min="-255"
+										max="255"
+										step="5"
+									/>
+									<span id="rgb/greenValue">0</span>
 								</div>
-								<div class="sliders">
-									<div>
-										<label for="hsv/saturation">Saturation:</label>
-										<input
-											type="range"
-											id="hsv/saturation"
-											name="hsv/saturation"
-											min="0"
-											max="10"
-											step=".1"
-										/>
-										<span id="hsv/saturationValue">1.0</span>
-									</div>
-									<div>
-										<label for="hsv/contrast">Contrast:</label>
-										<input
-											type="range"
-											id="hsv/contrast"
-											name="hsv/contrast"
-											min="0"
-											max="10"
-											step=".1"
-										/>
-										<span id="hsv/contrastValue">1</span>
-									</div>
-									<div>
-										<label for="hsv/brightness">Brightness:</label>
-										<input
-											type="range"
-											id="hsv/brightness"
-											name="hsv/brightness"
-											min="-255"
-											max="255"
-											step="5"
-										/>
-										<span id="hsv/brightnessValue">0</span>
-									</div>
+								<div>
+									<label for="rgb/blue">Blue Balance:</label>
+									<input
+										type="range"
+										id="rgb/blue"
+										name="rgb/blue"
+										min="-255"
+										max="255"
+										step="5"
+									/>
+									<span id="rgb/blueValue">0</span>
 								</div>
 							</div>
-						)}
-						{currentTab === "tab3" && (
-							<div id="tab3" class="tab-content">
-								<div class="neural_checkboxes">
-									<div>
-										<input type="checkbox" id="dl/active" name="dl/active" />
-										<label for="dl/active">Active</label>
-									</div>
-									<div>
-										<input type="checkbox" id="dl/ss" name="dl/ss" />
-										<label for="dl/ss">SS</label>
-									</div>
-									<div>
-										<input type="checkbox" id="dl/ssd" name="dl/ssd" />
-										<label for="dl/ssd">SSD</label>
-									</div>
-									<div>
-										<input type="checkbox" id="dl/half" name="dl/half" />
-										<label for="dl/half">Half Precision</label>
-									</div>
+						</div>
+						<div id="tab2" class="tab-content hidden">
+							<div>
+								<input type="checkbox" id="hsv/active" name="hsv/active" />
+								<label for="hsv/active">Active</label>
+							</div>
+							<div class="sliders">
+								<div>
+									<label for="hsv/saturation">Saturation:</label>
+									<input
+										type="range"
+										id="hsv/saturation"
+										name="hsv/saturation"
+										min="0"
+										max="10"
+										step=".1"
+									/>
+									<span id="hsv/saturationValue">1.0</span>
 								</div>
-								<div class="sliders">
-									<div>
-										<label for="dl/conf">Conf:</label>
-										<input
-											type="range"
-											id="dl/conf"
-											name="dl/conf"
-											min="0"
-											max="1"
-											step=".01"
-										/>
-										<span id="dl/confValue">0</span>
-									</div>
-									<div>
-										<label for="dl/iou">IOU:</label>
-										<input
-											type="range"
-											id="dl/iou"
-											name="dl/iou"
-											min="0"
-											max="1"
-											step=".01"
-										/>
-										<span id="dl/iouValue">0</span>
-									</div>
-									<div>
-										<label for="dl/max">Max:</label>
-										<input
-											type="range"
-											id="dl/max"
-											name="dl/max"
-											min="0"
-											max="100"
-											step="1"
-										/>
-										<span id="dl/maxValue">0</span>
-									</div>
-									<div>
-										<label for="dl/img">Img:</label>
-										<input
-											type="range"
-											id="dl/img"
-											name="dl/img"
-											min="160"
-											max="640"
-											step="32"
-										/>
-										<span id="dl/imgValue">160</span>
-									</div>
+								<div>
+									<label for="hsv/contrast">Contrast:</label>
+									<input
+										type="range"
+										id="hsv/contrast"
+										name="hsv/contrast"
+										min="0"
+										max="10"
+										step=".1"
+									/>
+									<span id="hsv/contrastValue">1</span>
+								</div>
+								<div>
+									<label for="hsv/brightness">Brightness:</label>
+									<input
+										type="range"
+										id="hsv/brightness"
+										name="hsv/brightness"
+										min="-255"
+										max="255"
+										step="5"
+									/>
+									<span id="hsv/brightnessValue">0</span>
 								</div>
 							</div>
-						)}
+						</div>
+						<div id="tab3" class="tab-content hidden">
+							<div class="neural_checkboxes">
+								<div>
+									<input type="checkbox" id="dl/active" name="dl/active" />
+									<label for="dl/active">Active</label>
+								</div>
+								<div>
+									<input type="checkbox" id="dl/ss" name="dl/ss" />
+									<label for="dl/ss">SS</label>
+								</div>
+								<div>
+									<input type="checkbox" id="dl/ssd" name="dl/ssd" />
+									<label for="dl/ssd">SSD</label>
+								</div>
+								<div>
+									<input type="checkbox" id="dl/half" name="dl/half" />
+									<label for="dl/half">Half Precision</label>
+								</div>
+							</div>
+							<div class="sliders">
+								<div>
+									<label for="dl/conf">Conf:</label>
+									<input
+										type="range"
+										id="dl/conf"
+										name="dl/conf"
+										min="0"
+										max="1"
+										step=".01"
+									/>
+									<span id="dl/confValue">0</span>
+								</div>
+								<div>
+									<label for="dl/iou">IOU:</label>
+									<input
+										type="range"
+										id="dl/iou"
+										name="dl/iou"
+										min="0"
+										max="1"
+										step=".01"
+									/>
+									<span id="dl/iouValue">0</span>
+								</div>
+								<div>
+									<label for="dl/max">Max:</label>
+									<input
+										type="range"
+										id="dl/max"
+										name="dl/max"
+										min="0"
+										max="100"
+										step="1"
+									/>
+									<span id="dl/maxValue">0</span>
+								</div>
+								<div>
+									<label for="dl/img">Img:</label>
+									<input
+										type="range"
+										id="dl/img"
+										name="dl/img"
+										min="160"
+										max="640"
+										step="32"
+									/>
+									<span id="dl/imgValue">160</span>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="column-container right-column">

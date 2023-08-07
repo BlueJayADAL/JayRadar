@@ -32,7 +32,6 @@
   align-items: center;
 }
 
-.tab-content.active {
-  display: block;
-  background-color: #3DB5E6;
+.hidden {
+  display: none;
 }
