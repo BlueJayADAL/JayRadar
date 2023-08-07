@@ -19,6 +19,7 @@ tc = -1
 avgdelay = -1
 delay = -1
 
+
 def value_changed(table, key, value, isNew):
     global tx, ty, tw, th, ta, tc, avgdelay, delay
     if key == 'tx':
@@ -37,8 +38,12 @@ def value_changed(table, key, value, isNew):
         delay = round(value*1000, 1)
     elif key == 'avgdelay':
         avgdelay = round(value*1000, 1)
-    detection_info = f"tc: {tc} | delay: {delay}ms | avgdelay: {avgdelay}ms | avgFPS: {round(1000/avgdelay, 1)}"
+    detection_info = (
+        f"tc: {tc} | delay: {delay}ms | avgdelay: {avgdelay}ms | "
+        f"avgFPS: {round(1000/avgdelay, 1)}"
+    )
     time_label.config(text=detection_info)
+
 
 table.addEntryListener(value_changed)
 
@@ -56,15 +61,22 @@ config_options = ['Default', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 selected_option = tk.StringVar(window)
 selected_option.set(config_options[0])
 
+
 def config_dropdown_callback(*args):
     selected_config = selected_option.get()
     table.putValue('config', selected_config)
     print("Selected Config:", selected_config)
 
+
 config_label = tk.Label(left_frame, text="Config:")
 config_label.pack(padx=10, pady=10)
 
-config_menu = tk.OptionMenu(left_frame, selected_option, *config_options, command=config_dropdown_callback)
+config_menu = tk.OptionMenu(
+    left_frame,
+    selected_option,
+    *config_options,
+    command=config_dropdown_callback
+)
 config_menu.pack(padx=10, pady=10)
 
 # Create a dropdown menu with the video URLs
@@ -75,19 +87,21 @@ selected_video_url.set(video_urls[0])
 url_label = tk.Label(left_frame, text="Video URL:")
 url_label.pack(padx=10, pady=10)
 
+
 def url_dropdown_callback(*args):
     global cap, jayradar_ip
     selected_endpoint = selected_video_url.get()
     if selected_endpoint == 'none':
-        del(cap)
+        del (cap)
         cap = None
     else:
         url = f'http://{jayradar_ip}:8000/{selected_endpoint}'
-        del(cap)
+        del (cap)
         cap = cv2.VideoCapture(url)
 
 
-url_menu = tk.OptionMenu(left_frame, selected_video_url, *video_urls, command=url_dropdown_callback)
+url_menu = tk.OptionMenu(left_frame, selected_video_url,
+                         *video_urls, command=url_dropdown_callback)
 url_menu.pack(padx=10, pady=10)
 
 # Create a label to display the current time
@@ -104,6 +118,7 @@ video_label.pack(padx=10, pady=10)
 
 # Function to update the video feed
 
+
 def update_video():
     global cap
     if cap is not None:
@@ -115,6 +130,7 @@ def update_video():
             video_label.image = img
 
     window.after(30, update_video)  # Update every 30 milliseconds
+
 
 # Start updating the time label and video feed
 update_video()
