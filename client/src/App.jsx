@@ -1,7 +1,7 @@
-import JayRadar from "./components/JayRadar";
+import JayRadar from './components/JayRadar';
 
 function App() {
-	return <JayRadar />;
+  return <JayRadar />;
 }
 
 export default App;
