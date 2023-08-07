@@ -1,0 +1,24 @@
+name: PEP8 Formatting Check
+
+on:
+    pull_request:
+        paths:
+            - "api/**"
+
+jobs:
+    autopep8:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out source repository
+              uses: actions/checkout@v2
+
+            - name: Set up Python environment
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.8
+
+            - name: Install dependencies
+              run: pip install autopep8
+
+            - name: Run autopep8
+              run: autopep8 --diff --recursive api/

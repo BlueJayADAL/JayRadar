@@ -1,0 +1,24 @@
+name: Linting with Flake8
+
+on:
+    pull_request:
+        paths:
+            - "api/**"
+
+jobs:
+    flake8_lint:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out source repository
+              uses: actions/checkout@v2
+
+            - name: Set up Python environment
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.8
+
+            - name: Install dependencies
+              run: pip install flake8
+
+            - name: Run Flake8
+              run: flake8 api/
