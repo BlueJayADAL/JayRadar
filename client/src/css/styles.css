@@ -1,0 +1,24 @@
+/* General styles */
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  /* Use a CSS variable for the background color */
+}
+
+
+header {
+  background-color: #000;
+  color: #004B98;
+  text-align: center;
+  padding: 10px 0;
+}

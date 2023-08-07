@@ -2,3 +2,4 @@
 **/yolov*
 !models/*
 !**/*.py
+.DS_Store
