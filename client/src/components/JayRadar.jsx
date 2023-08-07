@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import "../css/columns.css";
 import "../css/settings.css";
 import "../css/styles.css";
