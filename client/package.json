@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite build --watch",
-    "lint": "eslint ./**/*.{js,jsx}",
-    "fix": "eslint ./**/*.{js,jsx} --fix",
-    "build": "vite build",
+    "dev": "concurrently \"vite build --watch\" \"tsc --watch --noEmit\"",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "fix": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
+    "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -19,15 +19,21 @@
     "@babel/preset-react": "^7.22.5",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
     "@vitejs/plugin-react": "^4.0.3",
+    "concurrently": "^8.2.0",
     "eslint": "^8.46.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^9.0.0",
+    "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-jsdoc": "^46.4.6",
     "eslint-plugin-react": "^7.33.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-prefer-function-component": "^3.2.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "typescript": "^5.1.6",
     "vite": "^4.4.5"
   }
 }
