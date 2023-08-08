@@ -9,14 +9,20 @@ import '../css/tabs.css';
 // this will be used while we build and improve the rest of the UI.
 // The CSS files imported above will also be removed later.
 
-let socket = null;
+let socket: WebSocket | null = null;
 
+/**
+ * Temporary component that renders the entire UI.
+ */
 function JayRadar() {
-  const configSelect = useRef(null);
+  const configSelect = useRef<HTMLSelectElement>(null);
 
   useEffect(() => {
     socket = new WebSocket(`ws://${location.host}/ws`);
 
+    /**
+     * Handles the WebSocket connection being established.
+     */
     socket.onopen = () => {
       console.log('WebSocket connection established.');
     };
@@ -25,12 +31,15 @@ function JayRadar() {
     socket.addEventListener('message', handleSocketMessage);
 
     return () => {
-      socket.close();
+      socket?.close();
     };
   }, []);
 
-  const handleInputEvent = (event) => {
-    const element = event.target;
+  /**
+   * Handles input events from the user.
+   */
+  const handleInputEvent = (event: Event) => {
+    const element = event.target as HTMLInputElement;
     const key = element.id;
     let value;
 
@@ -42,15 +51,18 @@ function JayRadar() {
       value = element.value;
     }
 
-    sendMessage(key, value);
+    sendMessage(key, value?.toString() || '');
   };
 
-  const handleSocketMessage = (event) => {
+  /**
+   * Handles messages received from the server.
+   */
+  const handleSocketMessage = (event: MessageEvent) => {
     const receivedMessage = event.data;
     const [key, receivedValue] = receivedMessage.split(': ');
     const value = receivedValue.toLowerCase();
 
-    const element = document.getElementById(key);
+    const element = document.getElementById(key) as HTMLInputElement;
     if (element) {
       if (element.type === 'range') {
         element.value = value;
@@ -69,29 +81,41 @@ function JayRadar() {
     }
   };
 
-  const sendMessage = (key, value) => {
+  /**
+   * Sends a message to the server.
+   */
+  const sendMessage = (key: string, value: string) => {
     const formattedMessage = `${key}/${value}`;
-    socket.send(formattedMessage);
+    socket?.send(formattedMessage);
   };
 
+  /**
+   * Saves the current config.
+   */
   const save = () => {
     const key = 'none/save';
-    const { value } = configSelect.current;
+    const { value } = configSelect.current as HTMLSelectElement;
     sendMessage(key, value);
   };
 
+  /**
+   * Resets the config to the default values.
+   */
   const reset = () => {
     const key = 'none/config';
-    const { value } = configSelect.current;
+    const { value } = configSelect.current as HTMLSelectElement;
     sendMessage(key, value);
   };
 
-  const changeTab = (tabName) => {
+  /**
+   * Changes the tab that is displayed.
+   */
+  const changeTab = (tabName: string) => {
     const tabs = ['tab1', 'tab2', 'tab3'];
 
     tabs.forEach((tab) => {
-      const tabElement = document.getElementById(tab);
-      const tabLinkElement = document.getElementById(`${tab}-link`);
+      const tabElement = document.getElementById(tab) as HTMLElement;
+      const tabLinkElement = document.getElementById(`${tab}-link`) as HTMLElement;
 
       if (tab === tabName) {
         tabElement.classList.remove('hidden');
