@@ -1,5 +1,6 @@
 **/__pycache__
 **/yolov*
+**venv
 !models/*
 !**/*.py
 .DS_Store
