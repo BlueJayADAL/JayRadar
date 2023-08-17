@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# This script is the base install. 
+# It has no apt installs
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     key="$1"

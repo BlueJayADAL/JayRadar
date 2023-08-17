@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# This script is designed for jetson nano install with U20
+# It has apt install for npm
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -14,7 +15,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-
+sudo apt install npm
 cd "$(dirname "${BASH_SOURCE[0]}")"
 cd ../../client
 npm install
