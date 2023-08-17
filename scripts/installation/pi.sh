@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# This script is designed for raspberry+orange pi install
+# It has apt installs for pip and npm
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -16,6 +17,7 @@ done
 
 sudo apt install -y python3-pip
 pip3 install --upgrade pip
+sudo apt install npm
 cd "$(dirname "${BASH_SOURCE[0]}")"
 cd ../../client
 npm install
