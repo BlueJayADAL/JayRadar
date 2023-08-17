@@ -1,7 +1,7 @@
 #!/bin/bash
 cd "$(dirname "${BASH_SOURCE[0]}")"
 cd ../../client
-npm run dev
+npm install
+npm run build
 cd ../api
-source ./.venv/Scripts/Activate.ps1
-python ./main.py
+pip install -r ./requirements.txt

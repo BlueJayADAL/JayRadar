@@ -1,9 +1,7 @@
 #!/bin/bash
 cd "$(dirname "${BASH_SOURCE[0]}")"
-cd ../client
+cd ../../client
 npm install
 npm run build
 cd ../api
-python -m venv .venv
-source ./.venv/bin/activate
 pip install -r ./requirements.txt
