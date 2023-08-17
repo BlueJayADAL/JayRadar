@@ -9,7 +9,6 @@ while [[ $# -gt 0 ]]; do
         shift
         ;;
         *)
-        # Unknown option
         shift
         ;;
     esac
@@ -19,7 +18,7 @@ done
 cd "$(dirname "${BASH_SOURCE[0]}")"
 cd ../../client
 npm install
-npm run build
+sudo npm run build
 cd ../api
 # Install requirements
 if [ "$CREATE_VENV" = true ]; then
