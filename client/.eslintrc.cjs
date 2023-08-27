@@ -17,6 +17,7 @@ module.exports = {
     'react/jsx-filename-extension': [1, { extensions: ['.ts', '.tsx'] }],
     'react/jsx-uses-vars': 'error',
     'react-prefer-function-component/react-prefer-function-component': ['error'],
+    'react/require-default-props': 'off',
     'import/no-duplicates': 'error',
     'import/no-named-as-default': 'error',
     'import/no-named-as-default-member': 'error',
@@ -38,6 +39,7 @@ module.exports = {
     'jsdoc/check-indentation': 2,
     '@typescript-eslint/no-use-before-define': 'off',
     'react/prop-types': 'off',
+    '@typescript-eslint/indent': ['error', 2],
   },
   env: {
     browser: true,

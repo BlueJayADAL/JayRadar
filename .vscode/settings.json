@@ -2,11 +2,20 @@
 	"eslint.workingDirectories": [
 		"./client",
 	],
-	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"prettier.enable": false,
 	"[javascript]": {
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2,
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
+	"[typescript]": {
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2,
 		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
 	},
 	"[javascriptreact]": {
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2,
 		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
 	},
 	"[json]": {
@@ -14,5 +23,5 @@
 	},
 	"[jsonc]": {
 		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
-	}
+	},
 }
