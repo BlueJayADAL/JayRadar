@@ -22,36 +22,6 @@ function Yolov8Tab({ options, handleChange }: Props) {
           />
           <label htmlFor="dl/active">Active</label>
         </div>
-        <div>
-          <input
-            type="checkbox"
-            id="dl/ss"
-            name="dl/ss"
-            checked={options.ss}
-            onChange={handleChange}
-          />
-          <label htmlFor="dl/ss">SS</label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            id="dl/ssd"
-            name="dl/ssd"
-            checked={options.ssd}
-            onChange={handleChange}
-          />
-          <label htmlFor="dl/ssd">SSD</label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            id="dl/half"
-            name="dl/half"
-            checked={options.half}
-            onChange={handleChange}
-          />
-          <label htmlFor="dl/half">Half Precision</label>
-        </div>
       </div>
       <div className="sliders">
         <div>
