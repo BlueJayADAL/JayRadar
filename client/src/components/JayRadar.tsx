@@ -41,9 +41,6 @@ function JayRadar() {
     },
     dl: {
       active: false,
-      ss: false,
-      ssd: false,
-      half: false,
       conf: 0,
       iou: 0,
       max: 0,
