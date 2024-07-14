@@ -1,20 +1,14 @@
 /* eslint-disable no-restricted-globals */
 import { useEffect, useRef, useState } from 'react';
-import '../css/columns.css';
-import '../css/settings.css';
-import '../css/styles.css';
-import '../css/tabs.css';
-import ConfigButton from './Config/ConfigButton';
-import ConfigOption from './Config/ConfigOption';
-import TabLink from './Tabs/TabLink';
 import RgbTab from './Tabs/RgbTab';
 import HsvTab from './Tabs/HsvTab';
 import Yolov8Tab from './Tabs/Yolov8Tab';
 import { TabOptions } from '../types/TabOptions';
+import { Image, Flex, Box } from '@chakra-ui/react';
+import ConfigBox from './Config/ConfigBox';
 
 // FYI - this is a temporary component that will be removed later.
 // this will be used while we build and improve the rest of the UI.
-// The CSS files imported above will also be removed later.
 
 let socket: WebSocket | null = null;
 
@@ -24,7 +18,6 @@ let socket: WebSocket | null = null;
 function JayRadar() {
   const configSelect = useRef<HTMLSelectElement>(null);
   const configOptions = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-  const [currentTab, setCurrentTab] = useState('RGB');
 
   const [options, setOptions] = useState<TabOptions>({
     rgb: {
@@ -68,25 +61,25 @@ function JayRadar() {
   /**
    * Handles input events from the user.
    */
-  const handleInputEvent = (event: React.ChangeEvent) => {
-    const element = event.target as HTMLInputElement;
-    const key = element.id;
-    const [tab, option] = element.id.split('/');
-
-    let value: string | boolean | number | null = null;
+  const handleInputEvent = (value: string | number | boolean, event?: React.ChangeEvent | React.SyntheticEvent) => {
+    // Use a custom attribute (e.g., data-id) to store the id
+    const element = event?.target as HTMLElement;
+    const key = element.getAttribute('data-id');
+    if (!key) return;
+  
+    const [tab, option] = key.split('/');
+  
     let settableValue: boolean | number | null = null;
-
-    if (element.type === 'range') {
-      value = element.value;
-      settableValue = Number(value);
-    } else if (element.type === 'checkbox') {
-      value = element.checked;
+  
+    if (typeof value === 'boolean') {
       settableValue = value;
-    } else if (element.type === 'select-one') {
-      value = element.value;
+    } else if (typeof value === 'number') {
+      settableValue = value;
+    } else {
+      // Handle other types as needed
     }
-
-    sendMessage(key, value?.toString() || '');
+  
+    sendMessage(key, value.toString());
     setOptions((prevOptions) => ({
       ...prevOptions,
       [tab]: {
@@ -153,49 +146,16 @@ function JayRadar() {
   };
 
   return (
-    <>
-      <header>
-        <h1>JayRadar</h1>
-      </header>
-
-      <main className="column-container">
-        <div className="column-container left-column">
-          <div className="config-controls">
-            <div>
-              <select id="none/config" ref={configSelect}>
-                <ConfigOption value="default" name="Default" />
-                { configOptions.map((option) => (
-                  <ConfigOption key={option} name={option} />
-                ))}
-              </select>
-            </div>
-            <ConfigButton handleClick={reset} text="Reset" />
-            <ConfigButton handleClick={save} text="Save" />
-          </div>
-          <div className="tabs">
-            <TabLink name="RGB" currentTab={currentTab} setCurrentTab={setCurrentTab} />
-            <TabLink name="HSV" currentTab={currentTab} setCurrentTab={setCurrentTab} />
-            <TabLink name="Yolov8" currentTab={currentTab} setCurrentTab={setCurrentTab} />
-          </div>
-          <div className="tab-contents">
-            { currentTab === 'RGB' && (
-              <RgbTab options={options.rgb} handleChange={handleInputEvent} />
-            )}
-            { currentTab === 'HSV' && (
-              <HsvTab options={options.hsv} handleChange={handleInputEvent} />
-            )}
-            { currentTab === 'Yolov8' && (
-              <Yolov8Tab options={options.dl} handleChange={handleInputEvent} />
-            )}
-          </div>
-        </div>
-        <div className="column-container right-column">
-          <div className="video-container">
-            <img id="videoFeed" src="video_feed" alt="video_feed" width="480" height="320" />
-          </div>
-        </div>
-      </main>
-    </>
+    
+  <Flex w="100vw" h="100vh" bg="brand.background">
+    <Box>
+      <ConfigBox reset={reset} save={save} configOptions={configOptions} configSelect={configSelect}/> 
+      <RgbTab options={options.rgb} handleChange={handleInputEvent} />
+      <HsvTab options={options.hsv} handleChange={handleInputEvent} />
+      <Yolov8Tab options={options.dl} handleChange={handleInputEvent} />
+    </Box>
+    <Image id="videoFeed" src="video_feed" alt="video feed" boxSize="480px" />
+  </Flex>
   );
 }
 
