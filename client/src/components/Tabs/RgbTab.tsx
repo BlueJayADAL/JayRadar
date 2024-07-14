@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Checkbox, Slider, SliderTrack, SliderFilledTrack, SliderThumb } from '@chakra-ui/react';
+import { Flex, HStack, Text, Checkbox, Slider, SliderTrack, SliderFilledTrack, SliderThumb } from '@chakra-ui/react';
 import { RgbConfigOptions } from '../../types/RgbConfigOptions';
 
 interface Props {
@@ -28,20 +28,14 @@ function RgbTab({ options, handleChange }: Props) {
   };
 
   return (
-    <Box>
-      <Checkbox
-        data-id="rgb/active" // Ensure data-id is set for handleInputEvent to work
-        name="rgb/active"
-        isChecked={options.active}
-        onChange={handleCheckboxChange}
-      >
+    <Flex direction="column" borderRadius="25px" justifyContent="center" alignItems="center" w="30vw" h="30vh" mb="2vw" bg="brand.dark_blue">
+      <Checkbox isChecked={options.active} onChange={handleCheckboxChange} color="brand.grey">
         Active
       </Checkbox>
-      <Flex>
-        <Text as="label" htmlFor="rgb/red" color="white">Red Balance:</Text>
-        <Slider
-          data-id="rgb/red" // Ensure data-id is set for handleInputEvent to work
-          name="rgb/red"
+      <HStack spacing="5" w="70%">
+        <Text color="brand.grey">Red Balance:</Text>
+        <Slider 
+          w="300px" 
           min={-255}
           max={255}
           step={5}
@@ -53,13 +47,12 @@ function RgbTab({ options, handleChange }: Props) {
           </SliderTrack>
           <SliderThumb />
         </Slider>
-        <Text data-id="rgb/redValue" color="white">{options.red}</Text>
-      </Flex>
-      <Flex>
-        <Text as="label" htmlFor="rgb/green" color="white">Green Balance:</Text>
-        <Slider
-          data-id="rgb/green" // Ensure data-id is set for handleInputEvent to work
-          name="rgb/green"
+        <Text color="brand.grey">{options.red}</Text>
+      </HStack>
+      <HStack spacing="5" w="70%">
+        <Text color="brand.grey">Green Balance:</Text>
+        <Slider 
+          w="300px" 
           min={-255}
           max={255}
           step={5}
@@ -71,13 +64,12 @@ function RgbTab({ options, handleChange }: Props) {
           </SliderTrack>
           <SliderThumb />
         </Slider>
-        <Text data-id="rgb/greenValue" color="white">{options.green}</Text>
-      </Flex>
-      <Flex>
-        <Text as="label" color="white" htmlFor="rgb/blue">Blue Balance:</Text>
-        <Slider
-          data-id="rgb/blue" // Ensure data-id is set for handleInputEvent to work
-          name="rgb/blue"
+        <Text color="brand.grey">{options.green}</Text>
+      </HStack>
+      <HStack spacing="5" w="70%">
+        <Text color="brand.grey">Blue Balance:</Text>
+        <Slider 
+          w="300px" 
           min={-255}
           max={255}
           step={5}
@@ -89,9 +81,9 @@ function RgbTab({ options, handleChange }: Props) {
           </SliderTrack>
           <SliderThumb />
         </Slider>
-        <Text color="white" data-id="rgb/blueValue">{options.blue}</Text>
-      </Flex>
-    </Box>
+        <Text color="brand.grey">{options.blue}</Text>
+      </HStack>
+    </Flex>
   );
 }
 

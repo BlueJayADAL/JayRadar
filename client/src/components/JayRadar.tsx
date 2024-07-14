@@ -147,14 +147,20 @@ function JayRadar() {
 
   return (
     
-  <Flex w="100vw" h="100vh" bg="brand.background">
+  <Flex w="100vw" h="100vh" alignItems="center" justifyContent="center" bg="brand.background">
+    
     <Box>
       <ConfigBox reset={reset} save={save} configOptions={configOptions} configSelect={configSelect}/> 
+      <Image id="videoFeed" src="video_feed" alt="video feed" boxSize="60vh" bg="brand.dark_blue" p="25px" borderRadius="25px" />
+    </Box>
+
+
+    <Box ml="5vw">
       <RgbTab options={options.rgb} handleChange={handleInputEvent} />
       <HsvTab options={options.hsv} handleChange={handleInputEvent} />
       <Yolov8Tab options={options.dl} handleChange={handleInputEvent} />
     </Box>
-    <Image id="videoFeed" src="video_feed" alt="video feed" boxSize="480px" />
+    
   </Flex>
   );
 }

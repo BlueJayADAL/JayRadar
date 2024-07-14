@@ -11,9 +11,9 @@ interface ConfigBoxProps {
 
 function ConfigBox ({reset, save, configOptions, configSelect}:ConfigBoxProps) {
   return (
-    <Flex direction="column" alignItems="center" justifyContent="center" p="10px">
+    <Flex borderRadius="25px" direction="column" alignItems="center" justifyContent="center" m="2vw" p="2vw" bg="brand.dark_blue">
         <Box>
-        <Select id="none/config" ref={configSelect} mb="10" bg="brand.dark_blue" variant="Filled" color="white">
+        <Select id="none/config" ref={configSelect} mb="5" bg="brand.mid_blue" variant="Filled" color="white">
             <ConfigOption value="default" name="Default" />
             { configOptions.map((option) => (
                 <ConfigOption key={option} name={option} />

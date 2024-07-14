@@ -1,5 +1,5 @@
 import { Yolov8ConfigOptions } from '../../types/Yolov8ConfigOptions';
-import { Box, Flex, Checkbox, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Text } from '@chakra-ui/react';
+import { Box, HStack, Flex, Checkbox, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Text } from '@chakra-ui/react';
 
 interface Props {
   options: Yolov8ConfigOptions;
@@ -29,53 +29,53 @@ function Yolov8Tab({ options, handleChange }: Props) {
     handleChange(String(event.target.checked), syntheticEvent as unknown as React.SyntheticEvent);
   };
   return (
-    <Box>
-      <Checkbox id="dl/active" name="dl/active" isChecked={options.active} onChange={handleCheckboxChange}>
+    <Flex direction="column" borderRadius="25px" justifyContent="center" alignItems="center" w="30vw" h="20vh" mb="2vw" bg="brand.dark_blue">
+      <Checkbox color="brand.grey" isChecked={options.active} onChange={handleCheckboxChange}>
         Active
       </Checkbox>
       <Box className="sliders">
-        <Flex>
-          <Text>Conf:</Text>
-          <Slider min={0} max={1} step={0.01} value={options.conf} onChange={handleSliderChange("dl/conf")}>
+        <HStack spacing="5" w="70%">
+          <Text color="brand.grey">Conf:</Text>
+          <Slider w="300px" min={0} max={1} step={0.01} value={options.conf} onChange={handleSliderChange("dl/conf")}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
             <SliderThumb />
           </Slider>
-          <Text>{options.conf}</Text>
-        </Flex>
-        <Flex>
-          <Text>IOU:</Text>
-          <Slider min={0} max={1} step={0.01} value={options.iou} onChange={handleSliderChange("dl/iou")}>
+          <Text color="brand.grey">{options.conf}</Text>
+        </HStack>
+        <HStack spacing="5" w="70%">
+          <Text color="brand.grey">IOU:</Text>
+          <Slider w="300px" min={0} max={1} step={0.01} value={options.iou} onChange={handleSliderChange("dl/iou")}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
             <SliderThumb />
           </Slider>
-          <Text>{options.iou}</Text>
-        </Flex>
-        <Flex>
-          <Text>Max:</Text>
-          <Slider min={0} max={100} step={1} value={options.max} onChange={handleSliderChange("dl/max")}>
+          <Text color="brand.grey">{options.iou}</Text>
+        </HStack>
+        <HStack spacing="5" w="70%">
+          <Text color="brand.grey">Max:</Text>
+          <Slider w="300px" min={0} max={100} step={1} value={options.max} onChange={handleSliderChange("dl/max")}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
             <SliderThumb />
           </Slider>
-          <Text>{options.max}</Text>
-        </Flex>
-        <Flex>
-          <Text>Img:</Text>
-          <Slider min={160} max={640} step={32} value={options.img} onChange={handleSliderChange("dl/img")}>
+          <Text color="brand.grey">{options.max}</Text>
+        </HStack>
+        <HStack spacing="5" w="70%">
+          <Text color="brand.grey">Img:</Text>
+          <Slider w="300px" min={160} max={640} step={32} value={options.img} onChange={handleSliderChange("dl/img")}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
             <SliderThumb />
           </Slider>
-          <Text>{options.img}</Text>
-        </Flex>
+          <Text color="brand.grey">{options.img}</Text>
+        </HStack>
       </Box>
-    </Box>
+    </Flex>
       );
     }
 
