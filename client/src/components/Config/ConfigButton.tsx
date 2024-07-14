@@ -1,3 +1,5 @@
+import { Button } from "@chakra-ui/react";
+
 interface Props {
   handleClick: () => void;
   text: string;
@@ -8,9 +10,9 @@ interface Props {
  */
 function ConfigButton({ handleClick, text }: Props) {
   return (
-    <button onClick={handleClick} type="button">
+    <Button onClick={handleClick} type="button" colorScheme="blue">
       {text}
-    </button>
+    </Button>
   );
 }
 

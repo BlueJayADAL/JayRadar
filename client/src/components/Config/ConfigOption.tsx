@@ -8,7 +8,7 @@ interface Props {
  */
 function ConfigOption({ name, value }: Props) {
   return (
-    <option value={value ?? name}>
+    <option style={{ color: 'black' }} value={value ?? name}>
       Config:
       {' '}
       {name}
