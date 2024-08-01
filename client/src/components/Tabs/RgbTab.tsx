@@ -28,14 +28,17 @@ function RgbTab({ options, handleChange }: Props) {
   };
 
   return (
-    <Flex direction="column" borderRadius="25px" justifyContent="center" alignItems="center" w="30vw" h="30vh" mb="2vw" bg="brand.dark_blue">
-      <Checkbox isChecked={options.active} onChange={handleCheckboxChange} color="brand.grey">
-        Active
-      </Checkbox>
+    <Flex direction="column" borderRadius="25px" justifyContent="center" alignItems="center" w="30vw" h="30vh" mb="2vw" pt="10px" bg="brand.dark_blue">
+      <HStack spacing="5" w="70%">
+        <Text color="white">RGB</Text>
+        <Checkbox color="brand.grey" isChecked={options.active} onChange={handleCheckboxChange}>
+          Active
+        </Checkbox>
+      </HStack>
       <HStack spacing="5" w="70%">
         <Text color="brand.grey">Red Balance:</Text>
         <Slider 
-          w="300px" 
+          w="200px" 
           min={-255}
           max={255}
           step={5}
@@ -52,7 +55,7 @@ function RgbTab({ options, handleChange }: Props) {
       <HStack spacing="5" w="70%">
         <Text color="brand.grey">Green Balance:</Text>
         <Slider 
-          w="300px" 
+          w="200px" 
           min={-255}
           max={255}
           step={5}
@@ -69,7 +72,7 @@ function RgbTab({ options, handleChange }: Props) {
       <HStack spacing="5" w="70%">
         <Text color="brand.grey">Blue Balance:</Text>
         <Slider 
-          w="300px" 
+          w="200px" 
           min={-255}
           max={255}
           step={5}

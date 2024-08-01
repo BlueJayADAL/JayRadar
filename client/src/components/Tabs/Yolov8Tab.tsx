@@ -1,5 +1,5 @@
 import { Yolov8ConfigOptions } from '../../types/Yolov8ConfigOptions';
-import { Box, HStack, Flex, Checkbox, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Text } from '@chakra-ui/react';
+import { HStack, Flex, Checkbox, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Text } from '@chakra-ui/react';
 
 interface Props {
   options: Yolov8ConfigOptions;
@@ -29,14 +29,16 @@ function Yolov8Tab({ options, handleChange }: Props) {
     handleChange(String(event.target.checked), syntheticEvent as unknown as React.SyntheticEvent);
   };
   return (
-    <Flex direction="column" borderRadius="25px" justifyContent="center" alignItems="center" w="30vw" h="20vh" mb="2vw" bg="brand.dark_blue">
-      <Checkbox color="brand.grey" isChecked={options.active} onChange={handleCheckboxChange}>
-        Active
-      </Checkbox>
-      <Box className="sliders">
+    <Flex direction="column" borderRadius="25px" justifyContent="center" alignItems="center" w="30vw" h="30vh" mb="2vw" bg="brand.dark_blue">
+      <HStack spacing="5" w="70%">
+        <Text color="white">YOLOv8</Text>
+        <Checkbox color="brand.grey" isChecked={options.active} onChange={handleCheckboxChange}>
+          Active
+        </Checkbox>
+      </HStack>
         <HStack spacing="5" w="70%">
           <Text color="brand.grey">Conf:</Text>
-          <Slider w="300px" min={0} max={1} step={0.01} value={options.conf} onChange={handleSliderChange("dl/conf")}>
+          <Slider w="200px" min={0} max={1} step={0.01} value={options.conf} onChange={handleSliderChange("dl/conf")}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
@@ -46,7 +48,7 @@ function Yolov8Tab({ options, handleChange }: Props) {
         </HStack>
         <HStack spacing="5" w="70%">
           <Text color="brand.grey">IOU:</Text>
-          <Slider w="300px" min={0} max={1} step={0.01} value={options.iou} onChange={handleSliderChange("dl/iou")}>
+          <Slider w="200px" min={0} max={1} step={0.01} value={options.iou} onChange={handleSliderChange("dl/iou")}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
@@ -56,7 +58,7 @@ function Yolov8Tab({ options, handleChange }: Props) {
         </HStack>
         <HStack spacing="5" w="70%">
           <Text color="brand.grey">Max:</Text>
-          <Slider w="300px" min={0} max={100} step={1} value={options.max} onChange={handleSliderChange("dl/max")}>
+          <Slider w="200px" min={0} max={100} step={1} value={options.max} onChange={handleSliderChange("dl/max")}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
@@ -66,7 +68,7 @@ function Yolov8Tab({ options, handleChange }: Props) {
         </HStack>
         <HStack spacing="5" w="70%">
           <Text color="brand.grey">Img:</Text>
-          <Slider w="300px" min={160} max={640} step={32} value={options.img} onChange={handleSliderChange("dl/img")}>
+          <Slider w="200px" min={160} max={640} step={32} value={options.img} onChange={handleSliderChange("dl/img")}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
@@ -74,7 +76,6 @@ function Yolov8Tab({ options, handleChange }: Props) {
           </Slider>
           <Text color="brand.grey">{options.img}</Text>
         </HStack>
-      </Box>
     </Flex>
       );
     }

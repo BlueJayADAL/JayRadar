@@ -1,5 +1,5 @@
 import { HsvConfigOptions } from '../../types/HsvConfigOptions';
-import { Box, HStack, Flex, Checkbox, Slider, SliderTrack, SliderThumb, SliderFilledTrack, Text } from '@chakra-ui/react';
+import { HStack, Flex, Checkbox, Slider, SliderTrack, SliderThumb, SliderFilledTrack, Text } from '@chakra-ui/react';
 
 interface Props {
   options: HsvConfigOptions;
@@ -30,13 +30,15 @@ function HsvTab({ options, handleChange }: Props) {
   };
   return (
     <Flex direction="column" borderRadius="25px" justifyContent="center" alignItems="center" w="30vw" h="20vh" mb="2vw" bg="brand.dark_blue">
-      <Checkbox color="brand.grey" isChecked={options.active} onChange={handleCheckboxChange} name="hsv/active">
-        Active
-      </Checkbox>
-      <Box className="sliders">
+      <HStack spacing="5" w="70%">
+        <Text color="white">HSV</Text>
+        <Checkbox color="brand.grey" isChecked={options.active} onChange={handleCheckboxChange}>
+          Active
+        </Checkbox>
+      </HStack>
         <HStack spacing="5" w="70%">
           <Text color="brand.grey">Saturation:</Text>
-          <Slider w="300px" min={0} max={10} step={0.01} value={options.saturation} onChange={handleSliderChange("hsv/saturation")}>
+          <Slider w="200px" min={0} max={10} step={0.01} value={options.saturation} onChange={handleSliderChange("hsv/saturation")}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
@@ -46,7 +48,7 @@ function HsvTab({ options, handleChange }: Props) {
         </HStack>
         <HStack spacing="5" w="70%">
           <Text color="brand.grey">Contrast:</Text>
-          <Slider w="300px" min={0} max={10} step={0.01} value={options.contrast} onChange={handleSliderChange("hsv/contrast")}>
+          <Slider w="200px" min={0} max={10} step={0.01} value={options.contrast} onChange={handleSliderChange("hsv/contrast")}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
@@ -56,7 +58,7 @@ function HsvTab({ options, handleChange }: Props) {
         </HStack>
         <HStack spacing="5" w="70%">
           <Text color="brand.grey">Brightness:</Text>
-          <Slider w="300px" min={-255} max={255} step={5} value={options.brightness} onChange={handleSliderChange("hsv/brightness")}>
+          <Slider w="200px" min={-255} max={255} step={5} value={options.brightness} onChange={handleSliderChange("hsv/brightness")}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
@@ -64,7 +66,6 @@ function HsvTab({ options, handleChange }: Props) {
           </Slider>
           <Text color="brand.grey">{options.brightness}</Text>
         </HStack>
-      </Box>
     </Flex>
   );
 }

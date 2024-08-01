@@ -11,7 +11,7 @@ interface ConfigBoxProps {
 
 function ConfigBox ({reset, save, configOptions, configSelect}:ConfigBoxProps) {
   return (
-    <Flex borderRadius="25px" direction="column" alignItems="center" justifyContent="center" m="2vw" p="2vw" bg="brand.dark_blue">
+    <Flex borderRadius="25px" w="65vh" direction="column" alignItems="center" justifyContent="center" mb="2vw" p="10px" bg="brand.dark_blue">
         <Box>
         <Select id="none/config" ref={configSelect} mb="5" bg="brand.mid_blue" variant="Filled" color="white">
             <ConfigOption value="default" name="Default" />

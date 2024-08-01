@@ -4,8 +4,9 @@ import RgbTab from './Tabs/RgbTab';
 import HsvTab from './Tabs/HsvTab';
 import Yolov8Tab from './Tabs/Yolov8Tab';
 import { TabOptions } from '../types/TabOptions';
-import { Image, Flex, Box } from '@chakra-ui/react';
+import { Image, Flex, Box, Heading } from '@chakra-ui/react';
 import ConfigBox from './Config/ConfigBox';
+import logo from '../../public/logo.png';
 
 // FYI - this is a temporary component that will be removed later.
 // this will be used while we build and improve the rest of the UI.
@@ -146,22 +147,28 @@ function JayRadar() {
   };
 
   return (
-    
-  <Flex w="100vw" h="100vh" alignItems="center" justifyContent="center" bg="brand.background">
-    
-    <Box>
-      <ConfigBox reset={reset} save={save} configOptions={configOptions} configSelect={configSelect}/> 
-      <Image id="videoFeed" src="video_feed" alt="video feed" boxSize="60vh" bg="brand.dark_blue" p="25px" borderRadius="25px" />
-    </Box>
+  <Flex>
+    <Flex direction="column" alignItems="center" w="150px" h="100vh" bg="brand.dark_blue">
+      <Image src={logo} pt="25px" boxSize="100px"/>
+      <Heading as="u" color="brand.light_blue" size="md" pt="25px">Tuning</Heading>
+      <Heading color="white" size="md" pt="25px">Settings</Heading>
+    </Flex>
+    <Flex w="calc(100vw - 150px)" h="100vh" alignItems="center" justifyContent="center" bg="brand.background">
+      <Box>
+        <ConfigBox reset={reset} save={save} configOptions={configOptions} configSelect={configSelect}/> 
+        <Image id="videoFeed" src="video_feed" alt="video feed" boxSize="65vh" bg="brand.dark_blue" p="10px" borderRadius="25px" />
+      
+      </Box>
 
 
-    <Box ml="5vw">
-      <RgbTab options={options.rgb} handleChange={handleInputEvent} />
-      <HsvTab options={options.hsv} handleChange={handleInputEvent} />
-      <Yolov8Tab options={options.dl} handleChange={handleInputEvent} />
-    </Box>
-    
-  </Flex>
+      <Box ml="5vw">
+        <RgbTab options={options.rgb} handleChange={handleInputEvent} />
+        <HsvTab options={options.hsv} handleChange={handleInputEvent} />
+        <Yolov8Tab options={options.dl} handleChange={handleInputEvent} />
+      </Box>
+      
+    </Flex>
+  </Flex> 
   );
 }
 
